@@ -1,0 +1,3402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://schemas.civica.co.uk/UHWeb/2013/03" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PropertyService" targetNamespace="http://schemas.civica.co.uk/UHWeb/2013/03" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://schemas.civica.co.uk/UHWeb/2013/03">
+      <xsd:element name="GetPropertyByRef">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ByPropertyRefRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ByPropertyRefRequest">
+        <xsd:annotation>
+          <xsd:appinfo />
+          <xsd:documentation>&lt;summary&gt;
+            A web request to allow a property reference to be passed in
+            &lt;/summary&gt;</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebRequest">
+            <xsd:sequence>
+              <xsd:element name="PropertyReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Property reference
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="ByPropertyRefRequest" nillable="true" type="tns:ByPropertyRefRequest" />
+      <xsd:complexType name="WebRequest">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="CompanyCode" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="DirectUser" nillable="true" type="tns:UserCredential" />
+          <xsd:element minOccurs="0" name="SessionToken" nillable="true" type="xsd:string" />
+          <xsd:element name="SourceSystem" nillable="true" type="xsd:string" />
+          <xsd:element name="UserId" type="xsd:int" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="WebRequest" nillable="true" type="tns:WebRequest" />
+      <xsd:complexType name="UserCredential">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="UserName" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="UserPassword" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="UserCredential" nillable="true" type="tns:UserCredential" />
+      <xsd:element name="GetPropertyByRefResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetPropertyByRefResult" nillable="true" type="tns:PropertyGetResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="PropertyGetResponse">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebResponse">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Property" nillable="true" type="tns:PropertyDto">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            A property data transfer object
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="PropertyGetResponse" nillable="true" type="tns:PropertyGetResponse" />
+      <xsd:complexType name="WebResponse">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="ErrorCode" type="xsd:int" />
+          <xsd:element minOccurs="0" name="ErrorMessage" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="Success" type="xsd:boolean" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="WebResponse" nillable="true" type="tns:WebResponse" />
+      <xsd:complexType name="PropertyDto">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:UserFieldEntity">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="AllocationsPanel" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Property let by allocations panel
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="AreaOfficeCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Area office lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ArrearsOfficerCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Arrears officer lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ArrearsPatchCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Arrears patch lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Asbestos" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is there is asbestos at the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="BuildingSchemeReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a building scheme record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="CompanyCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Housing systems company code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ConditionCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Condition Code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ContactKey" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique identifier of the contact record relating to the household living at the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="CoreShared" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True if there are shared facilities at the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="CyclicalDue" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Year planned works are next due
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeCostAtYearOfFailure" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes cost at year of failure
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeCostNow" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes cost now
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeDateAssessed" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes date assessed
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeStatusCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes status code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeYearOfFailure" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes year of failure
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DisplayCompanyCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Defines other housing system companies that should be able to view this property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcCO2Rating" nillable="true" type="xsd:short">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance CO2 rating
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcCertificateDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance certificate date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcCertificateNo" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance certificate number
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcEnergyRating" nillable="true" type="xsd:short">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance rating
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcRecordedDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance recorded date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcRequestDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance request date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcSurveyDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance survey date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureAccessShower" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Access shower
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureChilrenAllowed" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Are children allowed
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureCommLifts" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Communal lifts
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureDiningRoom" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True if there is a dining room
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureFamilySize" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Family size
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureFloors" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of floors
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureGarage" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Garage
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureHandRails" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True if there is hand rail access
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureKitchenDining" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Kitchen dining
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureLaundry" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Are laundry facilities available
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureLounge" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Lounge
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureMaxAgeRestriction" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Maximum age restriction
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureMinAgeRestriction" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Minimum age restriction
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeaturePetsAllowed" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Are pets are allowed
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureRamp" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is there is ramp access
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureSecondToilet" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Second toilet
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureSheltered" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Sheltered accommodation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureShower" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Shower
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureStairLift" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Stair lift
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureSteps" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of steps leading to the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureStore" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Store room
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureThroughLift" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Through lift
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureVisitorBed" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Is a visitor bed available
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureWardenFlat" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Warden flat
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FinanceCompany" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            The code of the finance systems company that this property relates to
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Handover" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Handover date, relates to the properties development
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="HeatingCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Heating type lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="HouseholdRef" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference to the household living at the property (If occupied)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="HousingOfficerCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Housing officer lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Id" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique Identifier
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="InsValue" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Insurance Value
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="InsurancePolicyNumber" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Insurance policy number
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Keys" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of keys
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Leasehold" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is this is a leasehold property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Letable" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True if the property can be let.
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="LettingAreaCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Letting area lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="LevelReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a property level record (Scheme, Block, House etc)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="LocalAuthorityReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a local authority record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="LocalConnection" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Local connection required
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="MaintResponsibilityCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Maintenance responsibility lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ManagedProperty" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Managed property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NherRating" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            National Home Energy Rating (NHER) value
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoBedrooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of bedrooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoDoubleBedrooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of double bedrooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoMaintenanceAllowed" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True if no maintenance should be allowed at the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoSingleBedrooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of single bedrooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NominalScheme" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Nominal (Management) scheme. Relates to the finance system
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OccupationStatusReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of an occupation status record (Occupied, Void etc)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OnlineRepairs" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Online repairs
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OwnerConfirmationCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Depreciated. Related to the now defunct NROSH programme
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OwnerReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference to a property owner record. 
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ParentPropertyReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique property reference of the parent of this property. E.g. a flats parent may be a Block.
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PlannedMaintAreaReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a planned maintenance area record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PostCodeValue" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Post code of the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PostDesignation" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Property house number
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PostPreamble" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Post House name
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PracticalCompletion" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Practical completion date, relates to the properties development
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PropertyTypeReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a property type record (Hostel, General needs etc)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RateValue" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Valuation rateable Value
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Reference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            The property reference
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RepairAreaCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Repair area lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RepairOfficerCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Repair officer lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RepairSubArea" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Repair sub-area lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Repairable" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is repairs can be logged at this property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ResidentsAssosiationReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a residents association record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Rtb" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Right To Buy (RTB)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RtbApplication" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is a Right To Buy (RTB) application has been made at the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="S125" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Section 125, relates to Right To Buy (RTB)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="SapRating" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Standard Assessment Procedure (SAP) rating. Relates to the energy performance of the property.
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ShortAddress" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Short address (system generated)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="SubtypeValue" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Mixed use field
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Telephone" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Telephone
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="VoidMonLive" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is there is an open void monitoring record for this property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="VoidPropertyReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a void monitoring record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WalkNo" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Walk number
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WalkSequence" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Walk sequence
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WardenReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a warden record (Who looks after the property)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WaterSupplierReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a water supplier record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="PropertyDto" nillable="true" type="tns:PropertyDto" />
+      <xsd:complexType name="UserFieldEntity">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="UserFieldList" nillable="true" type="tns:ArrayOfUserField">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            List of user-defined fields
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="UserFieldEntity" nillable="true" type="tns:UserFieldEntity" />
+      <xsd:complexType name="ArrayOfUserField">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="UserField" nillable="true" type="tns:UserField" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfUserField" nillable="true" type="tns:ArrayOfUserField" />
+      <xsd:complexType name="UserField">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Key" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Fieldname for user field
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="Value" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Field Value
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="UserField" nillable="true" type="tns:UserField" />
+      <xsd:element name="GetCurrentPropertiesByMember">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ListByIdRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ListByIdRequest">
+        <xsd:annotation>
+          <xsd:appinfo />
+          <xsd:documentation>&lt;summary&gt;
+            Adds an ID property to a list request
+            &lt;/summary&gt;</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:ListRequest">
+            <xsd:sequence>
+              <xsd:element name="Id" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Entity ID
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="ListByIdRequest" nillable="true" type="tns:ListByIdRequest" />
+      <xsd:complexType name="ListRequest">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebRequest">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="MaxRecords" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Allows the limiting of the result set where the request returns a list
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="ListRequest" nillable="true" type="tns:ListRequest" />
+      <xsd:element name="GetCurrentPropertiesByMemberResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetCurrentPropertiesByMemberResult" nillable="true" type="tns:MemberPropertyGetResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="MemberPropertyGetResponse">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebResponse">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="MemberPropertyList" nillable="true" type="tns:ArrayOfMemberPropertyInfo">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            A collection of member/property summary items
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="MemberPropertyGetResponse" nillable="true" type="tns:MemberPropertyGetResponse" />
+      <xsd:complexType name="ArrayOfMemberPropertyInfo">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="MemberPropertyInfo" nillable="true" type="tns:MemberPropertyInfo" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfMemberPropertyInfo" nillable="true" type="tns:ArrayOfMemberPropertyInfo" />
+      <xsd:complexType name="MemberPropertyInfo">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:PropertySummary">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="TenancyEnd" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Tenancy end date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="TenancyStart" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Tenancy start date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="MemberPropertyInfo" nillable="true" type="tns:MemberPropertyInfo" />
+      <xsd:complexType name="PropertySummary">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="AddressLine1" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 1
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AddressLine2" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 2
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AddressLine3" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 3
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AddressLine4" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 4
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AllocationStatusDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Allocation status description (Offer made, Offer accepted etc)
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="CompanyCode" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Housing system company code to which this property is related
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="CompanyName" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            TableName of the housing system company to which this property is related
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="HousingOfficerDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            TableName of the housing officer
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="LettingAreaDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Letting area description
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="LevelDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Level description (Scheme, block, house etc)
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="OccupationStatusDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Occupation status description (Void, Occupied etc)
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="OwnerName" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Owners name
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="ParentPropertyReference" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Parent property reference
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="PostCodeValue" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Post code
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="PostDesignation" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            House number
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="PostPreamble" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            House name
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="PropertyReference" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Property reference
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="PropertyTypeDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Property type description
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="ShortAddress" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Short address generated by the system
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="TenureDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Tenure (Assured, Fair etc)
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="PropertySummary" nillable="true" type="tns:PropertySummary" />
+      <xsd:element name="GetPropertyHistoryByMember">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ListByIdAndDateRangeRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ListByIdAndDateRangeRequest">
+        <xsd:annotation>
+          <xsd:appinfo />
+          <xsd:documentation>&lt;summary&gt;
+            Adds a date range to a ListByIdRequest
+            &lt;/summary&gt;</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:ListByIdRequest">
+            <xsd:sequence>
+              <xsd:element name="DateFrom" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date from
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="DateTo" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date to
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="ListByIdAndDateRangeRequest" nillable="true" type="tns:ListByIdAndDateRangeRequest" />
+      <xsd:element name="GetPropertyHistoryByMemberResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetPropertyHistoryByMemberResult" nillable="true" type="tns:MemberPropertyGetResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetPropertyListByPostCode">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ListByPostCodeRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ListByPostCodeRequest">
+        <xsd:annotation>
+          <xsd:appinfo />
+          <xsd:documentation>&lt;summary&gt;
+            A web request that allows a post code to be passed in
+            &lt;/summary&gt;</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:ListRequest">
+            <xsd:sequence>
+              <xsd:element name="PostCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Post code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="ListByPostCodeRequest" nillable="true" type="tns:ListByPostCodeRequest" />
+      <xsd:element name="GetPropertyListByPostCodeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetPropertyListByPostCodeResult" nillable="true" type="tns:PropertyInfoResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="PropertyInfoResponse">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebResponse">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="PropertyList" nillable="true" type="tns:ArrayOfPropertySummary">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            A collection of property summary items
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="PropertyInfoResponse" nillable="true" type="tns:PropertyInfoResponse" />
+      <xsd:complexType name="ArrayOfPropertySummary">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="PropertySummary" nillable="true" type="tns:PropertySummary" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfPropertySummary" nillable="true" type="tns:ArrayOfPropertySummary" />
+      <xsd:element name="GetPropertyRentRecordByRef">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ByPropertyRefRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetPropertyRentRecordByRefResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetPropertyRentRecordByRefResult" nillable="true" type="tns:PropertyRentGetResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="PropertyRentGetResponse">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebResponse">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="PropertyRent" nillable="true" type="tns:PropertyRentDto">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            A property rent data transfer object
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="PropertyRentGetResponse" nillable="true" type="tns:PropertyRentGetResponse" />
+      <xsd:complexType name="PropertyRentDto">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:UserFieldEntity">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="AllowFreePeriods" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Indicates if rent free periods are applied to this property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="BarrierFreeCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            No barriers to the property. (Yes/No/Unknown)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="BuildTypeCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Build type lookup code (New, Converted etc)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="CblLetDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Choice based lettings let date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="CompanyCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Housing system company this property relates to
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="CurrentRegisteredRent" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Current registered rent
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DateOccupationStatus" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date the current occupation status started
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DefaultVoidOccupationStatusCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Default void occupation status code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DesignTypeCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Design type lookup code (General purpose, Sheltered etc)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DiscretionaryRentPoints" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Discretionary rent points
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DisplayCompanyCodes" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Other housing companies the record should be visible to
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FloorLevelCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Floor level lookup code (Ground floor, First Floor etc)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="HouseholdReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Reference to a household record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Id" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique identifier
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="IsFurnished" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Furnished
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="IsLocalLetting" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Local letting
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="IsMobilityUnit" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Is the property a mobility unit
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="IsRtbEligible" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Right to buy eligible
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="IsSuspendedFromCbl" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Indicates the property should not be available in the CBL system
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="LastReviewDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date the rent was last reviewed at the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="MajorPhase" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Major phase
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="MajorPhaseFromDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date the current major phase started
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NewTenureEffectiveDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            If a NewTenureCode is specified it will be effective from this date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NewTenureType" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Tenure the property will take on at the NewTenureEffectiveDate
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NextReviewDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date the rent level next needs reviewing
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoBedrooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of bedrooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoBeds" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of beds
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoRooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of rooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Notes" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Notes
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OccupationPhase" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Occupation phase
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OccupationStatusCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Reference to an occupation status code (Occupied, Void etc)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OtherPayable" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Other payable charges
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PermittedNo" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of people permitted to live in the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PropertyTypeCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Accommodation type lookup code (Room, House, Garage etc)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1CouncilTaxFromLandlord" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration tax from landlord
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1CouncilTaxToLandlord" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration council tax to landlord
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1FurnitureDetails" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration furniture details
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1LandlordRepairs" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration landlord repairs
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1LandlordSharedAccom" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration shared accommodation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1MajorImprovement" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration major improvement
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1NewRent" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration new rent
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1OtherDetails" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration other details
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1OtherSharedAccom" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration other shared accommodation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1RatesDetails" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration rates details
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1ReRegisteringDetails" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration re-register details
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1RoomDetails" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration room details
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1ServicesAmount" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration services amount
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1TenancyStartDate" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration tenancy start date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1TenantDisrepair" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration tenant disrepair
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1TenantImprovements" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration tenant improvements
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RR1TenantRepairs" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Fair rent registration tenant repairs
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Reference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique property reference
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RentPayable" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Payable rent
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RentPoints" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Rent points. Calculated from property attributes, can be used to determine rent
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RentRegistrationApplicationDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Rent registration application date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RentRegistrationDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Rent registration date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RentRegistrationDateFirstRegistered" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Rent registration date first registered
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RentRegistrationDueDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Rent registration due date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RentSettingMethodCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Rent setting method lookup code.
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RentgroupReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Reference to a rent group record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ServiceChargeBalMethodCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Balancing service charge method lookup code (default for the property)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ServiceChargeLastReviewDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date when service charges were last reviewed
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ServiceChargeMethodCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Service charge method lookup code (default for the property)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ServiceChargeNextReviewDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date when service charges next need reviewing
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ServiceChargePeriodCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Reference to a rent period code, used by the service charges module
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ServicePayable" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Payable service charge
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="SharedOwnerPercentage" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Shared ownership percentage
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ShortAddress" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            System generated short address
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="TargetRent" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Target rent
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="TenureType" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Reference to a tenure record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Valuation1999Level" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            1999 Valuation level
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationCapital" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Capital valuation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationCouncilTaxBand" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Council tax band
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Date the property was last valued
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationEnergyRating" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy rating valuation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationInsurance" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Insurance valuation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationIsActual" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Valuation is actual
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationIsEstimated" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Valuation is estimated
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationRateable" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Valuation rateable valuation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationResidentialUse" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Residential use valuation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationVacantPosession" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Vacant possession valuation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ValuationValue" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Property valuation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WheelChair" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Wheel chair access
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="PropertyRentDto" nillable="true" type="tns:PropertyRentDto" />
+      <xsd:element name="GetGasServiceInfoByProperty">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ByPropertyRefRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetGasServiceInfoByPropertyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetGasServiceInfoByPropertyResult" nillable="true" type="tns:GasServiceInfoResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GasServiceInfoResponse">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebResponse">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="GasServiceItems" nillable="true" type="tns:ArrayOfGasServiceInfo">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            A collection of gas service info items
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="GasServiceInfoResponse" nillable="true" type="tns:GasServiceInfoResponse" />
+      <xsd:complexType name="ArrayOfGasServiceInfo">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GasServiceInfo" nillable="true" type="tns:GasServiceInfo" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGasServiceInfo" nillable="true" type="tns:ArrayOfGasServiceInfo" />
+      <xsd:complexType name="GasServiceInfo">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="AttributeDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Description of the attribute E.G. Gas Boiler
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="LastServiceDate" nillable="true" type="xsd:dateTime">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Date the attribute was last serviced
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="LocationDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Location at the property where the attribute is situated
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="NextServiceDueDate" nillable="true" type="xsd:dateTime">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Date the attribute is next due to be serviced
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GasServiceInfo" nillable="true" type="tns:GasServiceInfo" />
+      <xsd:element name="GetCurrentAddressByUHWContact">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ByIdRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ByIdRequest">
+        <xsd:annotation>
+          <xsd:appinfo />
+          <xsd:documentation>&lt;summary&gt;
+            Used by get methods where a single record should be returned by ID
+            &lt;/summary&gt;</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebRequest">
+            <xsd:sequence>
+              <xsd:element name="Id" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Entity identifier
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="ByIdRequest" nillable="true" type="tns:ByIdRequest" />
+      <xsd:element name="GetCurrentAddressByUHWContactResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetCurrentAddressByUHWContactResult" nillable="true" type="tns:UHWAddressResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="UHWAddressResponse">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebResponse">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="ContactAddress" nillable="true" type="tns:WFContactAddressDto">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            A UHW contact address data transfer object
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="UHWAddressResponse" nillable="true" type="tns:UHWAddressResponse" />
+      <xsd:complexType name="WFContactAddressDto">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="AddressLine1" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 1
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AddressLine2" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 2
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AddressLine3" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 3
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AddressLine4" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 4
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AddressLine5" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address line 5
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AddressStatus" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Address status
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AliasAddressCount" nillable="true" type="xsd:int">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Alias address count
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="AreaCode" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Area code
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="CountryID" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Country ID
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="CountyID" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            County ID
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="Id" type="xsd:int">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Unique identifier
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="ModDate" nillable="true" type="xsd:dateTime">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Last modified date
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="ModType" type="ser:char">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Modification type
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="ModUser" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Last modified user
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="PostCode" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Post code
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="ProcessNo" nillable="true" type="xsd:int">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Process number
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="PropertyReference" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            UHT property reference
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="UPRN" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Unique property reference number (National register)
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="WalkCode" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Walk number
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="WFContactAddressDto" nillable="true" type="tns:WFContactAddressDto" />
+      <xsd:element name="GetAddressByUHWRef">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ByIdRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAddressByUHWRefResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetAddressByUHWRefResult" nillable="true" type="tns:UHWAddressResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetPropertyAsbestosHazards">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ByPropertyRefRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetPropertyAsbestosHazardsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetPropertyAsbestosHazardsResult" nillable="true" type="tns:PropertyHazardInfoResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="PropertyHazardInfoResponse">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebResponse">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="PropertyHazardList" nillable="true" type="tns:ArrayOfPropertyHazardInfo">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            A collection of property hazard info items
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="PropertyHazardInfoResponse" nillable="true" type="tns:PropertyHazardInfoResponse" />
+      <xsd:complexType name="ArrayOfPropertyHazardInfo">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="PropertyHazardInfo" nillable="true" type="tns:PropertyHazardInfo" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfPropertyHazardInfo" nillable="true" type="tns:ArrayOfPropertyHazardInfo" />
+      <xsd:complexType name="PropertyHazardInfo">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="HazardAdvise" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Advise (E.g. Do not dismantle)
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="HazardDescription" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Description (E.g. Blue Asbestos)
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="HazardReference" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Unique hazard reference
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="PropertyReference" nillable="true" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo />
+              <xsd:documentation>&lt;summary&gt;
+            Unique property reference this hazard relates to
+            &lt;/summary&gt;</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="PropertyHazardInfo" nillable="true" type="tns:PropertyHazardInfo" />
+      <xsd:element name="GetPropertyAlerts">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:ByPropertyRefRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetPropertyAlertsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetPropertyAlertsResult" nillable="true" type="tns:KeyObjectAlertMessagesResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="KeyObjectAlertMessagesResponse">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebResponse">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="KeyObjectAlertMessages" nillable="true" type="tns:ArrayOfKeyObjectAlertMessageDto">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            A collection of key object alert message data transfer objects
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="KeyObjectAlertMessagesResponse" nillable="true" type="tns:KeyObjectAlertMessagesResponse" />
+      <xsd:complexType name="ArrayOfKeyObjectAlertMessageDto">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="KeyObjectAlertMessageDto" nillable="true" type="tns:KeyObjectAlertMessageDto" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfKeyObjectAlertMessageDto" nillable="true" type="tns:ArrayOfKeyObjectAlertMessageDto" />
+      <xsd:complexType name="KeyObjectAlertMessageDto">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Category" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="Reference" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="KeyObjectAlertMessageDto" nillable="true" type="tns:KeyObjectAlertMessageDto" />
+      <xsd:element name="UpdateProperty">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="dto" nillable="true" type="tns:PropertyUpdateRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="PropertyUpdateRequest">
+        <xsd:annotation>
+          <xsd:appinfo />
+          <xsd:documentation>&lt;summary&gt;
+            A web request to allow property information to be updated
+            &lt;/summary&gt;</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:WebRequest">
+            <xsd:sequence>
+              <xsd:element name="PropertyInfo" nillable="true" type="tns:PropertyInfo">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Defines property fields that can be updated
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="PropertyUpdateRequest" nillable="true" type="tns:PropertyUpdateRequest" />
+      <xsd:complexType name="PropertyInfo">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:UserFieldEntity">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="AllocationsPanel" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Allocations panel
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="AreaOfficeCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Area office lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ArrearsOfficerCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Arrears officer lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ArrearsPatchCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Arrears patch lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Asbestos" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is there is asbestos at the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="BuildingSchemeReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a building scheme record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="CoreShared" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True if there are shared facilities at the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="CyclicalDue" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Year planned works are next due
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeCostAtYearOfFailure" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes cost at year of failure
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeCostNow" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes cost now
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeDateAssessed" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes date assessed
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeStatusCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes status code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="DecentHomeYearOfFailure" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Decent homes year of failure
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcCO2Rating" nillable="true" type="xsd:short">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance CO2 rating
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcCertificateDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance certificate date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcCertificateNo" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance certificate number
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcEnergyRating" nillable="true" type="xsd:short">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance rating
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcRecordedDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance recorded date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcRequestDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance request date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="EpcSurveyDate" nillable="true" type="xsd:dateTime">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Energy performance survey date
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureAccessShower" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Access shower
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureBedrooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of bedrooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureChilrenAllowed" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Are children allowed
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureCommLifts" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Communal lifts
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureDiningRoom" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True if there is a dining room
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureFamilySize" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Family size
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureFloors" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of floors
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureGarage" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Garage
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureHandRails" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True if there is hand rail access
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureKitchenDining" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Kitchen dining
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureLaundry" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Are laundry facilities available
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureLounge" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Lounge
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureMaxAgeRestriction" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Maximum age restriction
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureMinAgeRestriction" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Minimum age restriction
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeaturePetsAllowed" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Are pets are allowed
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureRamp" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is there is ramp access
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureSecondToilet" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Second toilet
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureSheltered" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Sheltered accommodation
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureShower" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Shower
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureStairLift" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Stair lift
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureSteps" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of steps leading to the property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureStore" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Store room
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureThroughLift" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Through lift
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureVisitorBed" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Is a visitor bed available
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="FeatureWardenFlat" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Warden flat
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="HeatingCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Heating type lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="HousingOfficerCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Housing officer lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Keys" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of keys
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Leasehold" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is this is a leasehold property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="LettingAreaCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Letting area lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="LocalAuthorityReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a local authority record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="LocalConnection" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Local connection required
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="MaintResponsibilityCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Maintenance responsibility lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NherRating" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            National Home Energy Rating (NHER) value
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoBedrooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of bedrooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoDoubleBedrooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of double bedrooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NoSingleBedrooms" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Number of single bedrooms
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="NominalScheme" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Nominal (Management) scheme. Relates to the finance system
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OnlineRepairs" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Online repairs
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OwnerConfirmationCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Depreciated. Related to the now defunct NROSH programme
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="OwnerReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference to a property owner record. 
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PlannedMaintAreaReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a planned maintenance area record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="PropertyTypeReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Property type record reference
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="Reference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Property reference
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RepairAreaCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Repair area lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="RepairOfficerCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Repair officer lookup code
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Repairable" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            True is repairs can be logged at this property
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="ResidentsAssosiationReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a residents association record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="Rtb" nillable="true" type="xsd:boolean">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Right To Buy (RTB)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="SapRating" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Standard Assessment Procedure (SAP) rating. Relates to the energy performance of the property.
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WalkNo" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Walk number
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WalkSequence" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Walk sequence
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WardenReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a warden record (Who looks after the property)
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element minOccurs="0" name="WaterSupplierReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:appinfo />
+                  <xsd:documentation>&lt;summary&gt;
+            Unique reference of a water supplier record
+            &lt;/summary&gt;</xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="PropertyInfo" nillable="true" type="tns:PropertyInfo" />
+      <xsd:element name="UpdatePropertyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="UpdatePropertyResult" nillable="true" type="tns:PropertyGetResponse" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+    <xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="anyType" nillable="true" type="xs:anyType" />
+      <xs:element name="anyURI" nillable="true" type="xs:anyURI" />
+      <xs:element name="base64Binary" nillable="true" type="xs:base64Binary" />
+      <xs:element name="boolean" nillable="true" type="xs:boolean" />
+      <xs:element name="byte" nillable="true" type="xs:byte" />
+      <xs:element name="dateTime" nillable="true" type="xs:dateTime" />
+      <xs:element name="decimal" nillable="true" type="xs:decimal" />
+      <xs:element name="double" nillable="true" type="xs:double" />
+      <xs:element name="float" nillable="true" type="xs:float" />
+      <xs:element name="int" nillable="true" type="xs:int" />
+      <xs:element name="long" nillable="true" type="xs:long" />
+      <xs:element name="QName" nillable="true" type="xs:QName" />
+      <xs:element name="short" nillable="true" type="xs:short" />
+      <xs:element name="string" nillable="true" type="xs:string" />
+      <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte" />
+      <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt" />
+      <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong" />
+      <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort" />
+      <xs:element name="char" nillable="true" type="tns:char" />
+      <xs:simpleType name="char">
+        <xs:restriction base="xs:int" />
+      </xs:simpleType>
+      <xs:element name="duration" nillable="true" type="tns:duration" />
+      <xs:simpleType name="duration">
+        <xs:restriction base="xs:duration">
+          <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?" />
+          <xs:minInclusive value="-P10675199DT2H48M5.4775808S" />
+          <xs:maxInclusive value="P10675199DT2H48M5.4775807S" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="guid" nillable="true" type="tns:guid" />
+      <xs:simpleType name="guid">
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:attribute name="FactoryType" type="xs:QName" />
+      <xs:attribute name="Id" type="xs:ID" />
+      <xs:attribute name="Ref" type="xs:IDREF" />
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="IPropertyService_GetPropertyByRef_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyByRef" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyByRef_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyByRefResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetCurrentPropertiesByMember_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCurrentPropertiesByMember" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetCurrentPropertiesByMember_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCurrentPropertiesByMemberResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyHistoryByMember_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyHistoryByMember" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyHistoryByMember_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyHistoryByMemberResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyListByPostCode_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyListByPostCode" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyListByPostCode_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyListByPostCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyRentRecordByRef_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyRentRecordByRef" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyRentRecordByRef_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyRentRecordByRefResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetGasServiceInfoByProperty_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGasServiceInfoByProperty" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetGasServiceInfoByProperty_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGasServiceInfoByPropertyResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetCurrentAddressByUHWContact_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCurrentAddressByUHWContact" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetCurrentAddressByUHWContact_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCurrentAddressByUHWContactResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetAddressByUHWRef_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAddressByUHWRef" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetAddressByUHWRef_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAddressByUHWRefResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyAsbestosHazards_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyAsbestosHazards" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyAsbestosHazards_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyAsbestosHazardsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyAlerts_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyAlerts" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_GetPropertyAlerts_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropertyAlertsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_UpdateProperty_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateProperty" />
+  </wsdl:message>
+  <wsdl:message name="IPropertyService_UpdateProperty_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdatePropertyResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IPropertyService">
+    <wsdl:documentation>&lt;summary&gt;
+            A service to provide integration with the UH property module
+            &lt;/summary&gt;</wsdl:documentation>
+    <wsdl:operation name="GetPropertyByRef">
+      <wsdl:documentation>&lt;summary&gt;
+            Returns property information for the specified property reference
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The property reference&lt;/param&gt;
+            &lt;returns&gt;A property DTO&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyByRef" message="tns:IPropertyService_GetPropertyByRef_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyByRefResponse" message="tns:IPropertyService_GetPropertyByRef_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCurrentPropertiesByMember">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets properties currently linked to the specified member
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The ID of the member&lt;/param&gt;
+            &lt;returns&gt;A collection of records summarising the property/tenancy information&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetCurrentPropertiesByMember" message="tns:IPropertyService_GetCurrentPropertiesByMember_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetCurrentPropertiesByMemberResponse" message="tns:IPropertyService_GetCurrentPropertiesByMember_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyHistoryByMember">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets all properties the member has ever been linked to within the specified date range
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The member ID and date range&lt;/param&gt;
+            &lt;returns&gt;A collection of records summarising the property/tenancy information&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyHistoryByMember" message="tns:IPropertyService_GetPropertyHistoryByMember_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyHistoryByMemberResponse" message="tns:IPropertyService_GetPropertyHistoryByMember_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyListByPostCode">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets summary information for properties matching the specified postcode
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The post code&lt;/param&gt;
+            &lt;returns&gt;A collection of property summary records&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyListByPostCode" message="tns:IPropertyService_GetPropertyListByPostCode_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyListByPostCodeResponse" message="tns:IPropertyService_GetPropertyListByPostCode_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyRentRecordByRef">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets the rent record for the specified property
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The property reference&lt;/param&gt;
+            &lt;returns&gt;A rent DTO&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyRentRecordByRef" message="tns:IPropertyService_GetPropertyRentRecordByRef_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyRentRecordByRefResponse" message="tns:IPropertyService_GetPropertyRentRecordByRef_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGasServiceInfoByProperty">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets gas service information for the specified property
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The property reference&lt;/param&gt;
+            &lt;returns&gt;A collection of gas service info records&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetGasServiceInfoByProperty" message="tns:IPropertyService_GetGasServiceInfoByProperty_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetGasServiceInfoByPropertyResponse" message="tns:IPropertyService_GetGasServiceInfoByProperty_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCurrentAddressByUHWContact">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets the address from UHW for a given contact
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The UHW contact ID&lt;/param&gt;
+            &lt;returns&gt;The address record &lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetCurrentAddressByUHWContact" message="tns:IPropertyService_GetCurrentAddressByUHWContact_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetCurrentAddressByUHWContactResponse" message="tns:IPropertyService_GetCurrentAddressByUHWContact_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAddressByUHWRef">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets a UHW address record by ID
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The ID of the UHW contact address record&lt;/param&gt;
+            &lt;returns&gt;The contact address record&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetAddressByUHWRef" message="tns:IPropertyService_GetAddressByUHWRef_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetAddressByUHWRefResponse" message="tns:IPropertyService_GetAddressByUHWRef_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyAsbestosHazards">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets hazards linked to the specified property where the linked hazard type is set to Asbestos (ASB)
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The property reference&lt;/param&gt;
+            &lt;returns&gt;A collection of asbestos hazards&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyAsbestosHazards" message="tns:IPropertyService_GetPropertyAsbestosHazards_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyAsbestosHazardsResponse" message="tns:IPropertyService_GetPropertyAsbestosHazards_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyAlerts">
+      <wsdl:documentation>&lt;summary&gt;
+            Gets Key Object alerts that apply to the specified property. Contact Civica for information on how to set up Key object alerts.
+            Key object alerts provide functionality similar to conditional alerts (e.g. Do not visit alone) but can be shared between UHT and UHW
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;The property reference&lt;/param&gt;
+            &lt;returns&gt;A collection of alerts&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyAlerts" message="tns:IPropertyService_GetPropertyAlerts_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyAlertsResponse" message="tns:IPropertyService_GetPropertyAlerts_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateProperty">
+      <wsdl:documentation>&lt;summary&gt;
+            Updates a property record
+            &lt;/summary&gt;
+            &lt;param name="dto"&gt;Updated values for the property, the Reference field is required&lt;/param&gt;
+            &lt;returns&gt;The updated property record&lt;/returns&gt;</wsdl:documentation>
+      <wsdl:input wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/UpdateProperty" message="tns:IPropertyService_UpdateProperty_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/UpdatePropertyResponse" message="tns:IPropertyService_UpdateProperty_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IPropertyService" type="tns:IPropertyService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetPropertyByRef">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyByRef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCurrentPropertiesByMember">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetCurrentPropertiesByMember" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyHistoryByMember">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyHistoryByMember" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyListByPostCode">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyListByPostCode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyRentRecordByRef">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyRentRecordByRef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGasServiceInfoByProperty">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetGasServiceInfoByProperty" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCurrentAddressByUHWContact">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetCurrentAddressByUHWContact" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAddressByUHWRef">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetAddressByUHWRef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyAsbestosHazards">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyAsbestosHazards" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyAlerts">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/GetPropertyAlerts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateProperty">
+      <soap:operation soapAction="http://schemas.civica.co.uk/UHWeb/2013/03/IPropertyService/UpdateProperty" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PropertyService">
+    <wsdl:port name="BasicHttpBinding_IPropertyService" binding="tns:BasicHttpBinding_IPropertyService">
+      <soap:address location="http://localhost:8000/PropertyService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

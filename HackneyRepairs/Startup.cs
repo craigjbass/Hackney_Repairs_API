@@ -1,0 +1,85 @@
+﻿using System.Configuration;
+using HackneyRepairs.Tests;
+using HackneyRepairs.DbContext;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
+using NLog.Extensions.Logging;
+using NLog.Web;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.IO;
+using HackneyRepairs.Extension;
+
+
+namespace HackneyRepairs
+{
+
+    public class Startup
+    {
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
+            TestStatus.IsRunningInTests = false;
+        }
+
+        public IConfigurationRoot Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            // Add framework services.
+            services.AddDbContext<UhtDbContext>(options =>
+            options.UseSqlServer(ConfigurationManager.ConnectionStrings["UhtDb"].ConnectionString));
+            services.AddDbContext<UhwDbContext>(options =>
+            options.UseSqlServer(ConfigurationManager.ConnectionStrings["UhwDb"].ConnectionString));
+
+            services.AddDbContext<UHWWarehouseDbContext>(options =>
+                options.UseSqlServer(ConfigurationManager.ConnectionStrings["UHWReportingWarehouse"].ConnectionString));
+
+            services.AddMvc();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "HackneyRepairs" });
+                // Set the comments path for the Swagger JSON and UI.
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                //string xmlPath = Path.Combine(basePath, "hackneyapi.xml");
+                //c.IncludeXmlComments(xmlPath);
+            });
+            services.AddCors(option => {
+                option.AddPolicy("AllowAny", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+            });          
+            services.AddCustomServices();
+        }
+
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+
+            loggerFactory.AddNLog();
+            app.AddNLogWeb();
+            env.ConfigureNLog("NLog.config");
+            app.UseCors("AllowAny");
+            app.UseMvc();
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
+                if (basePath == null) basePath = "/";
+                c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "HackneyAPI");
+            });
+        }
+    }
+}
