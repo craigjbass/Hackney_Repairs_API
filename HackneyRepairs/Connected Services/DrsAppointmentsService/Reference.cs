@@ -8200,7 +8200,11 @@ namespace DrsAppointmentsService
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
-            string endpointUrl = ConfigurationManager.AppSettings.Get("DRSWebServicesURL");
+            string endpointUrl = Environment.GetEnvironmentVariable("DRSWebServicesURL");
+            if (endpointUrl == null)
+            {
+                endpointUrl = ConfigurationManager.AppSettings.Get("DRSWebServicesURL");
+            }
             
             if ((endpointConfiguration == EndpointConfiguration.SOAPImplPort))
             {

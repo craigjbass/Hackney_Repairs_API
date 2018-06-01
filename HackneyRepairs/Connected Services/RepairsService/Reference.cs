@@ -9,6 +9,7 @@
 
 namespace RepairsService
 {
+    using System;
     using System.Configuration;
     using System.Runtime.Serialization;
     
@@ -6570,7 +6571,12 @@ namespace RepairsService
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
-            string endpointUrl = ConfigurationManager.AppSettings.Get("UHWebServicesURL") + "RepairService.svc";
+            string endpointUrl = Environment.GetEnvironmentVariable("UHWebServicesURL");
+            if (endpointUrl == null)
+            {
+                endpointUrl = ConfigurationManager.AppSettings.Get("UHWebServicesURL");
+            }
+            endpointUrl += "RepairService.svc";
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IRepairService))
             {
                 return new System.ServiceModel.EndpointAddress(endpointUrl);

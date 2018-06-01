@@ -22,11 +22,14 @@ namespace HackneyRepairs.Controllers
         private IHackneyPropertyServiceRequestBuilder _propertyServiceRequestBuilder;
         private IPostcodeValidator _postcodeValidator;
         private ILoggerAdapter<PropertyActions> _loggerAdapter;
+        private HackneyConfigurationBuilder _configBuilder;
+
         public PropertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository)
         {
             HackneyPropertyServiceFactory factory = new HackneyPropertyServiceFactory();
+            _configBuilder = new HackneyConfigurationBuilder((Dictionary<string, string>)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
             _propertyService = factory.build(uhtRepository, loggerAdapter);
-            _propertyServiceRequestBuilder = new HackneyPropertyServiceRequestBuilder(ConfigurationManager.AppSettings, new PostcodeFormatter());
+            _propertyServiceRequestBuilder = new HackneyPropertyServiceRequestBuilder(_configBuilder.getConfiguration(), new PostcodeFormatter());
             _postcodeValidator = new PostcodeValidator();
             _loggerAdapter = loggerAdapter;
         }

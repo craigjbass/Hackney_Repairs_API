@@ -21,12 +21,14 @@ namespace HackneyRepairs.Controllers
         private IHackneyRepairsServiceRequestBuilder _requestBuilder;
         private IRepairRequestValidator _repairRequestValidator;
         private ILoggerAdapter<RepairsActions> _loggerAdapter;
+        private HackneyConfigurationBuilder _configBuilder;
 
         public RepairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
         {
             var factory = new HackneyRepairsServiceFactory();
+            _configBuilder = new HackneyConfigurationBuilder((Dictionary<string,string>)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
             _repairsService = factory.build(uhtRepository, uhwRepository, loggerAdapter);
-            _requestBuilder = new HackneyRepairsServiceRequestBuilder(ConfigurationManager.AppSettings);
+            _requestBuilder = new HackneyRepairsServiceRequestBuilder(_configBuilder.getConfiguration());
             _repairRequestValidator = new RepairRequestValidator();
             _loggerAdapter = loggerAdapter;
         }

@@ -39,13 +39,9 @@ namespace HackneyRepairs
         {
             // Add framework services.
             services.AddDbContext<UhtDbContext>(options =>
-            options.UseSqlServer(ConfigurationManager.ConnectionStrings["UhtDb"].ConnectionString));
+                                                options.UseSqlServer(Configuration.GetSection("UhtDb").Value));
             services.AddDbContext<UhwDbContext>(options =>
-            options.UseSqlServer(ConfigurationManager.ConnectionStrings["UhwDb"].ConnectionString));
-
-            services.AddDbContext<UHWWarehouseDbContext>(options =>
-                options.UseSqlServer(ConfigurationManager.ConnectionStrings["UHWReportingWarehouse"].ConnectionString));
-
+                                                options.UseSqlServer(Configuration.GetSection("UhwDb").Value));
             services.AddMvc();
             services.AddSwaggerGen(c =>
             {

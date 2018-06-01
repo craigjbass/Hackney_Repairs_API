@@ -9,6 +9,7 @@
 
 namespace HackneyRepairs.PropertyService
 {
+    using System;
     using System.Configuration;
     using System.Runtime.Serialization;
     
@@ -5527,7 +5528,12 @@ namespace HackneyRepairs.PropertyService
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
-            string endpointUrl = ConfigurationManager.AppSettings.Get("UHWebServicesURL")+"PropertyService.svc";
+            string endpointUrl = Environment.GetEnvironmentVariable("UHWebServicesURL");
+            if(endpointUrl==null)
+            {
+                endpointUrl = ConfigurationManager.AppSettings.Get("UHWebServicesURL");
+            }
+            endpointUrl+="PropertyService.svc";
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IPropertyService))
             {
                 return new System.ServiceModel.EndpointAddress(endpointUrl);

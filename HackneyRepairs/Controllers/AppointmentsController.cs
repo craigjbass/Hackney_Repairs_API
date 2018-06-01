@@ -23,18 +23,20 @@ namespace HackneyRepairs.Controllers
         private IHackneyAppointmentsServiceRequestBuilder _serviceRequestBuilder;
         private IHackneyRepairsServiceRequestBuilder _repairsServiceRequestBuilder;
         private IScheduleBookingRequestValidator _scheduleBookingRequestValidator;
+        private HackneyConfigurationBuilder _configBuilder;
         
         public AppointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, 
             ILoggerAdapter<HackneyAppointmentsServiceRequestBuilder> requestBuildLoggerAdapter, ILoggerAdapter<RepairsActions> repairsLoggerAdapter)
         {
             var serviceFactory = new HackneyAppointmentServiceFactory();
+            _configBuilder = new HackneyConfigurationBuilder((Dictionary<string, string>)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
             _appointmentsService = serviceFactory.build(loggerAdapter);
             var factory = new HackneyRepairsServiceFactory();
             _repairsService = factory.build(uhtRepository, uhwRepository, repairsLoggerAdapter);
             _loggerAdapter = loggerAdapter;
-            _serviceRequestBuilder = new HackneyAppointmentsServiceRequestBuilder(ConfigurationManager.AppSettings, requestBuildLoggerAdapter);
+            _serviceRequestBuilder = new HackneyAppointmentsServiceRequestBuilder(_configBuilder.getConfiguration(), requestBuildLoggerAdapter);
             _scheduleBookingRequestValidator = new ScheduleBookingRequestValidator(_repairsService);
-            _repairsServiceRequestBuilder = new HackneyRepairsServiceRequestBuilder(ConfigurationManager.AppSettings);
+            _repairsServiceRequestBuilder = new HackneyRepairsServiceRequestBuilder(_configBuilder.getConfiguration());
         }
 
         [HttpGet]
@@ -67,7 +69,7 @@ namespace HackneyRepairs.Controllers
                     return json;
                 }
             }
-            catch (NoAvailableAppointmentsException ex)
+            catch (NoAvailableAppointmentsException)
             {
                 var data = new List<string>();
                 var json = Json(new { results = data });
