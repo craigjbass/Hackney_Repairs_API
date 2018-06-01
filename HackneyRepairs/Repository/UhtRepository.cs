@@ -11,6 +11,7 @@ using HackneyRepairs.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace HackneyRepairs.Repository
 {
@@ -27,33 +28,32 @@ namespace HackneyRepairs.Repository
 
         public async Task<bool> GetMaintainableFlag(string propertyReference)
         {
-            bool maintainableFlag = false;
+            bool? notMaintainableFlag = null;
             _logger.LogInformation($"Getting the maintainable flag from UHT for {propertyReference}");
+            string CS = Environment.GetEnvironmentVariable("UhtDb");
+            if (CS == null)
+            {
+                CS = ConfigurationManager.ConnectionStrings["UhtDb"].ConnectionString;
+            }
             try
             {
-                using (var command = _context.Database.GetDbConnection().CreateCommand())
+                using (SqlConnection con = new SqlConnection(CS))
                 {
-                    _context.Database.OpenConnection();
-                    command.CommandText = @"SELECT 
-                    [no_maint]
-                    FROM [property]
-                    WHERE prop_ref ='" + propertyReference + "'";
-                    command.CommandType = CommandType.Text;
-                    using (var reader = await command.ExecuteReaderAsync())
+                    string sql = "SELECT [no_maint] FROM [property] where [prop_ref]='" + propertyReference + "'";
+                    SqlCommand cmd = new SqlCommand(sql, con);
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    while (dr.Read())
                     {
-                        if (reader != null & reader.HasRows)
-                        {
-                            maintainableFlag = reader.GetBoolean(0);
-                        }
+                        notMaintainableFlag = dr.GetBoolean(0);
                     }
-                    
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
             }
-            return !maintainableFlag;
+            return !notMaintainableFlag.Value;
         }
 
         public async Task<DrsOrder> GetWorkOrderDetails(string workOrderReference)

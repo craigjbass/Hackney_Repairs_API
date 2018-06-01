@@ -25,7 +25,7 @@ namespace HackneyRepairs.Validators
             }
             else
             {
-                var workOrder = Task.Run(() =>_hackneyRepairsService.GetWorkOrderDetails(workOrderReference)).Result;
+                var workOrder = Task.Run(() => _hackneyRepairsService.GetWorkOrderDetails(workOrderReference)).Result;
                 if (string.IsNullOrEmpty(workOrder.wo_ref))
                 {
                     validationResult.Valid = false;
@@ -40,6 +40,10 @@ namespace HackneyRepairs.Validators
             else
             {
                 DateTime beginDateTime;
+                if (request.BeginDate.ToLower().EndsWith($"z"))
+                {
+                    request.BeginDate = request.BeginDate.Remove(request.BeginDate.Length - 1, 1);
+                }
                 if (!DateTime.TryParse(request.BeginDate, out beginDateTime))
                 {
                     validationResult.Valid = false;
@@ -54,6 +58,10 @@ namespace HackneyRepairs.Validators
             else
             {
                 DateTime endDateTime;
+                if (request.EndDate.ToLower().EndsWith($"z"))
+                {
+                    request.EndDate = request.EndDate.Remove(request.EndDate.Length - 1, 1);
+                }
                 if (!DateTime.TryParse(request.EndDate, out endDateTime))
                 {
                     validationResult.Valid = false;
