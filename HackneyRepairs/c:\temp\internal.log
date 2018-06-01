@@ -1,0 +1,243 @@
+2018-05-29 12:53:03.2670 Error Parsing configuration from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-29 12:53:03.2738 Warn Failed loading config from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-29 12:56:23.3302 Error Parsing configuration from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-29 12:56:23.3390 Warn Failed loading config from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-29 12:57:43.6761 Error Parsing configuration from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-29 12:57:43.6826 Warn Failed loading config from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-29 12:59:37.2102 Error Parsing configuration from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-29 12:59:37.2154 Warn Failed loading config from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-29 13:02:02.9790 Error Parsing configuration from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-29 13:02:02.9844 Warn Failed loading config from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-29 13:06:36.1130 Error Parsing configuration from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-29 13:06:36.1191 Warn Failed loading config from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-29 13:07:59.0608 Error Parsing configuration from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-29 13:07:59.0679 Warn Failed loading config from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-29 13:10:39.4562 Error Parsing configuration from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-29 13:10:39.4616 Warn Failed loading config from /Users/Preston/Projects/HackneyRepairs/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 11:51:27.2510 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 11:51:27.2560 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 11:53:10.3748 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 11:53:10.3789 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 11:54:08.8415 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 11:54:08.8457 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 11:54:52.8688 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 11:54:52.8727 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 13:07:59.5383 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 13:07:59.5424 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 13:11:25.9687 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 13:11:25.9727 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 13:12:57.1466 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 13:12:57.1502 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 13:19:29.5192 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 13:19:29.5234 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 13:25:11.0031 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 13:25:11.0069 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 13:31:34.0305 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 13:31:34.0343 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 13:52:40.6223 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 13:52:40.6264 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 14:40:36.2367 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 14:40:36.2406 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-05-31 14:43:53.6718 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-05-31 14:43:53.6759 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-06-01 09:30:49.8189 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-06-01 09:30:49.8253 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-06-01 09:33:58.1982 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-06-01 09:33:58.2016 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-06-01 09:35:17.7197 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-06-01 09:35:17.7237 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-06-01 09:36:37.5778 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-06-01 09:36:37.5819 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-06-01 09:44:16.6365 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-06-01 09:44:16.6400 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
+2018-06-01 11:24:15.9326 Error Parsing configuration from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config failed. Exception: NLog.NLogConfigurationException: Exception when parsing /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config.  ---> System.NotSupportedException: Parameter connectionStringName not supported on DatabaseTarget
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object obj, String propertyName, String value, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.XmlLoggingConfiguration.SetPropertyFromElement(Object o, NLogXmlElement element)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetElement(Target target, NLogXmlElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.XmlLoggingConfiguration.ParseTargetsElement(NLogXmlElement targetsElement)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(NLogXmlElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.Initialize(XmlReader reader, String fileName, Boolean ignoreErrors)
+   --- End of inner exception stack trace ---
+2018-06-01 11:24:15.9395 Warn Failed loading config from /Users/spreston/Projects/Hackney_Repairs_API/HackneyRepairs/NLog.config. Invalid XML?
