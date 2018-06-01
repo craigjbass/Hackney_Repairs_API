@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace HackneyRepairs.Controllers
         public PropertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository)
         {
             HackneyPropertyServiceFactory factory = new HackneyPropertyServiceFactory();
-            _configBuilder = new HackneyConfigurationBuilder((Dictionary<string, string>)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
+            _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
             _propertyService = factory.build(uhtRepository, loggerAdapter);
             _propertyServiceRequestBuilder = new HackneyPropertyServiceRequestBuilder(_configBuilder.getConfiguration(), new PostcodeFormatter());
             _postcodeValidator = new PostcodeValidator();

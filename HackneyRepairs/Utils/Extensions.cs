@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Collections.Generic;
+using System.Collections;
 namespace HackneyRepairs.ExtensionMethods
 {
     public static class Extensions
     {
-        public static NameValueCollection ToNameValueCollection<TKey, TValue>(this IDictionary<TKey, TValue> dict)
+        public static NameValueCollection ToNameValueCollection(this Hashtable entries)
         {
             var nameValueCollection = new NameValueCollection();
 
-            foreach (var kvp in dict)
+            foreach (DictionaryEntry entry in entries)
             {
                 string value = null;
-                if (kvp.Value != null)
-                    value = kvp.Value.ToString();
+                if (entry.Key != null)
+                    value = entry.Value.ToString();
 
-                nameValueCollection.Add(kvp.Key.ToString(), value);
+                nameValueCollection.Add(entry.Key.ToString(), value);
             }
             return nameValueCollection;
         }

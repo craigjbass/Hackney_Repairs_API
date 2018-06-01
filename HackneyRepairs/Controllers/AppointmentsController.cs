@@ -11,6 +11,7 @@ using HackneyRepairs.Formatters;
 using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
 
 namespace HackneyRepairs.Controllers
 {
@@ -29,7 +30,7 @@ namespace HackneyRepairs.Controllers
             ILoggerAdapter<HackneyAppointmentsServiceRequestBuilder> requestBuildLoggerAdapter, ILoggerAdapter<RepairsActions> repairsLoggerAdapter)
         {
             var serviceFactory = new HackneyAppointmentServiceFactory();
-            _configBuilder = new HackneyConfigurationBuilder((Dictionary<string, string>)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
+            _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
             _appointmentsService = serviceFactory.build(loggerAdapter);
             var factory = new HackneyRepairsServiceFactory();
             _repairsService = factory.build(uhtRepository, uhwRepository, repairsLoggerAdapter);

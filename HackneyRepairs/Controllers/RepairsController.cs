@@ -10,6 +10,7 @@ using HackneyRepairs.Interfaces;
 using HackneyRepairs.Factories;
 using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
+using System.Collections;
 
 namespace HackneyRepairs.Controllers
 {
@@ -26,7 +27,7 @@ namespace HackneyRepairs.Controllers
         public RepairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
         {
             var factory = new HackneyRepairsServiceFactory();
-            _configBuilder = new HackneyConfigurationBuilder((Dictionary<string,string>)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
+            _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
             _repairsService = factory.build(uhtRepository, uhwRepository, loggerAdapter);
             _requestBuilder = new HackneyRepairsServiceRequestBuilder(_configBuilder.getConfiguration());
             _repairRequestValidator = new RepairRequestValidator();

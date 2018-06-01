@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Collections.Specialized;
 using HackneyRepairs.ExtensionMethods;
 
@@ -8,7 +8,7 @@ namespace HackneyRepairs.Services
     public class HackneyConfigurationBuilder
     {
         private NameValueCollection _configuration;
-        public HackneyConfigurationBuilder(IDictionary<string, string> env_variables, NameValueCollection config_items)
+        public HackneyConfigurationBuilder(Hashtable env_variables, NameValueCollection config_items)
         {
             if(env_variables!=null)
             {
