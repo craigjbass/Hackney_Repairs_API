@@ -22,14 +22,16 @@ namespace HackneyRepairs.Actions
         private readonly IHackneyRepairsService _repairsService;
         private readonly IHackneyAppointmentsServiceRequestBuilder _appointmentsServiceRequestBuilder;
         private readonly IHackneyRepairsServiceRequestBuilder _repairsServiceRequestBuilder;
+        private readonly NameValueCollection _configuration;
 
-        public AppointmentActions(ILoggerAdapter<AppointmentActions> logger, IHackneyAppointmentsService appointmentsService, IHackneyAppointmentsServiceRequestBuilder requestBuilder, IHackneyRepairsService repairsService, IHackneyRepairsServiceRequestBuilder repairsServiceRequestBuilder)
+        public AppointmentActions(ILoggerAdapter<AppointmentActions> logger, IHackneyAppointmentsService appointmentsService, IHackneyAppointmentsServiceRequestBuilder requestBuilder, IHackneyRepairsService repairsService, IHackneyRepairsServiceRequestBuilder repairsServiceRequestBuilder, NameValueCollection configuration)
         {
             _logger = logger;
             _appointmentsService = appointmentsService;
             _appointmentsServiceRequestBuilder = requestBuilder;
             _repairsService = repairsService;
             _repairsServiceRequestBuilder = repairsServiceRequestBuilder;
+            _configuration = configuration;
         }
         public async Task<IList<Slot>> GetAppointments(string workOrderReference)
         {
@@ -113,8 +115,8 @@ namespace HackneyRepairs.Actions
             _logger.LogInformation($"Updating UH documents for workorder {workOrderReference}");
             if (order_id != null)
             {
-                await _repairsService.AddOrderDocumentAsync(ConfigurationManager.AppSettings["RepairRequestDocTypeCode"],
-                    workOrderReference, order_id.Value, ConfigurationManager.AppSettings["UHDocUploadResponseMessage"]);
+                await _repairsService.AddOrderDocumentAsync(_configuration.Get("RepairRequestDocTypeCode"),
+                                                            workOrderReference, order_id.Value, _configuration.Get("UHDocUploadResponseMessage"));
             }
             //Issue Order
 
