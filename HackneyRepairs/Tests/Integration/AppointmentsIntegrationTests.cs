@@ -20,8 +20,6 @@ namespace HackneyRepairs.Tests.Integration
 
         public AppointmentsIntegrationTests()
         {
-            Environment.SetEnvironmentVariable("UhtDb", "Test");
-            Environment.SetEnvironmentVariable("UhwDb", "Test");
             _server = new TestServer(new WebHostBuilder()
                 .UseStartup<TestStartup>());
             _client = _server.CreateClient();
