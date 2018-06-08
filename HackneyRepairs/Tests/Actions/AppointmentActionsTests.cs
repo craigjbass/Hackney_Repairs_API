@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
 using HackneyRepairs.Actions;
@@ -12,6 +13,14 @@ namespace HackneyRepairs.Tests.Actions
 {
     public class AppointmentActionsTests
     {
+        private NameValueCollection configuration = new NameValueCollection
+            {
+                {"UHUsername", "uhuser"},
+                {"UHPassword", "uhpassword"},
+                {"UHSourceSystem", "sourcesystem"},
+                {"UhSorSupplierMapping","08500820,H01|20040010,H01|20040020,H01|20040060,H01|20040310,H01|20060020,H01|20060030,H01|20110010,H01|48000000,H05|PRE00001,H02"}
+            };
+
         [Fact]
         public async Task get_appointments_returns_a_list_of_available_appointments()
         {
@@ -71,10 +80,10 @@ namespace HackneyRepairs.Tests.Actions
                     status = responseStatus.success
                 }
             );
-            var drsOrder = new DrsOrder { wo_ref = "01550854" };
-            var xmbCheckAvailabilty = new xmbCheckAvailability { theOrder = new order { primaryOrderNumber = "01550854" } };
+            var drsOrder = new DrsOrder { wo_ref = "01550854", priority="N" };
+            var xmbCheckAvailabilty = new xmbCheckAvailability { theOrder = new order { primaryOrderNumber = "01550854", priority = "N" } };
             var xmbCreateOrder =
-                new xmbCreateOrder { sessionId = "123456", theOrder = new order { primaryOrderNumber = "01550864" } };
+                new xmbCreateOrder { sessionId = "123456", theOrder = new order { primaryOrderNumber = "01550864", priority = "N" } };
             var createOrderResponse = new createOrderResponse
             {
                 @return = new xmbCreateOrderResponse
@@ -97,7 +106,7 @@ namespace HackneyRepairs.Tests.Actions
             fakeRequestBuilder.Setup(service => service.BuildXmbCreateOrderRequest("01550854", "123456", drsOrder))
                 .Returns(xmbCreateOrder);
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             var results = await appointmentActions.GetAppointments("01550854");
             Assert.Equal(1, results.Count);
         }
@@ -131,7 +140,7 @@ namespace HackneyRepairs.Tests.Actions
             fakeRequestBuilder.Setup(service => service.BuildXmbCheckAvailabilityRequest("0000123", "", drsOrder, DateTime.Now, DateTime.Now.AddDays(7))).Returns(new xmbCheckAvailability());
             fakeRequestBuilder.Setup(service => service.BuildXmbOpenSessionRequest()).Returns(new xmbOpenSession());
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             await Assert.ThrowsAsync<AppointmentServiceException>(async () => await appointmentActions.GetAppointments("01550854"));
         }
 
@@ -172,7 +181,7 @@ namespace HackneyRepairs.Tests.Actions
             fakeRequestBuilder.Setup(service => service.BuildXmbCheckAvailabilityRequest("0000123", "", drsOrder, DateTime.Now, DateTime.Now.AddDays(7))).Returns(new xmbCheckAvailability());
             fakeRequestBuilder.Setup(service => service.BuildXmbOpenSessionRequest()).Returns(new xmbOpenSession());
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             await Assert.ThrowsAsync<AppointmentServiceException>(async () => await appointmentActions.GetAppointments("01550854"));
         }
 
@@ -202,7 +211,7 @@ namespace HackneyRepairs.Tests.Actions
                     status = responseStatus.success
                 }
             );
-            var drsOrder = new DrsOrder { wo_ref = "01550854" };
+            var drsOrder = new DrsOrder { wo_ref = "01550854", priority = "N" };
             var xmbCheckAvailabilty = new xmbCheckAvailability { theOrder = new order { primaryOrderNumber = "01550854" } };
             var xmbCreateOrder =
                 new xmbCreateOrder { sessionId = "123456", theOrder = new order { primaryOrderNumber = "01550864" } };
@@ -227,7 +236,7 @@ namespace HackneyRepairs.Tests.Actions
             fakeRequestBuilder.Setup(service => service.BuildXmbCreateOrderRequest("01550854", "123456", drsOrder))
                 .Returns(xmbCreateOrder);
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             await Assert.ThrowsAsync<MissingSlotsException>(async () => await appointmentActions.GetAppointments("01550854"));
         }
 
@@ -257,7 +266,7 @@ namespace HackneyRepairs.Tests.Actions
                     status = responseStatus.error
                 }
             );
-            var drsOrder = new DrsOrder{wo_ref = "01550854"};
+            var drsOrder = new DrsOrder{wo_ref = "01550854", priority = "N"};
             var xmbCheckAvailabilty = new xmbCheckAvailability { theOrder = new order { primaryOrderNumber = "01550854" } };
             var xmbCreateOrder =
                 new xmbCreateOrder { sessionId = "123456", theOrder = new order { primaryOrderNumber = "01550864" } };
@@ -282,7 +291,7 @@ namespace HackneyRepairs.Tests.Actions
             fakeRequestBuilder.Setup(service => service.BuildXmbCreateOrderRequest("01550854", "123456", drsOrder))
                 .Returns(xmbCreateOrder);
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
 
             await Assert.ThrowsAsync<AppointmentServiceException>(async () => await appointmentActions.GetAppointments("01550854"));
         }
@@ -330,7 +339,7 @@ namespace HackneyRepairs.Tests.Actions
                 .Returns(new xmbCreateOrder());
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
             AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object,
-                mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+                                                                           mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             await Assert.ThrowsAsync<InvalidWorkOrderInUHException>(async () =>
                 await appointmentActions.GetAppointments("01550854"));
         }
@@ -370,7 +379,7 @@ namespace HackneyRepairs.Tests.Actions
                     errorMsg = "error creating the order"
                 }
             };
-            var drsOrder = new DrsOrder{wo_ref = "01550854"};
+            var drsOrder = new DrsOrder{wo_ref = "01550854", priority = "N"};
             var xmbCheckAvailabilty = new xmbCheckAvailability{theOrder = new order{primaryOrderNumber = "01550854"}};
             var xmbCreateOrder =
                 new xmbCreateOrder {sessionId = "123456", theOrder = new order {primaryOrderNumber = "01550864"}};
@@ -391,7 +400,7 @@ namespace HackneyRepairs.Tests.Actions
                 .Returns(xmbCreateOrder);
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
             AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object,
-                mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+                                                                           mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object, configuration);
             await Assert.ThrowsAsync<AppointmentServiceException>(async () =>
                 await appointmentActions.GetAppointments("01550854"));
         }
@@ -455,7 +464,7 @@ namespace HackneyRepairs.Tests.Actions
                     status = responseStatus.success
                 }
             );
-            var drsOrder = new DrsOrder { wo_ref = "01550854" };
+            var drsOrder = new DrsOrder { wo_ref = "01550854", priority = "N" };
             var xmbCheckAvailabilty = new xmbCheckAvailability { theOrder = new order { primaryOrderNumber = "01550854" } };
             var xmbCreateOrder =
                 new xmbCreateOrder { sessionId = "123456", theOrder = new order { primaryOrderNumber = "01550864" } };
@@ -482,7 +491,7 @@ namespace HackneyRepairs.Tests.Actions
             fakeRequestBuilder.Setup(service => service.BuildXmbCreateOrderRequest("01550854", "123456", drsOrder))
                 .Returns(xmbCreateOrder);
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             var results = await appointmentActions.GetAppointments("01550854");
             Assert.Equal(results.Count, xmbResponse.theSlots[0].slotsForDay.Length);
         }
@@ -561,7 +570,7 @@ namespace HackneyRepairs.Tests.Actions
                     new DateTime(2017, 11, 21, 10, 00, 00), new DateTime(2017, 11, 21, 12, 00, 00), drsOrder))
                 .Returns(xmbScheduleBooking);
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             var result = await appointmentActions.BookAppointment("01550854", new DateTime(2017, 11, 21,10,00,00), new DateTime(2017, 11, 21, 12, 00, 00));
             Assert.Contains("{ beginDate = 2017-11-21T10:00:00Z, endDate = 2017-11-21T12:00:00Z }", result.ToString());
         }
@@ -621,7 +630,7 @@ namespace HackneyRepairs.Tests.Actions
                     new DateTime(2017, 11, 21, 10, 00, 00), new DateTime(2017, 11, 21, 12, 00, 00), drsOrder))
                 .Returns(new xmbScheduleBooking{theBooking = new booking()});
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             await Assert.ThrowsAsync<AppointmentServiceException>(async () => await appointmentActions.BookAppointment("01550854", new DateTime(2017, 11, 21, 10, 00, 00), new DateTime(2017, 11, 21, 12, 00, 00)));
         }
 
@@ -661,7 +670,7 @@ namespace HackneyRepairs.Tests.Actions
                     new DateTime(2017, 11, 21, 10, 00, 00), new DateTime(2017, 11, 21, 12, 00, 00), drsOrder))
                 .Returns(new xmbScheduleBooking());
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             await Assert.ThrowsAsync<AppointmentServiceException>(async () => await appointmentActions.BookAppointment("01550854", new DateTime(2017, 11, 21, 10, 00, 00), new DateTime(2017, 11, 21, 12, 00, 00)));
         }
 
@@ -720,7 +729,7 @@ namespace HackneyRepairs.Tests.Actions
                     new DateTime(2017, 11, 21, 10, 00, 00), new DateTime(2017, 11, 21, 12, 00, 00), drsOrder))
                 .Returns(new xmbScheduleBooking{theBooking = new booking()});
             var fakeRepairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
-            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object);
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, mockAppointmentsService.Object, fakeRequestBuilder.Object, mockRepairsService.Object, fakeRepairRequestBuilder.Object,configuration);
             await Assert.ThrowsAsync<AppointmentServiceException>(async () => await appointmentActions.BookAppointment("01550854", new DateTime(2017, 11, 21, 10, 00, 00), new DateTime(2017, 11, 21, 12, 00, 00)));
         }
     }
