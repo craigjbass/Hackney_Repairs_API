@@ -15,6 +15,14 @@ namespace HackneyRepairs.Tests.Services
 {
     public class HackneyRepairsServiceRequestBuilderTests
     {
+        private NameValueCollection configuration = new NameValueCollection
+            {
+                {"UHUsername", "uhuser"},
+                {"UHPassword", "uhpassword"},
+                {"UHSourceSystem", "sourcesystem"},
+                {"UhSorSupplierMapping","08500820,H01|20040010,H01|20040020,H01|20040060,H01|20040310,H01|20060020,H01|20060030,H01|20110010,H01|48000000,H05|PRE00001,H02"}
+            };
+
         [Fact]
         public void return_a_built_request_object()
         {
@@ -26,12 +34,6 @@ namespace HackneyRepairs.Tests.Services
         [Fact]
         public void build_new_repair_request_builds_a_valid_request()
         {
-            var configuration = new NameValueCollection
-            {
-                {"UHUsername", "uhuser"},
-                {"UHPassword", "uhpassword"},
-                {"UHSourceSystem", "sourcesystem"}
-            };
             var builder = new HackneyRepairsServiceRequestBuilder(configuration);
             var request = builder.BuildNewRepairRequest(new RepairRequest
             {
@@ -57,12 +59,6 @@ namespace HackneyRepairs.Tests.Services
         [Fact]
         public async Task should_return_the_correct_contractor_reference_for_a_given_SOR_code()
         {
-            var configuration = new NameValueCollection
-            {
-                {"UHUsername", "uhuser"},
-                {"UHPassword", "uhpassword"},
-                {"UHSourceSystem", "sourcesystem"}
-            };
             var builder = new HackneyRepairsServiceRequestBuilder(configuration);
             var request = builder.BuildNewRepairTasksRequest(new RepairRequest
             {
@@ -87,12 +83,6 @@ namespace HackneyRepairs.Tests.Services
         [Fact]
         public async Task should_raise_an_SOR_exception_for_an_invalid_SOR_code()
         {
-            var configuration = new NameValueCollection
-            {
-                {"UHUsername", "uhuser"},
-                {"UHPassword", "uhpassword"},
-                {"UHSourceSystem", "sourcesystem"}
-            };
             var builder = new HackneyRepairsServiceRequestBuilder(configuration);
             Assert.Throws<InvalidSORCodeException>(() =>
                             builder.BuildNewRepairTasksRequest(new RepairRequest
@@ -116,12 +106,6 @@ namespace HackneyRepairs.Tests.Services
         }
         public async Task should_raise_an_SOR_exception_for_an_empty_SOR_code()
         {
-            var configuration = new NameValueCollection
-            {
-                {"UHUsername", "uhuser"},
-                {"UHPassword", "uhpassword"},
-                {"UHSourceSystem", "sourcesystem"}
-            };
             var builder = new HackneyRepairsServiceRequestBuilder(configuration);
             Assert.Throws<InvalidSORCodeException>(() =>
                             builder.BuildNewRepairTasksRequest(new RepairRequest
