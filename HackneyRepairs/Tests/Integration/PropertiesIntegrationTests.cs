@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using System;
 using Newtonsoft.Json;
 using Xunit;
 using System.Net.Http;
@@ -19,6 +20,8 @@ namespace HackneyRepairs.Tests
 
         public PropertiesShould()
         {
+            Environment.SetEnvironmentVariable("UhtDb", "Test");
+            Environment.SetEnvironmentVariable("UhwDb", "Test");
             _server = new TestServer(new WebHostBuilder()
             .UseStartup<TestStartup>());
             _client = _server.CreateClient();
@@ -46,6 +49,7 @@ namespace HackneyRepairs.Tests
             var result = await _client.GetAsync("v1/properties?postcode=");
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
+
 
         [Fact]
         public async Task return_a_400_result_for_invalid_postcode()
