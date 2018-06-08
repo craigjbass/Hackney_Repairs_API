@@ -62,7 +62,7 @@ namespace HackneyRepairs.Controllers
                 }
                 else
                 {
-                    var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder);
+                    var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder,_configBuilder.getConfiguration());
                     var response = await appointmentsActions.GetAppointments(workOrderReference);
                     var json = Json(new { results = response.ToList().FormatAppointmentsDaySlots() });
                     json.StatusCode = 200;
@@ -104,7 +104,7 @@ namespace HackneyRepairs.Controllers
                 if (validationResult.Valid)
                 {
                     var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService,
-                        _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder);
+                                                                     _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
                     var result = await appointmentsActions.BookAppointment(workOrderReference,
                         DateTime.Parse(request.BeginDate),
                         DateTime.Parse(request.EndDate));
@@ -160,7 +160,7 @@ namespace HackneyRepairs.Controllers
                 }
                 else
                 {
-                    var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder);
+                    var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
                     var response = await appointmentsActions.GetAppointmentForWorksOrder(workOrderReference);
                     var json = Json(response);
                     json.StatusCode = 200;
