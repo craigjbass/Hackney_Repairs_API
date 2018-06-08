@@ -101,7 +101,7 @@ namespace HackneyRepairs.Services
 
         public string getContractorForSOR(string sorCode)
         {
-            string[] sorLookupOptions = ConfigurationManager.AppSettings["UhSorSupplierMapping"].Split('|');
+            string[] sorLookupOptions = _configuration.Get("UhSorSupplierMapping").Split('|');
             Dictionary<string, string> sorDictionary = new Dictionary<string, string>();
             for(int a=0; a<sorLookupOptions.Length; a++)
             {
