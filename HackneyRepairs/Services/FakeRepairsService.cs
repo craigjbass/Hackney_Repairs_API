@@ -91,6 +91,7 @@ namespace HackneyRepairs.Services
                 contract = "H01",
                 prop_ref = "12345",
                 propname = "Address name",
+                priority = "N",
                 address1 = "Address name",
                 postcode = "addresspostcode",
                 createdDate = DateTime.Today,
