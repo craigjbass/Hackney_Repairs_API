@@ -45,7 +45,7 @@ namespace HackneyRepairs
             services.AddMvc();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "HackneyRepairs" });
+                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "HackneyRepairsAPI" });
                 // Set the comments path for the Swagger JSON and UI.
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 //string xmlPath = Path.Combine(basePath, "hackneyapi.xml");
@@ -74,7 +74,7 @@ namespace HackneyRepairs
             {
                 string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
                 if (basePath == null) basePath = "/";
-                c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "HackneyAPI");
+                c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "HackneyRepairsAPI");
             });
         }
     }

@@ -16,7 +16,7 @@ using System.Collections;
 namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
-    public class AppointmentsController : Controller
+    public class appointmentsController : Controller
     {
         private IHackneyAppointmentsService _appointmentsService;
         private IHackneyRepairsService _repairsService;
@@ -26,7 +26,7 @@ namespace HackneyRepairs.Controllers
         private IScheduleBookingRequestValidator _scheduleBookingRequestValidator;
         private HackneyConfigurationBuilder _configBuilder;
         
-        public AppointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, 
+        public appointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, 
             ILoggerAdapter<HackneyAppointmentsServiceRequestBuilder> requestBuildLoggerAdapter, ILoggerAdapter<RepairsActions> repairsLoggerAdapter)
         {
             var serviceFactory = new HackneyAppointmentServiceFactory();
@@ -41,12 +41,12 @@ namespace HackneyRepairs.Controllers
         }
 
         [HttpGet]
-        [Route("v1/work_orders/{workOrderReference}/available_appointments")]
-        public async Task<JsonResult> Get(string workOrderReference)
+        [Route("v1/work_orders/{workorderreference}/available_appointments")]
+        public async Task<JsonResult> Get(string workorderreference)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(workOrderReference))
+                if (string.IsNullOrWhiteSpace(workorderreference))
                 {
                     var errors = new List<ApiErrorMessage>
                     {
@@ -63,7 +63,7 @@ namespace HackneyRepairs.Controllers
                 else
                 {
                     var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder,_configBuilder.getConfiguration());
-                    var response = await appointmentsActions.GetAppointments(workOrderReference);
+                    var response = await appointmentsActions.GetAppointments(workorderreference);
                     var json = Json(new { results = response.ToList().FormatAppointmentsDaySlots() });
                     json.StatusCode = 200;
                     json.ContentType = "application/json";
@@ -95,17 +95,17 @@ namespace HackneyRepairs.Controllers
         }
 
         [HttpPost]
-        [Route("v1/work_orders/{workOrderReference}/[controller]")]
-        public async Task<JsonResult> Post(string workOrderReference, [FromBody]ScheduleAppointmentRequest request)
+        [Route("v1/work_orders/{workorderreference}/[controller]")]
+        public async Task<JsonResult> Post(string workorderreference, [FromBody]ScheduleAppointmentRequest request)
         {
             try
             {
-                var validationResult = _scheduleBookingRequestValidator.Validate(workOrderReference, request);
+                var validationResult = _scheduleBookingRequestValidator.Validate(workorderreference, request);
                 if (validationResult.Valid)
                 {
                     var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService,
                                                                      _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-                    var result = await appointmentsActions.BookAppointment(workOrderReference,
+                    var result = await appointmentsActions.BookAppointment(workorderreference,
                         DateTime.Parse(request.BeginDate),
                         DateTime.Parse(request.EndDate));
                     var json = Json(result);

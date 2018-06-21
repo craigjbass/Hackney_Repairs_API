@@ -16,7 +16,7 @@ namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
     [Route("v1/[controller]")]
-    public class RepairsController : Controller
+    public class repairsController : Controller
     {
         private IHackneyRepairsService _repairsService;
         private IHackneyRepairsServiceRequestBuilder _requestBuilder;
@@ -24,7 +24,7 @@ namespace HackneyRepairs.Controllers
         private ILoggerAdapter<RepairsActions> _loggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-        public RepairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
+        public repairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
         {
             var factory = new HackneyRepairsServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
