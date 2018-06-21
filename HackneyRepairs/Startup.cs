@@ -7,14 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.PlatformAbstractions;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
 using HackneyRepairs.Extension;
-
+using System.Reflection;
 
 namespace HackneyRepairs
 {
@@ -46,10 +45,9 @@ namespace HackneyRepairs
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Version = "v1", Title = "HackneyRepairsAPI" });
-                // Set the comments path for the Swagger JSON and UI.
-                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-                //string xmlPath = Path.Combine(basePath, "hackneyapi.xml");
-                //c.IncludeXmlComments(xmlPath);
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
             services.AddCors(option => {
                 option.AddPolicy("AllowAny", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
@@ -75,6 +73,7 @@ namespace HackneyRepairs
                 string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
                 if (basePath == null) basePath = "/";
                 c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "HackneyRepairsAPI");
+                c.RoutePrefix = string.Empty;
             });
         }
     }
