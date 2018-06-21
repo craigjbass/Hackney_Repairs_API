@@ -8,7 +8,7 @@ namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
     [Route("v1/[controller]")]
-    public class ValuesController : Controller
+    public class valuesController : Controller
     {
         // GET api/values
         [HttpGet]
