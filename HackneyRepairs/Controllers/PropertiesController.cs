@@ -16,8 +16,8 @@ using HackneyRepairs.Validators;
 namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
-    [Route("v1/[controller]")]
-    public class propertiesController : Controller
+    [Route("v1/properties")]
+    public class PropertiesController : Controller
     {
         private IHackneyPropertyService _propertyService;
         private IHackneyPropertyServiceRequestBuilder _propertyServiceRequestBuilder;
@@ -25,7 +25,7 @@ namespace HackneyRepairs.Controllers
         private ILoggerAdapter<PropertyActions> _loggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-        public propertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository)
+        public PropertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository)
         {
             HackneyPropertyServiceFactory factory = new HackneyPropertyServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);

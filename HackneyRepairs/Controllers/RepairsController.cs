@@ -15,8 +15,8 @@ using System.Collections;
 namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
-    [Route("v1/[controller]")]
-    public class repairsController : Controller
+    [Route("v1/repairs")]
+    public class RepairsController : Controller
     {
         private IHackneyRepairsService _repairsService;
         private IHackneyRepairsServiceRequestBuilder _requestBuilder;
@@ -24,7 +24,7 @@ namespace HackneyRepairs.Controllers
         private ILoggerAdapter<RepairsActions> _loggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-        public repairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
+        public RepairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
         {
             var factory = new HackneyRepairsServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);

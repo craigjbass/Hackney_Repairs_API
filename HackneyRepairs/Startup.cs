@@ -44,7 +44,10 @@ namespace HackneyRepairs
             services.AddMvc();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "HackneyRepairsAPI" });
+                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "Hackney Repairs API", 
+                    Description="This is the Hackney Repairs API which allows client applications </br>" +
+                        "to securely access publicly available information on repairs to Hackney properties, </br>" +
+                        "and to raise new repair requests." });
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);

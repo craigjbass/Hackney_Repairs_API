@@ -16,7 +16,7 @@ using System.Collections;
 namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
-    public class appointmentsController : Controller
+    public class AppointmentsController : Controller
     {
         private IHackneyAppointmentsService _appointmentsService;
         private IHackneyRepairsService _repairsService;
@@ -25,8 +25,8 @@ namespace HackneyRepairs.Controllers
         private IHackneyRepairsServiceRequestBuilder _repairsServiceRequestBuilder;
         private IScheduleBookingRequestValidator _scheduleBookingRequestValidator;
         private HackneyConfigurationBuilder _configBuilder;
-        
-        public appointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, 
+
+        public AppointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository,
             ILoggerAdapter<HackneyAppointmentsServiceRequestBuilder> requestBuildLoggerAdapter, ILoggerAdapter<RepairsActions> repairsLoggerAdapter)
         {
             var serviceFactory = new HackneyAppointmentServiceFactory();
@@ -50,6 +50,9 @@ namespace HackneyRepairs.Controllers
         /// <response code="400">If no valid work order reference is provided</response>   
         /// <response code="500">If any errors are encountered</response>   
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         [Route("v1/work_orders/{workorderreference}/available_appointments")]
         public async Task<JsonResult> Get(string workorderreference)
         {
@@ -104,7 +107,7 @@ namespace HackneyRepairs.Controllers
         }
 
         [HttpPost]
-        [Route("v1/work_orders/{workorderreference}/[controller]")]
+        [Route("v1/work_orders/{workorderreference}/appointments")]
         public async Task<JsonResult> Post(string workorderreference, [FromBody]ScheduleAppointmentRequest request)
         {
             try
@@ -148,7 +151,7 @@ namespace HackneyRepairs.Controllers
         }
 
         [HttpGet]
-        [Route("v1/work_orders/{workOrderReference}/[controller]")]
+        [Route("v1/work_orders/{workOrderReference}/appointments")]
         public async Task<JsonResult> GetAppointment(string workOrderReference)
         {
             try
