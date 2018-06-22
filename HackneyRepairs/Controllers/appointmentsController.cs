@@ -40,6 +40,15 @@ namespace HackneyRepairs.Controllers
             _repairsServiceRequestBuilder = new HackneyRepairsServiceRequestBuilder(_configBuilder.getConfiguration());
         }
 
+        // GET available appointments
+        /// <summary>
+        /// Retrieves available appointments
+        /// </summary>
+        /// <param name="workorderreference">The work order reference for which to provide available appointments</param>
+        /// <returns>A list of available appointments</returns>
+        /// <response code="200">Returns the list of available appointments</response>
+        /// <response code="400">If no valid work order reference is provided</response>   
+        /// <response code="500">If any errors are encountered</response>   
         [HttpGet]
         [Route("v1/work_orders/{workorderreference}/available_appointments")]
         public async Task<JsonResult> Get(string workorderreference)
