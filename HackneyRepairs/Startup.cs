@@ -62,7 +62,6 @@ namespace HackneyRepairs
         {
 
             loggerFactory.AddNLog();
-            app.AddNLogWeb();
             env.ConfigureNLog("NLog.config");
             app.UseCors("AllowAny");
             app.UseMvc();

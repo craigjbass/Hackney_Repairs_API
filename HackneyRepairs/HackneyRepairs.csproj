@@ -7,6 +7,7 @@
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DocumentationFile>bin\Debug\netcoreapp2.1\hackneyrepairs.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="wwwroot\" />
@@ -23,8 +24,6 @@
     <PackageReference Include="System.ServiceModel.Http" Version="4.4.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
     <PackageReference Include="NLog" Version="4.5.5" />
-    <PackageReference Include="NLog.Extensions" Version="1.0.1" />
-    <PackageReference Include="NLog.Web" Version="4.5.3" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
     <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="15.7.2" />
@@ -54,6 +53,9 @@
     </Content>
     <Content Update="ExtendedAppSettings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

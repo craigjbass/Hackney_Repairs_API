@@ -28,7 +28,7 @@ namespace HackneyRepairs.Services
                 RepairRequest = new RepairRequestInfo
                 {
                     Problem = request.ProblemDescription,
-                    Priority = request.Priority.ToUpper(),
+                    Priority = request.Priority?.ToUpper(),
                     PropertyRef = request.PropertyReference,
                     Name = request.Contact.Name,
                     Phone = request.Contact.TelephoneNumber
