@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
-    [Route("v1/[controller]")]
-    public class valuesController : Controller
+    [Route("v1/values")]
+    public class ValuesController : Controller
     {
         // GET api/values
         [HttpGet]

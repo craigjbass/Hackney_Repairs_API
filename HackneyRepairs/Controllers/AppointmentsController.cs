@@ -16,7 +16,7 @@ using System.Collections;
 namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
-    public class appointmentsController : Controller
+    public class AppointmentsController : Controller
     {
         private IHackneyAppointmentsService _appointmentsService;
         private IHackneyRepairsService _repairsService;
@@ -25,8 +25,8 @@ namespace HackneyRepairs.Controllers
         private IHackneyRepairsServiceRequestBuilder _repairsServiceRequestBuilder;
         private IScheduleBookingRequestValidator _scheduleBookingRequestValidator;
         private HackneyConfigurationBuilder _configBuilder;
-        
-        public appointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, 
+
+        public AppointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository,
             ILoggerAdapter<HackneyAppointmentsServiceRequestBuilder> requestBuildLoggerAdapter, ILoggerAdapter<RepairsActions> repairsLoggerAdapter)
         {
             var serviceFactory = new HackneyAppointmentServiceFactory();
@@ -50,6 +50,9 @@ namespace HackneyRepairs.Controllers
         /// <response code="400">If no valid work order reference is provided</response>   
         /// <response code="500">If any errors are encountered</response>   
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         [Route("v1/work_orders/{workorderreference}/available_appointments")]
         public async Task<JsonResult> Get(string workorderreference)
         {
@@ -103,8 +106,15 @@ namespace HackneyRepairs.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates an appointment
+        /// </summary>
+        /// <param name="workorderreference">The reference number of the work order for the appointment</param>
+        /// <param name="appointment">Details of the appointment to be booked</param>
+        /// <returns>A JSON object for a successfully created appointment</returns>
+        /// <response code="200">A successfully created repair request</response>
         [HttpPost]
-        [Route("v1/work_orders/{workorderreference}/[controller]")]
+        [Route("v1/work_orders/{workorderreference}/appointments")]
         public async Task<JsonResult> Post(string workorderreference, [FromBody]ScheduleAppointmentRequest request)
         {
             try
@@ -147,13 +157,22 @@ namespace HackneyRepairs.Controllers
             }
         }
 
+        // GET appointments
+        /// <summary>
+        /// Retrieves an appointment for a work order
+        /// </summary>
+        /// <param name="workorderreference">The work order reference for which to provide available appointments</param>
+        /// <returns>An appointment</returns>
+        /// <response code="200">Returns the appointment</response>
+        /// <response code="400">The appointment was not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
         [HttpGet]
-        [Route("v1/work_orders/{workOrderReference}/[controller]")]
-        public async Task<JsonResult> GetAppointment(string workOrderReference)
+        [Route("v1/work_orders/{workorderreference}/appointments")]
+        public async Task<JsonResult> GetAppointment(string workorderreference)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(workOrderReference))
+                if (string.IsNullOrWhiteSpace(workorderreference))
                 {
                     var errors = new List<ApiErrorMessage>
                     {
@@ -170,7 +189,7 @@ namespace HackneyRepairs.Controllers
                 else
                 {
                     var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-                    var response = await appointmentsActions.GetAppointmentForWorksOrder(workOrderReference);
+                    var response = await appointmentsActions.GetAppointmentForWorksOrder(workorderreference);
                     var json = Json(response);
                     json.StatusCode = 200;
                     json.ContentType = "application/json";

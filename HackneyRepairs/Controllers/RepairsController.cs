@@ -15,8 +15,8 @@ using System.Collections;
 namespace HackneyRepairs.Controllers
 {
     [Produces("application/json")]
-    [Route("v1/[controller]")]
-    public class repairsController : Controller
+    [Route("v1/repairs")]
+    public class RepairsController : Controller
     {
         private IHackneyRepairsService _repairsService;
         private IHackneyRepairsServiceRequestBuilder _requestBuilder;
@@ -24,7 +24,7 @@ namespace HackneyRepairs.Controllers
         private ILoggerAdapter<RepairsActions> _loggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-        public repairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
+        public RepairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
         {
             var factory = new HackneyRepairsServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
@@ -90,13 +90,21 @@ namespace HackneyRepairs.Controllers
         }
 
         // GET repair by reference
-        [HttpGet("{reference}")]
-        public async Task<JsonResult> GetByReference(string reference)
+        /// <summary>
+        /// Retrieves a repair request
+        /// </summary>
+        /// <param name="repairRequestReference">The reference number of the repair request</param>
+        /// <returns>A repair request</returns>
+        /// <response code="200">Returns a repair request</response>
+        /// <response code="404">If the request is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet("{repairRequestReference}")]
+        public async Task<JsonResult> GetByReference(string repairRequestReference)
         {
             try
             {
                 RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
-                var json = Json(await repairActions.GetRepairByReference(reference));
+                var json = Json(await repairActions.GetRepairByReference(repairRequestReference));
                 json.StatusCode = 200;
                 return json;
             }
