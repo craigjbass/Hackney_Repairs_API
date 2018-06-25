@@ -106,6 +106,13 @@ namespace HackneyRepairs.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates an appointment
+        /// </summary>
+        /// <param name="workorderreference">The reference number of the work order for the appointment</param>
+        /// <param name="appointment">Details of the appointment to be booked</param>
+        /// <returns>A JSON object for a successfully created appointment</returns>
+        /// <response code="200">A successfully created repair request</response>
         [HttpPost]
         [Route("v1/work_orders/{workorderreference}/appointments")]
         public async Task<JsonResult> Post(string workorderreference, [FromBody]ScheduleAppointmentRequest request)

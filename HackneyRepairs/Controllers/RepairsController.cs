@@ -90,13 +90,21 @@ namespace HackneyRepairs.Controllers
         }
 
         // GET repair by reference
-        [HttpGet("{reference}")]
-        public async Task<JsonResult> GetByReference(string reference)
+        /// <summary>
+        /// Retrieves a repair request
+        /// </summary>
+        /// <param name="repairRequestReference">The reference number of the repair request</param>
+        /// <returns>A repair request</returns>
+        /// <response code="200">Returns a repair request</response>
+        /// <response code="404">If the request is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet("{repairRequestReference}")]
+        public async Task<JsonResult> GetByReference(string repairRequestReference)
         {
             try
             {
                 RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
-                var json = Json(await repairActions.GetRepairByReference(reference));
+                var json = Json(await repairActions.GetRepairByReference(repairRequestReference));
                 json.StatusCode = 200;
                 return json;
             }
