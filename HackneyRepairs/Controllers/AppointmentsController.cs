@@ -157,13 +157,22 @@ namespace HackneyRepairs.Controllers
             }
         }
 
+        // GET appointments
+        /// <summary>
+        /// Retrieves an appointment for a work order
+        /// </summary>
+        /// <param name="workorderreference">The work order reference for which to provide available appointments</param>
+        /// <returns>An appointment</returns>
+        /// <response code="200">Returns the appointment</response>
+        /// <response code="400">The appointment was not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
         [HttpGet]
-        [Route("v1/work_orders/{workOrderReference}/appointments")]
-        public async Task<JsonResult> GetAppointment(string workOrderReference)
+        [Route("v1/work_orders/{workorderreference}/appointments")]
+        public async Task<JsonResult> GetAppointment(string workorderreference)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(workOrderReference))
+                if (string.IsNullOrWhiteSpace(workorderreference))
                 {
                     var errors = new List<ApiErrorMessage>
                     {
@@ -180,7 +189,7 @@ namespace HackneyRepairs.Controllers
                 else
                 {
                     var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-                    var response = await appointmentsActions.GetAppointmentForWorksOrder(workOrderReference);
+                    var response = await appointmentsActions.GetAppointmentForWorksOrder(workorderreference);
                     var json = Json(response);
                     json.StatusCode = 200;
                     json.ContentType = "application/json";
