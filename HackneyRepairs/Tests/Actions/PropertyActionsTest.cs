@@ -5,7 +5,6 @@ using Xunit;
 using System.Text;
 using HackneyRepairs.PropertyService;
 using HackneyRepairs.Interfaces;
-using HackneyRepairs.Interfaces;
 using Newtonsoft.Json;
 
 namespace HackneyRepairs.Tests.Actions
@@ -16,13 +15,7 @@ namespace HackneyRepairs.Tests.Actions
         public async Task find_properties_returns_a_list_of_properties()
         {
             var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
-            var request = new ListByPostCodeRequest();
-            
-            var response = new PropertyInfoResponse()
-            {
-                PropertyList = new PropertySummary[2],
-                Success =  true
-            };
+
             var property1 = new PropertySummary()
             {
                 ShortAddress = "Front Office, Robert House, 6 - 15 Florfield Road",
@@ -35,15 +28,17 @@ namespace HackneyRepairs.Tests.Actions
                 PostCodeValue = "E8 1DT",
                 PropertyReference = "2/32453245"
             };
-            response.PropertyList[0] = property1;
-            response.PropertyList[1] = property2;
+            var PropertyList = new PropertySummary[2];
+            PropertyList[0] = property1;
+            PropertyList[1] = property2;
             var fakeService = new Mock<IHackneyPropertyService>();
             
-            fakeService.Setup(service => service.GetPropertyListByPostCodeAsync(request))
-                .ReturnsAsync(response);
+            fakeService.Setup(service => service.GetPropertyListByPostCode("E8 1DT"))
+                .ReturnsAsync(PropertyList);
 
             var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
-            fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 1DT")).Returns(request);
+            fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 1DT"))
+                .Returns("E8 1DT");
             PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, mockLogger.Object);
             var results = await propertyActions.FindProperty("E8 1DT");
 
@@ -69,18 +64,13 @@ namespace HackneyRepairs.Tests.Actions
         public async Task find_properties_returns_an_empty_response_when_no_matches()
         {
             var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
-            var request = new ListByPostCodeRequest();
-            var response = new PropertyInfoResponse()
-            {
-                PropertyList = new PropertySummary[0],
-                Success = true
-            };
+            var PropertyList = new PropertySummary[0];
             var fakeService = new Mock<IHackneyPropertyService>();
-            fakeService.Setup(service => service.GetPropertyListByPostCodeAsync(It.IsAny<ListByPostCodeRequest>()))
-                .ReturnsAsync(response);
+            fakeService.Setup(service => service.GetPropertyListByPostCode(It.IsAny<string>()))
+                .ReturnsAsync(PropertyList);
 
             var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
-            fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 2LN")).Returns(request);
+            fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 2LN")).Returns(string.Empty);
             PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, mockLogger.Object);
             var results = await propertyActions.FindProperty("E8 2LN");
             var properties = new object[0];
@@ -92,32 +82,14 @@ namespace HackneyRepairs.Tests.Actions
         public async Task find_properties_raises_an_exception_if_the_property_list_is_missing()
         {
             var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
-            var request = new ListByPostCodeRequest();
-            var response = new PropertyInfoResponse {Success = true};
             var fakeService = new Mock<IHackneyPropertyService>();
-            fakeService.Setup(service => service.GetPropertyListByPostCodeAsync(It.IsAny<ListByPostCodeRequest>()))
+            PropertySummary[] response = null;
+            fakeService.Setup(service => service.GetPropertyListByPostCode(It.IsAny<string>()))
                 .ReturnsAsync(response);
-
+            
             var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
-            fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 2LN")).Returns(request);
             PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, mockLogger.Object);
-            await Assert.ThrowsAsync<HackneyRepairs.Actions.MissingPropertyListException>(async () => await propertyActions.FindProperty("E8 2LN"));
-        }
-
-        [Fact]
-        public async Task find_properties_raises_an_exception_if_the_service_responds_with_an_error()
-        {
-            var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
-            var request = new ListByPostCodeRequest();
-            var response = new PropertyInfoResponse {Success = false, PropertyList = null};
-            var fakeService = new Mock<IHackneyPropertyService>();
-            fakeService.Setup(service => service.GetPropertyListByPostCodeAsync(It.IsAny<ListByPostCodeRequest>()))
-                .ReturnsAsync(response);
-
-            var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
-            fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 2LN")).Returns(request);
-            PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, mockLogger.Object);
-            await Assert.ThrowsAsync<HackneyRepairs.Actions.PropertyServiceException>(async () => await propertyActions.FindProperty("E8 2LN"));
+            await Assert.ThrowsAsync<PropertyServiceException>(async () => await propertyActions.FindProperty("E8 2LN"));
         }
 
         [Fact]

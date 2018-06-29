@@ -20,24 +20,16 @@ namespace HackneyRepairs.Tests.Services
             IHackneyPropertyServiceRequestBuilder builder =
                 new HackneyPropertyServiceRequestBuilder(new NameValueCollection(), new PostcodeFormatter());
             var request = builder.BuildListByPostCodeRequest("anypostcode");
-            Assert.IsType<ListByPostCodeRequest>(request);
+            Assert.IsType<string>(request);
         }
 
         [Fact]
         public void build_list_by_postcode_request_builds_a_valid_request()
         {
-            var configuration = new NameValueCollection
-            {
-                {"UHUsername", "uhuser"},
-                {"UHPassword", "uhpassword"},
-                {"UHSourceSystem", "sourcesystem"}
-            };
+            var configuration = new NameValueCollection();
             IHackneyPropertyServiceRequestBuilder builder = new HackneyPropertyServiceRequestBuilder(configuration, new PostcodeFormatter());
             var request = builder.BuildListByPostCodeRequest("N16 8RE");
-            Assert.Equal("N16 8RE", request.PostCode);
-            Assert.Equal("uhuser", request.DirectUser.UserName);
-            Assert.Equal("uhpassword", request.DirectUser.UserPassword);
-            Assert.Equal("sourcesystem", request.SourceSystem);
+            Assert.Equal("N16 8RE", request);
         }
 
         [Fact]

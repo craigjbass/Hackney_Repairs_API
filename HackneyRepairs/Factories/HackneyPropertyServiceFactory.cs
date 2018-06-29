@@ -6,13 +6,13 @@ namespace HackneyRepairs.Factories
 {
     internal class HackneyPropertyServiceFactory
     {
-        public IHackneyPropertyService build(IUhtRepository uhtRepository, ILoggerAdapter<PropertyActions> logger)
+        public IHackneyPropertyService build(IUhtRepository uhtRepository, IUHWWarehouseRepository uHWWarehouseRepository, ILoggerAdapter<PropertyActions> logger)
         {
            
 
             if (TestStatus.IsRunningInTests == false)
             {
-                return new Services.HackneyPropertyService(uhtRepository, logger);
+                return new Services.HackneyPropertyService(uhtRepository, uHWWarehouseRepository, logger);
             }
             else
             {

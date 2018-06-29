@@ -20,6 +20,10 @@ namespace HackneyRepairs.Tests
 
         public PropertiesShould()
         {
+            Environment.SetEnvironmentVariable("UhtDb", "connectionString=Test");
+            Environment.SetEnvironmentVariable("UhwDb", "connectionString=Test");
+            Environment.SetEnvironmentVariable("UhWarehouseDb", "connectionString=Test");
+            Environment.SetEnvironmentVariable("UhSorSupplierMapping", "08500820,H01|20040010,H01|20040020,H01|20040060,H01|20040310,H01|20060020,H01|20060030,H01|20110010,H01|48000000,H05|PRE00001,H02");
             _server = new TestServer(new WebHostBuilder()
             .UseStartup<TestStartup>());
             _client = _server.CreateClient();
@@ -29,7 +33,7 @@ namespace HackneyRepairs.Tests
         [Fact]
         public async Task return_a_200_result_for_valid_requests()
         {
-            var result = await _client.GetAsync("v1/properties?postcode=E8+2LN");
+            var result = await _client.GetAsync("v1/properties?postcode=E8+1DT");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
@@ -59,7 +63,7 @@ namespace HackneyRepairs.Tests
         [Fact]
         public async Task return_a_500_result_when_there_is_an_internal_server_error_for_properties_by_postcode()
         {
-            var result = await _client.GetAsync("v1/properties?postcode=E8+2LT");
+            var result = await _client.GetAsync("v1/properties?postcode=E8+2LN");
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
 

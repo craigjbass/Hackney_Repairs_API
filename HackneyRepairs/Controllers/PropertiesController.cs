@@ -25,11 +25,11 @@ namespace HackneyRepairs.Controllers
         private ILoggerAdapter<PropertyActions> _loggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-        public PropertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository)
+        public PropertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository, IUHWWarehouseRepository uHWWarehouseRepository)
         {
             HackneyPropertyServiceFactory factory = new HackneyPropertyServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
-            _propertyService = factory.build(uhtRepository, loggerAdapter);
+            _propertyService = factory.build(uhtRepository, uHWWarehouseRepository, loggerAdapter);
             _propertyServiceRequestBuilder = new HackneyPropertyServiceRequestBuilder(_configBuilder.getConfiguration(), new PostcodeFormatter());
             _postcodeValidator = new PostcodeValidator();
             _loggerAdapter = loggerAdapter;
@@ -52,7 +52,7 @@ namespace HackneyRepairs.Controllers
                 if (_postcodeValidator.Validate(postcode))
                 {
                     PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
-                    var json = Json(await actions.FindProperty(postcode));
+                    var json = Json(await actions.FindProperty(_propertyServiceRequestBuilder.BuildListByPostCodeRequest(postcode)));
                     json.StatusCode = 200;
                     json.ContentType = "application/json";
                     return json;

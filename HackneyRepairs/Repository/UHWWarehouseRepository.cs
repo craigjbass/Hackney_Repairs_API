@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.DbContext;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.PropertyService;
 using Microsoft.EntityFrameworkCore;
 
 namespace HackneyRepairs.Repository
@@ -66,7 +68,35 @@ namespace HackneyRepairs.Repository
                 _context.Database.CloseConnection();
             }
         }
-
+        public async Task<PropertySummary[]> GetPropertyListByPostCode(string postcode)
+        {
+            List<PropertySummary> properties = new List<PropertySummary>();
+            _logger.LogInformation($"Getting properties for postcode {postcode}");
+            string CS = Environment.GetEnvironmentVariable("UhWarehouseDb");
+            if (CS == null)
+            {
+                CS = ConfigurationManager.ConnectionStrings["UhWarehouseDb"].ConnectionString;
+            }
+            try
+            {
+                using (SqlConnection con = new SqlConnection(CS))
+                {
+                    string sql = "select short_address, post_code, prop_ref from property where post_code = '" + postcode + "'";
+                    SqlCommand cmd = new SqlCommand(sql, con);
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr != null & dr.HasRows)
+                    {
+                        properties = dr.MapToList<PropertySummary>();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            return properties.ToArray();
+        }
     }
 
     public class UHWWarehouseRepositoryException: Exception

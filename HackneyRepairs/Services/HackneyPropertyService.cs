@@ -11,11 +11,13 @@ namespace HackneyRepairs.Services
     {
         private readonly PropertyServiceClient _client;
         private IUhtRepository _uhtRepository;
+        private IUHWWarehouseRepository _uhWarehouseRepository;
         private ILoggerAdapter<PropertyActions> _logger;
-        public HackneyPropertyService(IUhtRepository uhtRepository, ILoggerAdapter<PropertyActions> logger)
+        public HackneyPropertyService(IUhtRepository uhtRepository, IUHWWarehouseRepository uHWWarehouseRepository, ILoggerAdapter<PropertyActions> logger)
         {
             _client = new PropertyServiceClient();
             _uhtRepository = uhtRepository;
+            _uhWarehouseRepository = uHWWarehouseRepository;
             _logger = logger;
         }
 
@@ -42,5 +44,14 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyPropertyService/GetMaintainable(): Received response from upstream PropertyServiceClient (Reference: {reference})");
             return response;
         }
+
+        public async Task<PropertySummary[]> GetPropertyListByPostCode(string post_code)
+        {
+            _logger.LogInformation($"HackneyPropertyService/GetPropertyListByPostCode(): Sent request to upstream data warehouse (Postcode: {post_code})");
+            var response = await _uhWarehouseRepository.GetPropertyListByPostCode(post_code);
+            _logger.LogInformation($"HackneyPropertyService/GetPropertyListByPostCode(): Received response from upstream data warehouse (Postcode: {post_code})");
+            return response;
+        }
+
     }
 }

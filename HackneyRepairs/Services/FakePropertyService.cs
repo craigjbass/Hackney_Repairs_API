@@ -90,5 +90,36 @@ namespace HackneyRepairs.Services
         {
             return Task.Run(() => reference == "525252525");
         }
+
+        public Task<PropertySummary[]> GetPropertyListByPostCode(string post_code)
+        {
+            var  PropertyList= new PropertySummary[2];
+            PropertySummary[] emptyPropertyList;
+            var property1 = new PropertySummary()
+            {
+                ShortAddress = "Back Office, Robert House, 6 - 15 Florfield Road",
+                PostCodeValue = "E8 1DT",
+                PropertyReference = "1/525252525"
+            };
+            var property2 = new PropertySummary()
+            {
+                ShortAddress = "Meeting room, Maurice Bishop House, 17 Reading Lane",
+                PostCodeValue = "E8 1DT",
+                PropertyReference = "6/32453245   "
+            };
+            PropertyList[0] = property1;
+            PropertyList[1] = property2;
+            switch (post_code)
+            {
+                case "E8 1DT":
+                    return Task.Run(() => PropertyList);
+                case "E8 2LN":
+                    emptyPropertyList = null;
+                    return Task.Run(() => emptyPropertyList);
+                 default:
+                    emptyPropertyList = new PropertySummary[0];
+                    return Task.Run(() => emptyPropertyList);
+            }
+        }
     }
 }

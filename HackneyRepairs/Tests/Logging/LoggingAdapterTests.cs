@@ -42,7 +42,7 @@ namespace HackneyRepairs.Tests.Logging
                 .ReturnsAsync(response);
 
             var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
-            fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 1DT")).Returns(new ListByPostCodeRequest());
+            fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 1DT")).Returns(string.Empty);
             PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, mockLogger.Object);
             
             var result = await propertyActions.FindProperty("E8 1DT");

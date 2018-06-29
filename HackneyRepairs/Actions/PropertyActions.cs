@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.PropertyService;
@@ -21,20 +22,24 @@ namespace HackneyRepairs.Actions
         {
             _logger.LogInformation($"Finding property by postcode: {postcode}");
             var request = _requestBuilder.BuildListByPostCodeRequest(postcode);
-            var response = await _service.GetPropertyListByPostCodeAsync(request);
-            if (!response.Success)
+            try
             {
+                var response = await _service.GetPropertyListByPostCode(request);
+                if(response == null)
+                {
+                    _logger.LogError($"Finding property by postcode: {request} response not set to an instance of PropertySummary[].");
+                    throw new MissingPropertyListException();                    
+                }
+                return new
+                {
+                    results = response.Select(buildProperty).ToArray()
+                };
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"Finding property by postcode: {request} returned an error: {e.Message}");
                 throw new PropertyServiceException();
             }
-            var properties = response.PropertyList;
-            if (properties == null)
-            {
-                throw new MissingPropertyListException();
-            }
-            return new
-            {
-                results = properties.Select(buildProperty).ToArray()
-            };
         }
 
         public async Task<object> FindPropertyDetailsByRef(string reference)
