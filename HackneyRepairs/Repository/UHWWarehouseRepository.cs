@@ -81,7 +81,7 @@ namespace HackneyRepairs.Repository
             {
                 using (SqlConnection con = new SqlConnection(CS))
                 {
-                    string sql = "select short_address, post_code, prop_ref from property where post_code = '" + postcode + "'";
+                    string sql = "select short_address as 'ShortAddress', post_code as 'PostCodeValue', prop_ref as 'PropertyReference' from property where post_code = '" + postcode + "'";
                     SqlCommand cmd = new SqlCommand(sql, con);
                     con.Open();
                     SqlDataReader dr = cmd.ExecuteReader();
