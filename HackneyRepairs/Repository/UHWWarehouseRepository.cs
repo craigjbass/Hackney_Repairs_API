@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.DbContext;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
 using Microsoft.EntityFrameworkCore;
 
@@ -96,6 +97,36 @@ namespace HackneyRepairs.Repository
                 _logger.LogError(ex.Message);
             }
             return properties.ToArray();
+        }
+
+        public async Task<PropertyDetails> GetPropertyDetailsByReference(string reference)
+        {
+            var property = new PropertyDetails();
+            _logger.LogInformation($"Getting details for property {reference}");
+            string CS = Environment.GetEnvironmentVariable("UhWarehouseDb");
+            if (CS == null)
+            {
+                CS = ConfigurationManager.ConnectionStrings["UhWarehouseDb"].ConnectionString;
+            }
+            try
+            {
+                using (SqlConnection con = new SqlConnection(CS))
+                {
+                    string sql = "select short_address as 'ShortAddress', post_code as 'PostCodeValue', ~no_maint as 'Maintainable', prop_ref as 'PropertyReference' from property where level_code = 7 and post_code = '" + reference + "'";
+                    SqlCommand cmd = new SqlCommand(sql, con);
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr != null & dr.HasRows)
+                    {
+                        property = dr.MapToList<PropertyDetails>().FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            return property;
         }
     }
 
