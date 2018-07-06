@@ -1,10 +1,14 @@
 ﻿using System;
+using HackneyRepairs.PropertyService;
+
 namespace HackneyRepairs.Models
 {
-    public class PropertyDetails
+    public class PropertyDetails : PropertySummary
     {
-        public PropertyDetails()
+        public bool Maintainable
         {
+            get;
+            set;
         }
     }
 }
