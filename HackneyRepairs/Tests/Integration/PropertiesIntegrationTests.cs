@@ -200,5 +200,60 @@ namespace HackneyRepairs.Tests
             Assert.Contains("developerMessage", resultString);
         }
         #endregion
+
+        #region Property block details by property reference test
+        [Fact]
+        public async Task return_a_200_result_for_valid_block_request_by_property_reference()
+        {
+            var result = await _client.GetAsync("v1/properties/52525252/block");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task return_a_404_result_for_block_request_when_property_reference_is_not_found()
+        {
+            var result = await _client.GetAsync("v1/properties/5252525255/block");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_500_result_if_something_goes_wrong()
+        {
+            var result = await _client.GetAsync("v1/properties/5252/block");
+            Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_json_object_if_something_goes_wrong_with_a_property_block_request()
+        {
+            var result = await _client.GetAsync("v1/properties/5252/block");
+            string resultString = await result.Content.ReadAsStringAsync();
+            StringBuilder json = new StringBuilder();
+            json.Append("[");
+            json.Append("{");
+            json.Append("\"developerMessage\":\"API Internal Error\",");
+            json.Append("\"userMessage\":\"API Internal Error\"");
+            json.Append("}");
+            json.Append("]");
+            Assert.Equal(json.ToString(), resultString);
+        }
+
+        [Fact]
+        public async Task return_a_json_object_for_valid_block_request_by_property_reference()
+        {
+            var result = await _client.GetAsync("v1/properties/52525252/block");
+            string resultString = await result.Content.ReadAsStringAsync();
+            StringBuilder json = new StringBuilder();
+            json.Append("{");
+            json.Append("\"address\":\"Back Office Block, Robert House, 6 - 15 Florfield Road\",");
+            json.Append("\"postcode\":\"E8 1DT\",");
+            json.Append("\"propertyReference\":\"525252527\",");
+            json.Append("\"maintainable\":true");
+            json.Append("}");
+            Assert.Equal(json.ToString(), resultString);
+        }
+
+        #endregion
     }
 }

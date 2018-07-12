@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
 
 namespace HackneyRepairs.Actions
@@ -63,6 +64,28 @@ namespace HackneyRepairs.Actions
                 propertyReference = response.Property.Reference.Trim(),
                 maintainable = maintainable
             };
+        }
+
+        public async Task<object> FindPropertyBlockDetailsByRef(string reference)
+        {
+            _logger.LogInformation($"Finding the block of a property by the property reference: {reference}");
+            try
+            {
+                var response = await _service.GetPropertyBlockByRef(reference);
+                if (response.PropertyReference == null)
+                    return null;
+                else
+                return new
+                {
+                    address = response.ShortAddress.Trim(),
+                    postcode = response.PostCodeValue.Trim(),
+                    propertyReference = response.PropertyReference.Trim(),
+                    maintainable = response.Maintainable
+                };
+            }
+            catch(Exception e){
+                throw e;
+            }
         }
 
         private object buildProperty(PropertySummary property)

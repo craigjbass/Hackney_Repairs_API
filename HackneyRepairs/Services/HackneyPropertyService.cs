@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
 
 namespace HackneyRepairs.Services
@@ -53,5 +54,9 @@ namespace HackneyRepairs.Services
             return response;
         }
 
+        public Task<PropertyDetails> GetPropertyBlockByRef(string reference)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

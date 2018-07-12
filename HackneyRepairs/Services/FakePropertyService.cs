@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.PropertyService;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Services
 {
@@ -119,6 +120,25 @@ namespace HackneyRepairs.Services
                  default:
                     emptyPropertyList = new PropertySummary[0];
                     return Task.Run(() => emptyPropertyList);
+            }
+        }
+
+        public Task<PropertyDetails> GetPropertyBlockByRef(string reference)
+        {
+            switch (reference)
+            {
+                case "52525252":
+                    return Task.Run(() => new PropertyDetails()
+                    {
+                        ShortAddress = "Back Office Block, Robert House, 6 - 15 Florfield Road    ",
+                        PostCodeValue = "E8 1DT",
+                        PropertyReference = "525252527",
+                        Maintainable = true
+                    });
+                case "5252":
+                    throw new Exception();
+                default:
+                    return Task.Run(() => new PropertyDetails());
             }
         }
     }
