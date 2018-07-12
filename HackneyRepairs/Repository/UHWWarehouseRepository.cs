@@ -128,6 +128,37 @@ namespace HackneyRepairs.Repository
             }
             return property;
         }
+
+        public Task<PropertyDetails> GetPropertyBlockByReference(string reference)
+        {
+            var property = new PropertyDetails();
+            _logger.LogInformation($"Getting details for property {reference}");
+            string CS = Environment.GetEnvironmentVariable("UhWarehouseDb");
+            if (CS == null)
+            {
+                CS = ConfigurationManager.ConnectionStrings["UhWarehouseDb"].ConnectionString;
+            }
+            try
+            {
+                using (SqlConnection con = new SqlConnection(CS))
+                {
+                    string sql = "select short_address as 'ShortAddress', post_code as 'PostCodeValue', ~no_maint as 'Maintainable', prop_ref as 'PropertyReference' from property where prop_ref";
+                    sql += " = (SELECT [u_block] FROM [property] where prop_ref = '" + reference + "')";
+                    SqlCommand cmd = new SqlCommand(sql, con);
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr != null & dr.HasRows)
+                    {
+                        property = dr.MapToList<PropertyDetails>().FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            return Task.Run(() => property);
+        }
     }
 
     public class UHWWarehouseRepositoryException: Exception
