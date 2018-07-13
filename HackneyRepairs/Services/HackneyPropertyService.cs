@@ -62,5 +62,14 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyPropertyService/GetPropertyBlockByRef(): Received response from upstream data warehouse (Property reference: {reference})");
             return property;
         }
+
+        public async Task<PropertyDetails> GetPropertyEstateByRef(string reference)
+        {
+            PropertyDetails property = new PropertyDetails();
+            _logger.LogInformation($"HackneyPropertyService/GetPropertyEstateByRef(): Sent request to upstream data warehouse (Property reference: {reference})");
+            property = await _uhWarehouseRepository.GetPropertyEstateByReference(reference);
+            _logger.LogInformation($"HackneyPropertyService/GetPropertyEstateByRef(): Received response from upstream data warehouse (Property reference: {reference})");
+            return property;
+        }
     }
 }
