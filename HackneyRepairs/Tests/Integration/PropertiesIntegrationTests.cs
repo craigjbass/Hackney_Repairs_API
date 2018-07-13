@@ -17,7 +17,6 @@ namespace HackneyRepairs.Tests
     {
         private readonly TestServer _server;
         private readonly HttpClient _client;
-
         public PropertiesShould()
         {
             Environment.SetEnvironmentVariable("UhtDb", "connectionString=Test");
@@ -51,7 +50,6 @@ namespace HackneyRepairs.Tests
             var result = await _client.GetAsync("v1/properties?postcode=");
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
-
 
         [Fact]
         public async Task return_a_400_result_for_invalid_postcode()
@@ -114,6 +112,7 @@ namespace HackneyRepairs.Tests
             json.Append("}");
             Assert.Equal(json.ToString(), result_string);
         }
+
         [Fact]
         public async Task return_a_json_object_for_valid_requests_with_lowercase_and_without_space_postcode()
         {
@@ -154,7 +153,7 @@ namespace HackneyRepairs.Tests
         }
         #endregion
 
-        #region Property details by reference test
+        #region Property details by reference tests
         [Fact]
         public async Task return_a_200_result_for_valid_request_by_reference()
         {
@@ -201,7 +200,7 @@ namespace HackneyRepairs.Tests
         }
         #endregion
 
-        #region Property block details by property reference test
+        #region Property block details by property reference tests
         [Fact]
         public async Task return_a_200_result_for_valid_block_request_by_property_reference()
         {
@@ -218,7 +217,7 @@ namespace HackneyRepairs.Tests
         }
 
         [Fact]
-        public async Task return_a_500_result_if_something_goes_wrong()
+        public async Task return_a_500_result_for_block_request_if_something_goes_wrong()
         {
             var result = await _client.GetAsync("v1/properties/5252/block");
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
@@ -255,5 +254,61 @@ namespace HackneyRepairs.Tests
         }
 
         #endregion
+
+        #region Property estate details by property reference tests
+        [Fact]
+        public async Task return_a_200_result_for_valid_estate_request_by_property_reference()
+        {
+            var result = await _client.GetAsync("v1/properties/52525252/estate");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task return_a_404_result_for_estate_request_when_property_reference_is_not_found()
+        {
+            var result = await _client.GetAsync("v1/properties/5252525255/estate");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_500_result_for_estate_request_if_something_goes_wrong()
+        {
+            var result = await _client.GetAsync("v1/properties/5252/estate");
+            Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_json_object_if_something_goes_wrong_with_a_property_estate_request()
+        {
+            var result = await _client.GetAsync("v1/properties/5252/estate");
+            string resultString = await result.Content.ReadAsStringAsync();
+            StringBuilder json = new StringBuilder();
+            json.Append("[");
+            json.Append("{");
+            json.Append("\"developerMessage\":\"API Internal Error\",");
+            json.Append("\"userMessage\":\"API Internal Error\"");
+            json.Append("}");
+            json.Append("]");
+            Assert.Equal(json.ToString(), resultString);
+        }
+
+        [Fact]
+        public async Task return_a_json_object_for_valid_estate_request_by_property_reference()
+        {
+            var result = await _client.GetAsync("v1/properties/52525252/estate");
+            string resultString = await result.Content.ReadAsStringAsync();
+            StringBuilder json = new StringBuilder();
+            json.Append("{");
+            json.Append("\"address\":\"Back Office Estate, Robert House, 6 - 15 Florfield Road\",");
+            json.Append("\"postcode\":\"E8 1DT\",");
+            json.Append("\"propertyReference\":\"525252527\",");
+            json.Append("\"maintainable\":true");
+            json.Append("}");
+            Assert.Equal(json.ToString(), resultString);
+        }
+
+        #endregion
+
     }
 }
