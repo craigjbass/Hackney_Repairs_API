@@ -141,5 +141,24 @@ namespace HackneyRepairs.Services
                     return Task.Run(() => new PropertyDetails());
             }
         }
+
+        public Task<PropertyDetails> GetPropertyEstateByRef(string reference)
+        {
+            switch (reference)
+            {
+                case "52525252":
+                    return Task.Run(() => new PropertyDetails()
+                    {
+                        ShortAddress = "Back Office Estate, Robert House, 6 - 15 Florfield Road    ",
+                        PostCodeValue = "E8 1DT",
+                        PropertyReference = "525252527",
+                        Maintainable = true
+                    });
+                case "5252":
+                    throw new Exception();
+                default:
+                    return Task.Run(() => new PropertyDetails());
+            }
+        }
     }
 }
