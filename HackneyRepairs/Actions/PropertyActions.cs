@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
-
 namespace HackneyRepairs.Actions
 {
     public class PropertyActions
     {
         private IHackneyPropertyService _service;
         private IHackneyPropertyServiceRequestBuilder _requestBuilder;
-         private readonly ILoggerAdapter<PropertyActions> _logger;
+        private readonly ILoggerAdapter<PropertyActions> _logger;
+
         public PropertyActions(IHackneyPropertyService service, IHackneyPropertyServiceRequestBuilder requestBuilder, ILoggerAdapter<PropertyActions> logger)
         {
             _service = service;
@@ -83,7 +83,37 @@ namespace HackneyRepairs.Actions
                     maintainable = response.Maintainable
                 };
             }
-            catch(Exception e){
+            catch(Exception e)
+            {
+                _logger.LogError($"Finding the block of a property by the property reference: {reference} returned an error: {e.Message}");
+                throw e;
+            }
+        }
+
+        public async Task<object> FindPropertyEstateDetailsByRef(string reference)
+        {
+            _logger.LogInformation($"Finding the estate of a property by the property reference: {reference}");
+            try
+            {
+                var response = await _service.GetPropertyEstateByRef(reference);
+                if (response.PropertyReference == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new
+                    {
+                        address = response.ShortAddress.Trim(),
+                        postcode = response.PostCodeValue.Trim(),
+                        propertyReference = response.PropertyReference.Trim(),
+                        maintainable = response.Maintainable
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Finding the estate of a property by the property reference: {reference} returned an error: {e.Message}");
                 throw e;
             }
         }
@@ -104,5 +134,4 @@ namespace HackneyRepairs.Actions
     public class PropertyServiceException : System.Exception { }
 
     public class MissingPropertyException : System.Exception { }
-
 }
