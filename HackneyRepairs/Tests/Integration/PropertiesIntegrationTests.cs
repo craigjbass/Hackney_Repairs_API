@@ -157,7 +157,7 @@ namespace HackneyRepairs.Tests
         [Fact]
         public async Task return_a_200_result_for_valid_request_by_reference()
         {
-            var result = await _client.GetAsync("v1/properties/525252525");
+            var result = await _client.GetAsync("v1/properties/52525252");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
@@ -165,7 +165,7 @@ namespace HackneyRepairs.Tests
         [Fact]
         public async Task return_a_500_result_when_there_is_an_internal_server_error()
         {
-            var result = await _client.GetAsync("v1/properties/425252525");
+            var result = await _client.GetAsync("v1/properties/5252");
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
 
@@ -179,13 +179,13 @@ namespace HackneyRepairs.Tests
         [Fact]
         public async Task return_a_json_object_for_valid_reference()
         {
-            var result = await _client.GetAsync("v1/properties/525252525");
+            var result = await _client.GetAsync("v1/properties/52525252");
             string resultString = await result.Content.ReadAsStringAsync();
             StringBuilder json = new StringBuilder();
             json.Append("{");
             json.Append("\"address\":\"Back Office, Robert House, 6 - 15 Florfield Road\",");
             json.Append("\"postcode\":\"E8 1DT\",");
-            json.Append("\"propertyReference\":\"525252525\",");
+            json.Append("\"propertyReference\":\"52525252\",");
             json.Append("\"maintainable\":true");
             json.Append("}");
             Assert.Equal(json.ToString(), resultString);
