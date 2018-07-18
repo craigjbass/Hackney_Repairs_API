@@ -46,24 +46,27 @@ namespace HackneyRepairs.Actions
         public async Task<object> FindPropertyDetailsByRef(string reference)
         {
             _logger.LogInformation($"Finding property by reference: {reference}");
-            var request = _requestBuilder.BuildByPropertyRefRequest(reference);
-            var response = await _service.GetPropertyByRefAsync(request);
-            var maintainable = _service.GetMaintainable(reference).Result;
-            if (!response.Success)
+            try
             {
+                var response = await _service.GetPropertyByRefAsync(reference);
+                if (response.PropertyReference == null)
+                {
+                    throw new MissingPropertyException();
+                }
+                else
+                {
+                    return buildPropertyDetails(response);
+                }
+            }
+            catch(MissingPropertyException e)
+            {
+                throw e;
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"Finding a property with the property reference: {reference} returned an error: {e.Message}");
                 throw new PropertyServiceException();
             }
-            if (response.Property == null)
-            {
-                throw new MissingPropertyException();
-            }
-            return new
-            {
-                address = response.Property.ShortAddress.Trim(),
-                postcode = response.Property.PostCodeValue.Trim(),
-                propertyReference = response.Property.Reference.Trim(),
-                maintainable = maintainable
-            };
         }
 
         public async Task<object> FindPropertyBlockDetailsByRef(string reference)
@@ -73,20 +76,22 @@ namespace HackneyRepairs.Actions
             {
                 var response = await _service.GetPropertyBlockByRef(reference);
                 if (response.PropertyReference == null)
-                    return null;
-                else
-                return new
                 {
-                    address = response.ShortAddress.Trim(),
-                    postcode = response.PostCodeValue.Trim(),
-                    propertyReference = response.PropertyReference.Trim(),
-                    maintainable = response.Maintainable
-                };
+                    throw new MissingPropertyException();
+                }
+                else
+                {
+                    return buildPropertyDetails(response);
+                }
+            }
+            catch (MissingPropertyException e)
+            {
+                throw e;
             }
             catch(Exception e)
             {
                 _logger.LogError($"Finding the block of a property by the property reference: {reference} returned an error: {e.Message}");
-                throw e;
+                throw new PropertyServiceException();
             }
         }
 
@@ -98,23 +103,21 @@ namespace HackneyRepairs.Actions
                 var response = await _service.GetPropertyEstateByRef(reference);
                 if (response.PropertyReference == null)
                 {
-                    return null;
+                    throw new MissingPropertyException();
                 }
                 else
                 {
-                    return new
-                    {
-                        address = response.ShortAddress.Trim(),
-                        postcode = response.PostCodeValue.Trim(),
-                        propertyReference = response.PropertyReference.Trim(),
-                        maintainable = response.Maintainable
-                    };
+                        return buildPropertyDetails(response);
                 }
+            }
+            catch (MissingPropertyException e)
+            {
+                throw e;
             }
             catch (Exception e)
             {
                 _logger.LogError($"Finding the estate of a property by the property reference: {reference} returned an error: {e.Message}");
-                throw e;
+                throw new PropertyServiceException();
             }
         }
 
@@ -127,6 +130,18 @@ namespace HackneyRepairs.Actions
                 propertyReference = property.PropertyReference.Trim()
             };
         }
+
+            private object buildPropertyDetails(PropertyDetails property)
+        {
+            return new
+            {
+                address = property.ShortAddress.Trim(),
+                postcode = property.PostCodeValue.Trim(),
+                propertyReference = property.PropertyReference.Trim(),
+                maintainable = property.Maintainable
+            };
+        }
+
     }
 
     public class MissingPropertyListException : System.Exception{}
