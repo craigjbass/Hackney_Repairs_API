@@ -33,7 +33,7 @@ namespace HackneyRepairs.Actions
                 }
                 return new
                 {
-                    results = response.Select(buildProperty).ToArray()
+                    results = response.Select(BuildProperty).ToArray()
                 };
             }
             catch(Exception e)
@@ -55,7 +55,7 @@ namespace HackneyRepairs.Actions
                 }
                 else
                 {
-                    return buildPropertyDetails(response);
+                    return BuildPropertyDetails(response);
                 }
             }
             catch(MissingPropertyException e)
@@ -81,7 +81,7 @@ namespace HackneyRepairs.Actions
                 }
                 else
                 {
-                    return buildPropertyDetails(response);
+                    return BuildPropertyDetails(response);
                 }
             }
             catch (MissingPropertyException e)
@@ -107,7 +107,7 @@ namespace HackneyRepairs.Actions
                 }
                 else
                 {
-                        return buildPropertyDetails(response);
+                        return BuildPropertyDetails(response);
                 }
             }
             catch (MissingPropertyException e)
@@ -121,7 +121,7 @@ namespace HackneyRepairs.Actions
             }
         }
 
-        private object buildProperty(PropertySummary property)
+        private object BuildProperty(PropertySummary property)
         {
             return new
             {
@@ -131,7 +131,7 @@ namespace HackneyRepairs.Actions
             };
         }
 
-            private object buildPropertyDetails(PropertyDetails property)
+            private object BuildPropertyDetails(PropertyDetails property)
         {
             return new
             {
