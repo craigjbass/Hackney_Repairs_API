@@ -94,6 +94,9 @@ namespace HackneyRepairs.Controllers
         /// </summary>
         /// <param name="reference">The reference number of the requested property</param>
         /// <returns>Details of the requested property</returns>
+        /// <response code="200">Returns the property</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{reference}")]
         public async Task<JsonResult> GetByReference(string reference)
         {
@@ -141,6 +144,9 @@ namespace HackneyRepairs.Controllers
         /// </summary>
         /// <param name="reference">The reference number of the property</param>
         /// <returns>Details of the block the requested property belongs to</returns>
+        /// <response code="200">Returns the block of the property</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{reference}/block")]
         public async Task<JsonResult> GetBlockByReference(string reference)
         {
@@ -182,6 +188,9 @@ namespace HackneyRepairs.Controllers
         /// </summary>
         /// <param name="reference">The reference number of the property</param>
         /// <returns>Details of the estate the requested property belongs to</returns>
+        /// <response code="200">Returns the estate of the property</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{reference}/estate")]
         public async Task<JsonResult> GetEstateByReference(string reference)
         {
