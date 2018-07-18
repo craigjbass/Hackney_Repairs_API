@@ -23,46 +23,6 @@ namespace HackneyRepairs.Repository
             _logger = logger;
         }
 
-        public async Task<object> GetTagReferencenumber(string hackneyhomesId)
-        {
-            _logger.LogInformation($"Get Tag Refernce number for {hackneyhomesId}");
-            try
-            {
-                using (var command = _context.Database.GetDbConnection().CreateCommand())
-                {
-                    _context.Database.OpenConnection();
-                    command.CommandText = "GetTagReferenceNumber";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(new SqlParameter
-                    {
-                        DbType = DbType.String,
-                        ParameterName = "@hackneyhomeId",
-                        Value = hackneyhomesId
-                    });
-                    var tagReference="";
-                    using (var reader =  command.ExecuteReaderAsync().Result)
-                    {
-                        if (reader.HasRows && reader.Read())
-                        {
-                            if (reader["key1"] != null)
-                            {
-                                tagReference = reader["key1"].ToString().Trim();
-                            }
-                        }
-                    }
-                    return tagReference;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw new UHWWarehouseRepositoryException();
-            }
-            finally
-            {
-                _context.Database.CloseConnection();
-            }
-        }
         public async Task<PropertySummary[]> GetPropertyListByPostCode(string postcode)
         {
             List<PropertySummary> properties = new List<PropertySummary>();
