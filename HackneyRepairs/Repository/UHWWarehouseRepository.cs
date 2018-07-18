@@ -36,7 +36,11 @@ namespace HackneyRepairs.Repository
             {
                 using (SqlConnection con = new SqlConnection(CS))
                 {
-                    string sql = "SELECT SHORT_ADDRESS AS 'ShortAddress', POST_CODE AS 'PostCodeValue', PROP_REF AS 'PropertyReference' FROM PROPERTY WHERE LELEL_CODE = 7 AND POST_CODE = '" + postcode + "'";
+                    string sql = @"SELECT short_address AS 'ShortAddress', post_code AS 'PostCodeValue', 
+                    prop_ref AS 'PropertyReference' 
+                    FROM property 
+                    WHERE level_code = 7 
+                    AND post_code = '" + postcode + "'";
                     SqlCommand cmd = new SqlCommand(sql, con);
                     con.Open();
                     SqlDataReader dr = cmd.ExecuteReader();
@@ -66,7 +70,10 @@ namespace HackneyRepairs.Repository
             {
                 using (SqlConnection con = new SqlConnection(CS))
                 {
-                    string sql = "SELECT SHORT_ADDRESS AS 'ShortAddress', POST_CODE AS 'PostCodeValue', ~NO_MAINT AS 'Maintainable', PROP_REF AS 'PropertyReference' FROM PROPERTY WHERE PROP_REF = '" + reference + "'";
+                    string sql = @"SELECT short_address AS 'ShortAddress', post_code AS 'PostCodeValue', ~no_maint AS 'Maintainable', 
+                    prop_ref AS 'PropertyReference' 
+                    FROM property 
+                    WHERE prop_ref = '" + reference + "'";
                     SqlCommand cmd = new SqlCommand(sql, con);
                     con.Open();
                     SqlDataReader dr = cmd.ExecuteReader();
@@ -96,8 +103,9 @@ namespace HackneyRepairs.Repository
             {
                 using (SqlConnection con = new SqlConnection(CS))
                 {
-                    string sql = "SELECT SHORT_ADDRESS AS 'ShortAddress', POST_CODE AS 'PostCodeValue', ~NO_MAINT AS 'Maintainable', PROP_REF AS 'PropertyReference' FROM PROPERTY WHERE PROP_REF";
-                    sql += " = (SELECT U_BLOCK FROM PROPERTY WHERE PROP_REF = '" + reference + "')";
+                    string sql = @"SELECT short_address AS 'ShortAddress', post_code AS 'PostCodeValue', ~no_maint AS 'Maintainable', 
+                    prop_ref AS 'PropertyReference' FROM property WHERE prop_ref 
+                    = (SELECT u_block FROM property WHERE prop_ref = '" + reference + "')";
                     SqlCommand cmd = new SqlCommand(sql, con);
                     con.Open();
                     SqlDataReader dr = cmd.ExecuteReader();
@@ -127,8 +135,9 @@ namespace HackneyRepairs.Repository
             {
                 using (SqlConnection con = new SqlConnection(CS))
                 {
-                    string sql = "SELECT SHORT_ADDRESS AS 'ShortAddress', POST_CODE AS 'PostCodeValue', ~NO_MAINT AS 'Maintainable', PROP_REF AS 'PropertyReference' FROM PROPERTY WHERE PROP_REF";
-                    sql += " = (SELECT U_ESTATE FROM PROPERTY WHERE PROP_REF = '" + reference + "')";
+                    string sql = @"SELECT short_address AS 'ShortAddress', post_code AS 'PostCodeValue', ~no_maint AS 'Maintainable', 
+                    prop_ref AS 'PropertyReference' FROM property WHERE prop_ref 
+                    = (SELECT u_estate FROM property WHERE prop_ref = '" + reference + "')";
                     SqlCommand cmd = new SqlCommand(sql, con);
                     con.Open();
                     SqlDataReader dr = cmd.ExecuteReader();
