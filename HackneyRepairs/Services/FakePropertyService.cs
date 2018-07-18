@@ -50,40 +50,22 @@ namespace HackneyRepairs.Services
             }
         }
 
-        public Task<PropertyGetResponse> GetPropertyByRefAsync(ByPropertyRefRequest request)
+        public Task<PropertyDetails> GetPropertyByRefAsync(string reference)
         {
-            switch (request.PropertyReference)
+            switch (reference)
             {
-                case "525252525":
-                    return Task.Run(() => new PropertyGetResponse()
+                case "52525252":
+                    return Task.Run(() => new PropertyDetails()
                     {
-                        Property = new PropertyDto
-                        {
-                            ShortAddress = "Back Office, Robert House, 6 - 15 Florfield Road    ",
-                            PostCodeValue = "E8 1DT",
-                            Reference = "525252525"
-                        },
-                        Success = true
+                        ShortAddress = "Back Office, Robert House, 6 - 15 Florfield Road    ",
+                        PostCodeValue = "E8 1DT",
+                        PropertyReference = "52525252",
+                        Maintainable = true
                     });
-                case "425252525":
-                    return Task.Run(() => new PropertyGetResponse()
-                    {
-                        Property = null,
-                        Success = false,
-                    });
-                case "42525252512":
-                    return Task.Run(() => new PropertyGetResponse()
-                    {
-                        Property = null,
-                        Success = true,
-                    });
+                case "5252":
+                    throw new Exception();
                 default:
-                    var response = new PropertyGetResponse()
-                    {
-                        Property = new PropertyDto(),
-                        Success = true
-                    };
-                    return Task.Run(() => response);
+                    return Task.Run(() => new PropertyDetails());
             }
         }
 
