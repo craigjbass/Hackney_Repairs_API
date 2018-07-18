@@ -148,19 +148,16 @@ namespace HackneyRepairs.Controllers
             {
                 PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
                 var result = await actions.FindPropertyBlockDetailsByRef(reference);
-                if (result == null)
-                {
-                    var jsonResponse = Json(null);
-                    jsonResponse.StatusCode = 404;
-                    return jsonResponse;
-                }
-                else
-                {
-                    var json = Json(result);
-                    json.StatusCode = 200;
-                    json.ContentType = "application/json";
-                    return json;
-                }
+                var json = Json(result);
+                json.StatusCode = 200;
+                json.ContentType = "application/json";
+                return json;
+            }
+            catch(MissingPropertyException e)
+            {
+                var jsonResponse = Json(null);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
             }
             catch(Exception e)
             {
@@ -205,6 +202,12 @@ namespace HackneyRepairs.Controllers
                     json.ContentType = "application/json";
                     return json;
                 }
+            }
+            catch (MissingPropertyException e)
+            {
+                var jsonResponse = Json(null);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
             }
             catch (Exception e)
             {
