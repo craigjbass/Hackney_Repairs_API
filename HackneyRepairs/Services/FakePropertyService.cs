@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.PropertyService;
 using HackneyRepairs.Models;
+using HackneyRepairs.Actions;
 
 namespace HackneyRepairs.Services
 {
@@ -63,7 +64,7 @@ namespace HackneyRepairs.Services
                         Maintainable = true
                     });
                 case "5252":
-                    throw new Exception();
+                    throw new PropertyServiceException();
                 default:
                     return Task.Run(() => new PropertyDetails());
             }
@@ -118,7 +119,7 @@ namespace HackneyRepairs.Services
                         Maintainable = true
                     });
                 case "5252":
-                    throw new Exception();
+                    throw new PropertyServiceException();
                 default:
                     return Task.Run(() => new PropertyDetails());
             }
@@ -137,7 +138,7 @@ namespace HackneyRepairs.Services
                         Maintainable = true
                     });
                 case "5252":
-                    throw new Exception();
+                    throw new PropertyServiceException();
                 default:
                     return Task.Run(() => new PropertyDetails());
             }
