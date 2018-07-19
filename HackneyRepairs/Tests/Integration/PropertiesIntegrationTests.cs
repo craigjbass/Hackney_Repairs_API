@@ -307,8 +307,6 @@ namespace HackneyRepairs.Tests
             json.Append("}");
             Assert.Equal(json.ToString(), resultString);
         }
-
         #endregion
-
     }
 }
