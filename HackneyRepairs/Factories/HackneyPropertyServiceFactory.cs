@@ -8,8 +8,6 @@ namespace HackneyRepairs.Factories
     {
         public IHackneyPropertyService build(IUhtRepository uhtRepository, IUHWWarehouseRepository uHWWarehouseRepository, ILoggerAdapter<PropertyActions> logger)
         {
-           
-
             if (TestStatus.IsRunningInTests == false)
             {
                 return new Services.HackneyPropertyService(uhtRepository, uHWWarehouseRepository, logger);
@@ -18,7 +16,6 @@ namespace HackneyRepairs.Factories
             {
                 return new Services.FakePropertyService();
             }
-
         }
     }
 }
