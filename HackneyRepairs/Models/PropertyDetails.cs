@@ -5,10 +5,6 @@ namespace HackneyRepairs.Models
 {
     public class PropertyDetails : PropertySummary
     {
-        public bool Maintainable
-        {
-            get;
-            set;
-        }
+        public bool Maintainable{ get; set; }
     }
 }
