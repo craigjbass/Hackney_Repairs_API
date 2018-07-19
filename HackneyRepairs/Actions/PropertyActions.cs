@@ -60,6 +60,7 @@ namespace HackneyRepairs.Actions
             }
             catch(MissingPropertyException e)
             {
+                _logger.LogError($"Finding a property with the property reference: {reference} returned an error: {e.Message}");
                 throw e;
             }
             catch(Exception e)
@@ -86,6 +87,7 @@ namespace HackneyRepairs.Actions
             }
             catch (MissingPropertyException e)
             {
+                _logger.LogError($"Finding the block of a property by the property reference: {reference} returned an error: {e.Message}");
                 throw e;
             }
             catch(Exception e)
@@ -107,11 +109,12 @@ namespace HackneyRepairs.Actions
                 }
                 else
                 {
-                        return BuildPropertyDetails(response);
+                    return BuildPropertyDetails(response);
                 }
             }
             catch (MissingPropertyException e)
             {
+                _logger.LogError($"Finding the estate of a property by the property reference: {reference} returned an error: {e.Message}");
                 throw e;
             }
             catch (Exception e)
@@ -141,7 +144,6 @@ namespace HackneyRepairs.Actions
                 maintainable = property.Maintainable
             };
         }
-
     }
 
     public class MissingPropertyListException : System.Exception{}
