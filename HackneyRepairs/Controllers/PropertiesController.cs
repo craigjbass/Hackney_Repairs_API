@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using HackneyRepairs.Models;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Factories;
@@ -25,11 +24,11 @@ namespace HackneyRepairs.Controllers
         private ILoggerAdapter<PropertyActions> _loggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-        public PropertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository)
+        public PropertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository, IUHWWarehouseRepository uHWWarehouseRepository)
         {
             HackneyPropertyServiceFactory factory = new HackneyPropertyServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
-            _propertyService = factory.build(uhtRepository, loggerAdapter);
+            _propertyService = factory.build(uhtRepository, uHWWarehouseRepository, loggerAdapter);
             _propertyServiceRequestBuilder = new HackneyPropertyServiceRequestBuilder(_configBuilder.getConfiguration(), new PostcodeFormatter());
             _postcodeValidator = new PostcodeValidator();
             _loggerAdapter = loggerAdapter;
@@ -52,7 +51,7 @@ namespace HackneyRepairs.Controllers
                 if (_postcodeValidator.Validate(postcode))
                 {
                     PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
-                    var json = Json(await actions.FindProperty(postcode));
+                    var json = Json(await actions.FindProperty(_propertyServiceRequestBuilder.BuildListByPostCodeRequest(postcode)));
                     json.StatusCode = 200;
                     json.ContentType = "application/json";
                     return json;
@@ -95,6 +94,9 @@ namespace HackneyRepairs.Controllers
         /// </summary>
         /// <param name="reference">The reference number of the requested property</param>
         /// <returns>Details of the requested property</returns>
+        /// <response code="200">Returns the property</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{reference}")]
         public async Task<JsonResult> GetByReference(string reference)
         {
@@ -126,7 +128,7 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = e.Message,
+                        developerMessage = "Internal Server Error",
                         userMessage = "Internal Error"
                     }
                 };
@@ -136,5 +138,99 @@ namespace HackneyRepairs.Controllers
             }
         }
 
+        // GET details of a property block by property by reference
+        /// <summary>
+        /// Gets the details of a block of a property by a given property reference number
+        /// </summary>
+        /// <param name="reference">The reference number of the property</param>
+        /// <returns>Details of the block the requested property belongs to</returns>
+        /// <response code="200">Returns the block of the property</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet("{reference}/block")]
+        public async Task<JsonResult> GetBlockByReference(string reference)
+        {
+            try
+            {
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+                var result = await actions.FindPropertyBlockDetailsByRef(reference);
+                var json = Json(result);
+                json.StatusCode = 200;
+                json.ContentType = "application/json";
+                return json;
+            }
+            catch(MissingPropertyException e)
+            {
+                var jsonResponse = Json(null);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
+            }
+            catch(Exception e)
+            {
+                var errors = new List<ApiErrorMessage>()
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = "API Internal Error",
+                        userMessage = "API Internal Error"
+                    }
+                };
+                var jsonResponse = Json(errors);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+        }
+
+        // GET details of a property's estate by property by reference
+        /// <summary>
+        /// Gets the details of an estate of a property by a given property reference number
+        /// </summary>
+        /// <param name="reference">The reference number of the property</param>
+        /// <returns>Details of the estate the requested property belongs to</returns>
+        /// <response code="200">Returns the estate of the property</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet("{reference}/estate")]
+        public async Task<JsonResult> GetEstateByReference(string reference)
+        {
+            try
+            {
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+                var result = await actions.FindPropertyEstateDetailsByRef(reference);
+                if (result == null)
+                {
+                    var jsonResponse = Json(null);
+                    jsonResponse.StatusCode = 404;
+                    return jsonResponse;
+                }
+                else
+                {
+                    var json = Json(result);
+                    json.StatusCode = 200;
+                    json.ContentType = "application/json";
+                    return json;
+                }
+            }
+            catch (MissingPropertyException e)
+            {
+                var jsonResponse = Json(null);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
+            }
+            catch (Exception e)
+            {
+                var errors = new List<ApiErrorMessage>()
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = "API Internal Error",
+                        userMessage = "API Internal Error"
+                    }
+                };
+                var jsonResponse = Json(errors);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace HackneyRepairs.Interfaces
 {
     public interface IHackneyPropertyServiceRequestBuilder
     {
-        ListByPostCodeRequest BuildListByPostCodeRequest(string postcode);
+        string BuildListByPostCodeRequest(string postcode);
 
         ByPropertyRefRequest BuildByPropertyRefRequest(string reference);
     }

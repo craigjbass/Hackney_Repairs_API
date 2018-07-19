@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.DbContext;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
+using HackneyRepairs.PropertyService;
 using Microsoft.EntityFrameworkCore;
 
 namespace HackneyRepairs.Repository
@@ -13,7 +16,6 @@ namespace HackneyRepairs.Repository
     public class UHWWarehouseRepository :IUHWWarehouseRepository
     {
         private UHWWarehouseDbContext _context;
-
         private ILoggerAdapter<UHWWarehouseRepository> _logger;
         public UHWWarehouseRepository(UHWWarehouseDbContext context, ILoggerAdapter<UHWWarehouseRepository> logger)
         {
@@ -21,56 +23,137 @@ namespace HackneyRepairs.Repository
             _logger = logger;
         }
 
-        public async Task<object> GetTagReferencenumber(string hackneyhomesId)
+        public async Task<PropertySummary[]> GetPropertyListByPostCode(string postcode)
         {
-            _logger.LogInformation($"Get Tag Refernce number for {hackneyhomesId}");
-
+            List<PropertySummary> properties = new List<PropertySummary>();
+            _logger.LogInformation($"Getting properties for postcode {postcode}");
+            string CS = Environment.GetEnvironmentVariable("UhWarehouseDb");
+            if (CS == null)
+            {
+                CS = ConfigurationManager.ConnectionStrings["UhWarehouseDb"].ConnectionString;
+            }
             try
             {
-                using (var command = _context.Database.GetDbConnection().CreateCommand())
+                using (SqlConnection con = new SqlConnection(CS))
                 {
-                    _context.Database.OpenConnection();
-                    command.CommandText = "GetTagReferenceNumber";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(new SqlParameter
+                    string sql = @"SELECT short_address AS 'ShortAddress', post_code AS 'PostCodeValue', 
+                    prop_ref AS 'PropertyReference' 
+                    FROM property 
+                    WHERE level_code = 7 
+                    AND post_code = '" + postcode + "'";
+                    SqlCommand cmd = new SqlCommand(sql, con);
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr != null & dr.HasRows)
                     {
-                        DbType = DbType.String,
-                        ParameterName = "@hackneyhomeId",
-                        Value = hackneyhomesId
-                    });
-
-
-                    var tagReference="";
-                    using (var reader =  command.ExecuteReaderAsync().Result)
-                    {
-                        if (reader.HasRows && reader.Read())
-                        {
-                            if (reader["key1"] != null)
-                            {
-                                tagReference = reader["key1"].ToString().Trim();
-                            }
-                        }
+                        properties = dr.MapToList<PropertySummary>();
                     }
-
-
-                    return tagReference;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                throw new UHWWarehouseRepositoryException();
             }
-            finally
-            {
-                _context.Database.CloseConnection();
-            }
+            return properties.ToArray();
         }
 
+        public async Task<PropertyDetails> GetPropertyDetailsByReference(string reference)
+        {
+            var property = new PropertyDetails();
+            _logger.LogInformation($"Getting details for property {reference}");
+            string CS = Environment.GetEnvironmentVariable("UhWarehouseDb");
+            if (CS == null)
+            {
+                CS = ConfigurationManager.ConnectionStrings["UhWarehouseDb"].ConnectionString;
+            }
+            try
+            {
+                using (SqlConnection con = new SqlConnection(CS))
+                {
+                    string sql = @"SELECT short_address AS 'ShortAddress', post_code AS 'PostCodeValue', ~no_maint AS 'Maintainable', 
+                    prop_ref AS 'PropertyReference' 
+                    FROM property 
+                    WHERE prop_ref = '" + reference + "'";
+                    SqlCommand cmd = new SqlCommand(sql, con);
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr != null & dr.HasRows)
+                    {
+                        property = dr.MapToList<PropertyDetails>().FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            return property;
+        }
+
+        public Task<PropertyDetails> GetPropertyBlockByReference(string reference)
+        {
+            var property = new PropertyDetails();
+            _logger.LogInformation($"Getting details for property {reference}");
+            string CS = Environment.GetEnvironmentVariable("UhWarehouseDb");
+            if (CS == null)
+            {
+                CS = ConfigurationManager.ConnectionStrings["UhWarehouseDb"].ConnectionString;
+            }
+            try
+            {
+                using (SqlConnection con = new SqlConnection(CS))
+                {
+                    string sql = @"SELECT short_address AS 'ShortAddress', post_code AS 'PostCodeValue', ~no_maint AS 'Maintainable', 
+                    prop_ref AS 'PropertyReference' FROM property WHERE prop_ref 
+                    = (SELECT u_block FROM property WHERE prop_ref = '" + reference + "')";
+                    SqlCommand cmd = new SqlCommand(sql, con);
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr != null & dr.HasRows)
+                    {
+                        property = dr.MapToList<PropertyDetails>().FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            return Task.Run(() => property);
+        }
+
+        public Task<PropertyDetails> GetPropertyEstateByReference(string reference)
+        {
+            var property = new PropertyDetails();
+            _logger.LogInformation($"Getting details for property {reference}");
+            string CS = Environment.GetEnvironmentVariable("UhWarehouseDb");
+            if (CS == null)
+            {
+                CS = ConfigurationManager.ConnectionStrings["UhWarehouseDb"].ConnectionString;
+            }
+            try
+            {
+                using (SqlConnection con = new SqlConnection(CS))
+                {
+                    string sql = @"SELECT short_address AS 'ShortAddress', post_code AS 'PostCodeValue', ~no_maint AS 'Maintainable', 
+                    prop_ref AS 'PropertyReference' FROM property WHERE prop_ref 
+                    = (SELECT u_estate FROM property WHERE prop_ref = '" + reference + "')";
+                    SqlCommand cmd = new SqlCommand(sql, con);
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr != null & dr.HasRows)
+                    {
+                        property = dr.MapToList<PropertyDetails>().FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            return Task.Run(() => property);
+        }
     }
 
-    public class UHWWarehouseRepositoryException: Exception
-    {
-    }
-
+    public class UHWWarehouseRepositoryException : Exception { }
 }

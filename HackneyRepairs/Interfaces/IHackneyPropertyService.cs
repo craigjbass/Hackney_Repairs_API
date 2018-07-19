@@ -1,14 +1,16 @@
 ﻿using System.Threading.Tasks;
 using HackneyRepairs.PropertyService;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Interfaces
 {
     public interface IHackneyPropertyService
     {
         Task<PropertyInfoResponse> GetPropertyListByPostCodeAsync(ListByPostCodeRequest request);
-
-        Task<PropertyGetResponse> GetPropertyByRefAsync(ByPropertyRefRequest request);
-
+        Task<PropertySummary[]> GetPropertyListByPostCode(string post_code);
+        Task<PropertyDetails> GetPropertyByRefAsync(string reference);
+        Task<PropertyDetails> GetPropertyBlockByRef(string reference);
+        Task<PropertyDetails> GetPropertyEstateByRef(string reference);
         Task<bool> GetMaintainable(string reference);
     }
 }
