@@ -19,6 +19,7 @@ namespace HackneyRepairs.Services
             _configuration = configuration;
             _postcodeFormatter = postcodeFormatter;
         }
+
         public string BuildListByPostCodeRequest(string postcode)
         {
             return _postcodeFormatter.FormatPostcode(postcode);
