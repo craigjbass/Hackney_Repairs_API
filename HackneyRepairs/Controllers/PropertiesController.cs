@@ -177,9 +177,8 @@ namespace HackneyRepairs.Controllers
                 };
                 var jsonResponse = Json(errors);
                 jsonResponse.StatusCode = 500;
-                return jsonResponse; 
+                return jsonResponse;
             }
-
         }
 
         // GET details of a property's estate by property by reference
