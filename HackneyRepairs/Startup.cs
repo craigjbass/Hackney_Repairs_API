@@ -75,7 +75,7 @@ namespace HackneyRepairs
             app.UseSwaggerUI(c =>
             {
                 string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
-                if (basePath == null) basePath = "/";
+                if (basePath == null) basePath = "/UnboxedHackneyRepairs/";
                 c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "HackneyRepairsAPI");
                 c.RoutePrefix = string.Empty;
             });
