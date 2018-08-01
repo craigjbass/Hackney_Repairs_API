@@ -8,15 +8,15 @@ namespace HackneyRepairs.Services
 {
 	public class HackneyWorkOrdersService : IHackneyWorkOrdersService
 	{
-        private IUhtRepository _uhtRepository;
+		private IUhtRepository _uhtRepository;
 		private ILoggerAdapter<WorkOrdersActions> _logger;
 
 		public HackneyWorkOrdersService(IUhtRepository uhtRepository, ILoggerAdapter<WorkOrdersActions> logger)
-        {
+		{
 			_uhtRepository = uhtRepository;
 			_logger = logger;
-        }
-      
+		}
+
 		public Task<WorkOrderEntity> GetWorkOrderByReference(string workOrderReference)
 		{
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");

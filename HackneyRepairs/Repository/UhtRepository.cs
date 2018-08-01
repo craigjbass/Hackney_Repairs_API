@@ -20,7 +20,6 @@ namespace HackneyRepairs.Repository
 	public class UhtRepository : IUhtRepository
 	{
 		private UhtDbContext _context;
-
 		private ILoggerAdapter<UhtRepository> _logger;
 		public UhtRepository(UhtDbContext context, ILoggerAdapter<UhtRepository> logger)
 		{
@@ -246,14 +245,13 @@ namespace HackneyRepairs.Repository
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
 				{
 					string query = "SELECT * FROM rmworder WHERE wo_ref = '" + workOrderReference + "'";
-
 					workOrder = connection.Query<WorkOrderEntity>(query).FirstOrDefault();
 				}
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex.Message);
-                throw new UhtRepositoryException();
+				throw new UhtRepositoryException();
 			}
 			return workOrder;
 		}
