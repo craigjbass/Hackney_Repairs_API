@@ -219,7 +219,7 @@ namespace HackneyRepairs.Repository
 						{
 							_logger.LogInformation($"Blocking UH triggers for order {workOrderReference}");
 							string commandString = @"insert into u_sentToAppointmentSys (wo_ref,orderId,bookingId,dateSent,appointmentStart,appointmentEnd,uhVisitID) ";
-							commandString += @"values ('" + workOrderReference + "'," + orderId + "," + bookingId + ", convert(datetime,'" + DateTime.Now + "',105),convert(datetime,'" + startDate + "',105),convert(datetime,'" + endDate + "',105)," + visit_sid + ")";
+							commandString += @"values ('" + workOrderReference + "'," + orderId + "," + bookingId + ", convert(datetime,'" + DateTime.Now + "',101),convert(datetime,'" + startDate + "',101),convert(datetime,'" + endDate + "',101)," + visit_sid + ")";
 							_context.Database.ExecuteSqlCommand(commandString);
 						}
 					}
