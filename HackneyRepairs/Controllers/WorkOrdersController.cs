@@ -24,7 +24,19 @@ namespace HackneyRepairs.Controllers
 			_workOrdersService = factory.build(uhtRepository, _loggerAdapter);
         }
         
+		// GET Work Order 
+        /// <summary>
+        /// Retrieves a work order
+        /// </summary>
+		/// <param name="workOrderReference">Work order reference</param>
+        /// <returns>A work order entity</returns>
+        /// <response code="200">Returns the the work order for the work order reference</response>
+        /// <response code="404">If there is no work order for the given reference</response>   
+        /// <response code="500">If any errors are encountered</response>
 		[HttpGet("{workOrderReference}")]
+		[ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
 		public async Task<JsonResult> Get(string workOrderReference)
 		{
 			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _loggerAdapter);
