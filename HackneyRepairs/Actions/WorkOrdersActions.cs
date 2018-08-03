@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
@@ -17,10 +18,10 @@ namespace HackneyRepairs.Actions
 			_logger = logger;
         }
 
-		public async Task<WorkOrderEntity> GetWorkOrderByReference(string workOrderReference)
+		public async Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
 		{
 			_logger.LogInformation($"Finding work order details for reference: {workOrderReference}");
-		    var result = await _workOrdersService.GetWorkOrderByReference(workOrderReference);            
+		    var result = await _workOrdersService.GetWorkOrder(workOrderReference);            
             if (result == null)
 			{
 				_logger.LogError($"Work order not found for reference: {workOrderReference}");
@@ -29,7 +30,20 @@ namespace HackneyRepairs.Actions
 			_logger.LogInformation($"Work order details returned for: {workOrderReference}");
 			return result;
 		}
+
+        public async Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyId)
+        {
+            _logger.LogInformation($"Finding work order details for Id: {propertyId}");
+            var result = await _workOrdersService.GetWorkOrderByPropertyReference(propertyId);
+            if (((List<WorkOrderEntity>)result).Count == 0)
+            {
+                _logger.LogError($"Work order not found for Id: {propertyId}");
+                throw new MissingWorkOrderException();
+            }
+            _logger.LogInformation($"Work order details returned for: {propertyId}");
+            return result;
+        }
     }
 
-    public class MissingWorkOrderException : System.Exception { }
+    public class MissingWorkOrderException : Exception { }
 }

@@ -14,5 +14,6 @@ namespace HackneyRepairs.Interfaces
         Task <int?>UpdateVisitAndBlockTrigger(string workOrderReference, DateTime startDate, DateTime endDate, int orderId, int bookingId, string slotDetail);
         Task<bool> GetMaintainableFlag(string propertyReference);
 		Task<WorkOrderEntity> GetWorkOrder(string workOrderReference);
+        Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyId);
     }
 }

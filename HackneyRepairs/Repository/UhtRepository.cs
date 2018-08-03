@@ -239,13 +239,13 @@ namespace HackneyRepairs.Repository
 
 		public async Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
 		{
-			WorkOrderEntity workOrder = new WorkOrderEntity();
+            WorkOrderEntity workOrder;
 			try
 			{
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
 				{
-					string query = "SELECT * FROM rmworder WHERE wo_ref = '" + workOrderReference + "'";
-					workOrder = connection.Query<WorkOrderEntity>(query).FirstOrDefault();
+                    string query = $"SELECT * FROM rmworder WHERE wo_ref = '{workOrderReference}'";
+                    workOrder = connection.Query<WorkOrderEntity>(query).FirstOrDefault();
 				}
 			}
 			catch (Exception ex)
@@ -255,6 +255,25 @@ namespace HackneyRepairs.Repository
 			}
 			return workOrder;
 		}
+
+        public async Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyReference)
+        {
+            List<WorkOrderEntity> queryResult;
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $"SELECT * FROM rmworder WHERE prop_ref = '{propertyReference}'";
+                    queryResult = connection.Query<WorkOrderEntity>(query).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+            return queryResult;
+        }
 	}
 
 	public static class DateReaderExtensions
