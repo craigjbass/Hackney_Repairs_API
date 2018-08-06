@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HackneyRepairs.Controllers
 {
 	[Produces("application/json")]
-	[Route("v1/workorders")]
+	[Route("/v1/workorders")]
 	public class WorkOrdersController : Controller
 	{
 		private IHackneyWorkOrdersService _workOrdersService;

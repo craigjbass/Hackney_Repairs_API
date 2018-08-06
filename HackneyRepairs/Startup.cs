@@ -36,8 +36,10 @@ namespace HackneyRepairs
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddDbContext<UhtDbContext>(options =>
-			                                    options.UseSqlServer(Configuration.GetSection("UhtDb").Value));
+			services.AddDbContext<UhtDbContext>(options =>
+			{
+				options.UseSqlServer(Configuration.GetSection("UhtDb").Value);
+			});
             services.AddDbContext<UhwDbContext>(options =>
                                                 options.UseSqlServer(Configuration.GetSection("UhwDb").Value));
             services.AddDbContext<UHWWarehouseDbContext>(options =>
@@ -70,15 +72,30 @@ namespace HackneyRepairs
 			app.UseCors("AllowAny");
 			app.UseMvc();
 			app.UseDeveloperExceptionPage();
-			app.UseSwagger();
-			app.UseSwaggerUI(c =>
-			{
-				string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
-                //if (basePath == null) basePath = "/UnboxedHackneyRepairs/";
-                if (basePath == null) basePath = "/";
-				c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "HackneyRepairsAPI");
-				c.RoutePrefix = string.Empty;
-			});
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+				app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
+                    if (basePath == null) basePath = "/";
+                    c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "HackneyRepairsAPI");
+                    c.RoutePrefix = string.Empty;
+                });
+            } 
+            else
+            {
+				app.UseSwagger(
+					c => c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Host = httpReq.Host.Value + "/unboxedhackneyrepairs/")
+				);
+                app.UseSwaggerUI(c =>
+				{
+					string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
+					if (basePath == null) basePath = "/unboxedhackneyrepairs/";
+					c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "HackneyRepairsAPI");
+					c.RoutePrefix = string.Empty;
+				});
+            }
 		}
 	}
 }
