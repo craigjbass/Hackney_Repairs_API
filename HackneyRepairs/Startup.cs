@@ -27,7 +27,7 @@ namespace HackneyRepairs
 				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
 				.AddEnvironmentVariables();
 			Configuration = builder.Build();
-			TestStatus.IsRunningInTests = false;
+			TestStatus.IsRunningInTests = false;    
 		}
 
 		public IConfigurationRoot Configuration { get; }
@@ -85,9 +85,17 @@ namespace HackneyRepairs
             } 
             else
             {
-				app.UseSwagger(
-					c => c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Host = httpReq.Host.Value + "/unboxedhackneyrepairs/")
-				);
+				if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Test")
+				{
+					app.UseSwagger(
+						c => c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Host = "sandboxapi.hackney.gov.uk/unboxedhackneyrepairs/")
+					);
+                } else
+				{
+					app.UseSwagger(
+                        c => c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Host = "api.hackney.gov.uk/unboxedhackneyrepairs/")
+                    );
+				}
                 app.UseSwaggerUI(c =>
 				{
 					string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
