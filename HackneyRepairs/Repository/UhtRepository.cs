@@ -236,7 +236,6 @@ namespace HackneyRepairs.Repository
 			}
 		}
 
-
 		public async Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
 		{
             WorkOrderEntity workOrder;

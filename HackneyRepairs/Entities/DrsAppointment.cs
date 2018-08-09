@@ -1,7 +1,7 @@
 ﻿using System;
 namespace HackneyRepairs.Entities
 {
-    public class DRSAppointment
+    public class DrsAppointment
     {
         public string USERID { get; set; }
         public string NAME { get; set; }
