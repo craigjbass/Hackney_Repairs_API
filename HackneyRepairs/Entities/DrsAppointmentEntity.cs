@@ -1,7 +1,7 @@
 ﻿using System;
 namespace HackneyRepairs.Entities
 {
-    public class DrsAppointment
+    public class DrsAppointmentEntity
     {
         public string USERID { get; set; }
         public string NAME { get; set; }
@@ -12,7 +12,7 @@ namespace HackneyRepairs.Entities
         public string SUSPENDCOMMENT { get; set; }
         public string PRIORITY { get; set; }
         public int? PERIODICALMODEL { get; set; }
-        public byte?[] PERIODICITY { get; set; }
+        public string PERIODICITY { get; set; }
         public string PERIODICALMODELID { get; set; }
         public int? LUNCHBREAK { get; set; }
         public int? DEPOT { get; set; }
@@ -20,7 +20,7 @@ namespace HackneyRepairs.Entities
         public string RESETQUOTA { get; set; }
         public double? PICKUPDURATIONTU { get; set; }
         public string FOLLOWINGJOBUSERID { get; set; }
-        public byte?[] INITIALTIMEWINDOWS { get; set; }
+        public string INITIALTIMEWINDOWS { get; set; }
         public DateTime? GLOBALINITIALTIMEWINDOW_START { get; set; }
         public DateTime? GLOBALINITIALTIMEWINDOW_END { get; set; }
         public DateTime? MAXSTARTDATE { get; set; }
@@ -56,13 +56,13 @@ namespace HackneyRepairs.Entities
         public string ADDRESS_DEGRADATION { get; set; }
         public string ADDRESS_INITIALADDRESS { get; set; }
         public int? LOCALIZED { get; set; }
-        public byte?[] OPENCAL_MONSCHED { get; set; }
-        public byte?[] OPENCAL_TUESCHED { get; set; }
-        public byte?[] OPENCAL_WEDSCHED { get; set; }
-        public byte?[] OPENCAL_THUSCHED { get; set; }
-        public byte?[] OPENCAL_FRISCHED { get; set; }
-        public byte?[] OPENCAL_SATSCHED { get; set; }
-        public byte?[] OPENCAL_SUNSCHED { get; set; }
+        public string OPENCAL_MONSCHED { get; set; }
+        public string OPENCAL_TUESCHED { get; set; }
+        public string OPENCAL_WEDSCHED { get; set; }
+        public string OPENCAL_THUSCHED { get; set; }
+        public string OPENCAL_FRISCHED { get; set; }
+        public string OPENCAL_SATSCHED { get; set; }
+        public string OPENCAL_SUNSCHED { get; set; }
         public string ORGANISATION { get; set; }
         public string FORMERORGANISATION { get; set; }
         public string ATTRACTIONSTATE { get; set; }
@@ -76,16 +76,16 @@ namespace HackneyRepairs.Entities
         public int? PRIMARYSECTORONLY { get; set; }
         public string PUBLICATIONCOMMENT { get; set; }
         public string PUBLICATIONSTATUS { get; set; }
-        public byte?[] FFASTAMP { get; set; }
+        public string FFASTAMP { get; set; }
         public string EXTERNALID { get; set; }
         public string JOBSTATUSNOTIFY { get; set; }
         public string TTWJOBSTATUS { get; set; }
         public string TTWWARNING { get; set; }
-        public byte?[] PREFEREDWORKERS { get; set; }
-        public byte?[] MANDATORYWORKERS { get; set; }
-        public byte?[] FORBIDDENWORKERS { get; set; }
+        public string PREFEREDWORKERS { get; set; }
+        public string MANDATORYWORKERS { get; set; }
+        public string FORBIDDENWORKERS { get; set; }
         public string CUSTOMERID { get; set; }
-        public byte?[] UNAVAILABILITYCALENDARPERIODS { get; set; }
+        public string UNAVAILABILITYCALENDARPERIODS { get; set; }
         public int? PREFEREDCUSTOMEROPENING { get; set; }
         public int? VIOLATION { get; set; }
         public int? FORCED { get; set; }
@@ -110,14 +110,14 @@ namespace HackneyRepairs.Entities
         public string SEQUENCENAME { get; set; }
         public int? JOBISVALID { get; set; }
         public string BD_EMERGENCY { get; set; }
-        public byte?[] BD_PLANNER_COMMENTS { get; set; }
+        public string BD_PLANNER_COMMENTS { get; set; }
         public string BD_ACTION_TAKEN { get; set; }
         public string BD_APPOINTMENT_SEQUENCE { get; set; }
         public string BD_MULTI_RESOURCE_1 { get; set; }
         public string BD_MULTI_RESOURCE_2 { get; set; }
         public string BD_MULTI_STAGE_1 { get; set; }
         public string BD_MULTI_STAGE_2 { get; set; }
-        public byte?[] BD_OPERATIVE_COMMENTS { get; set; }
+        public string BD_OPERATIVE_COMMENTS { get; set; }
         public int? BD_ORIGINAL_DURATION { get; set; }
         public string BD_ORIG_PLAN_WIN_START { get; set; }
         public string BD_ORIG_PLAN_WIN_END { get; set; }
@@ -136,7 +136,7 @@ namespace HackneyRepairs.Entities
         public string BD_PREV_PLAN_WIN_END { get; set; }
         public string BD_BOOKING_TYPE { get; set; }
         public string BD_BOOKING_SUB_TYPE { get; set; }
-        public byte?[] BD_SUSPEND_COMMENT { get; set; }
+        public string BD_SUSPEND_COMMENT { get; set; }
         public string BD_SUSPEND_RESCHEDULE { get; set; }
         public long? BD_DURATION_STANDARD { get; set; }
         public long? BD_DURATION_URGENT { get; set; }
@@ -144,7 +144,7 @@ namespace HackneyRepairs.Entities
         public string BD_LAST_UPDATED { get; set; }
         public string BD_PP_WP_ID { get; set; }
         public string BD_GAS_PRIORITY { get; set; }
-        public byte?[] SELECTEDSLOTS { get; set; }
+        public string SELECTEDSLOTS { get; set; }
         public string PROJECTID { get; set; }
         public long? CURRENTTIMEWINDOWCHANGECOUNTER { get; set; }
         public string GROUPID { get; set; }
