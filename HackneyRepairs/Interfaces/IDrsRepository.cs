@@ -6,6 +6,6 @@ namespace HackneyRepairs.Interfaces
 {
     public interface IDrsRepository
     {
-        Task<DrsAppointment> GetDrsAppointment(string workOrderReference);
+        Task<DrsAppointmentEntity> GetDrsAppointment(string workOrderReference);
     }
 }

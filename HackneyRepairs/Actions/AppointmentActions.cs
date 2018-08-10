@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
 using HackneyRepairs.Interfaces;
-using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
-using HackneyRepairs.Repository;
 using System.Collections.Specialized;
-using System.Configuration;
-using System.Text;
 using HackneyRepairs.Formatters;
 
 namespace HackneyRepairs.Actions
@@ -33,6 +28,12 @@ namespace HackneyRepairs.Actions
             _repairsServiceRequestBuilder = repairsServiceRequestBuilder;
             _configuration = configuration;
         }
+
+        public async Task<AppointmentDetails> GetAppointmentDetails(string workOrderReference)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IList<Slot>> GetAppointments(string workOrderReference)
         {
             _logger.LogInformation($"Getting appointments from DRS for work order reference {workOrderReference}");

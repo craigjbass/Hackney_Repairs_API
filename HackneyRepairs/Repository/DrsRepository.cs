@@ -7,6 +7,7 @@ using HackneyRepairs.DbContext;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 namespace HackneyRepairs.Repository
 {
@@ -21,15 +22,16 @@ namespace HackneyRepairs.Repository
             _logger = logger;
         }
 
-        public async Task<DrsAppointment> GetDrsAppointment(string workOrderReference)
+        // this may have to return a list of appointments and take the number of them to be returned
+        public async Task<DrsAppointmentEntity> GetAppointment(string workOrderReference)
         {
             try
             {
-                DrsAppointment appointment;
-                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                DrsAppointmentEntity appointment;
+                using (var connection = new MySqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
                     string query = $"SELECT * FROM p_job WHERE name = '{workOrderReference}'";
-                    appointment = connection.Query<DrsAppointment>(query).FirstOrDefault();
+                    appointment = connection.Query<DrsAppointmentEntity>(query).FirstOrDefault();
                 }
                 return appointment;
             }

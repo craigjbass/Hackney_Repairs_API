@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
 using HackneyRepairs.Actions;
+using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 
 namespace HackneyRepairs.Services
@@ -11,11 +12,19 @@ namespace HackneyRepairs.Services
     public class HackneyAppointmentsService : IHackneyAppointmentsService
     {
         private readonly SOAPClient _client;
+        private IDrsRepository _repository;
         private ILoggerAdapter<AppointmentActions> _logger;
-        public HackneyAppointmentsService(ILoggerAdapter<AppointmentActions> logger)
+
+        public HackneyAppointmentsService(IDrsRepository repository, ILoggerAdapter<AppointmentActions> logger)
         {
             _client = new SOAPClient();
+            _repository = repository;
             _logger = logger;
+        }
+
+        public Task<DrsAppointmentEntity> GetDrsAppointment(string workOrderReference)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<checkAvailabilityResponse> GetAppointmentsForWorkOrderReference(xmbCheckAvailability checkAvailabilityRequest)

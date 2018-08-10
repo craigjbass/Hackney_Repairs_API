@@ -161,55 +161,26 @@ namespace HackneyRepairs.Controllers
 		/// <summary>
 		/// Retrieves an appointment for a work order
 		/// </summary>
-		/// <param name="workorderreference">The work order reference for which to provide available appointments</param>
+		/// <param name="workOrderReference">The work order reference for which to provide available appointments</param>
 		/// <returns>An appointment</returns>
 		/// <response code="200">Returns the appointment</response>
 		/// <response code="400">The appointment was not found</response>   
 		/// <response code="500">If any errors are encountered</response> 
 		[HttpGet]
-		[Route("v1/work_orders/{workorderreference}/appointments")]
-		public async Task<JsonResult> GetAppointment(string workorderreference)
-		{
-			try
-			{
-				if (string.IsNullOrWhiteSpace(workorderreference))
-				{
-					var errors = new List<ApiErrorMessage>
-					{
-						new ApiErrorMessage
-						{
-							developerMessage = "Invalid parameter - workorderreference",
-							userMessage = "Please provide a valid work order reference"
-						}
-					};
-					var json = Json(errors);
-					json.StatusCode = 400;
-					return json;
-				}
-				else
-				{
-					var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-					var response = await appointmentsActions.GetAppointmentForWorksOrder(workorderreference);
-					var json = Json(response);
-					json.StatusCode = 200;
-					json.ContentType = "application/json";
-					return json;
-				}
-			}
-			catch (Exception ex)
-			{
-				var errors = new List<ApiErrorMessage>
-				{
-					new ApiErrorMessage
-					{
-						developerMessage = ex.Message,
-						userMessage = "We had some problems processing your request"
-					}
-				};
-				var json = Json(errors);
-				json.StatusCode = 500;
-				return json;
-			}
+		[Route("v1/work_orders/{workOrderReference}/appointments")]
+        public async Task<IActionResult> GetAppointmentDetails(string workOrderReference)
+        {
+            try
+            {
+                var appointmentActions = new AppointmentActions(_loggerAdapter, _appointmentsService,
+                                                                _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder,
+                                                                _configBuilder.getConfiguration());
+                throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
 		}
 	}
 }
