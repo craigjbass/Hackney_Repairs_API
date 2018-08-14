@@ -145,15 +145,6 @@ namespace HackneyRepairs.Controllers
 
         }
 
-        // GET repair by reference
-        /// <summary>
-        /// Retrieves a repair request
-        /// </summary>
-        /// <param name="propertyReference">The reference number of the repair request</param>
-        /// <returns>A repair request</returns>
-        /// <response code="200">Returns a repair request</response>
-        /// <response code="404">If the request is not found</response>   
-        /// <response code="500">If any errors are encountered</response> 
         [HttpGet]
         public async Task<JsonResult> GetByPropertyReference(string propertyReference)
         {
