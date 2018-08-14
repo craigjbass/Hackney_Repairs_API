@@ -274,6 +274,24 @@ namespace HackneyRepairs.Repository
             }
             return queryResult;
         }
+
+        public async Task<IEnumerable<RepairRequestEntity>> GetRepairRequests(string propertyReference)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $"SELECT * FROM rmreqst WHERE prop_ref = '{propertyReference}'";
+                    var queryResult = connection.Query<RepairRequestEntity>(query).ToList();
+                    return queryResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+        }
 	}
 
 	public static class DateReaderExtensions

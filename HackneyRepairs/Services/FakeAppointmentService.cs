@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
+using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 
 namespace HackneyRepairs.Services
@@ -143,8 +144,8 @@ namespace HackneyRepairs.Services
 
         public Task<selectBookingResponse> SelectBookingAsync(xmbSelectBooking selectBooking)
         {
-                    return Task.Run(() =>
-                        new selectBookingResponse(new xmbSelectBookingResponse { status = responseStatus.success }));
+            return Task.Run(() =>
+                new selectBookingResponse(new xmbSelectBookingResponse { status = responseStatus.success }));
         }
     }
 }
