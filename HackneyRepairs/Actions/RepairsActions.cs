@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Models;
 using RepairsService;
+using HackneyRepairs.Entities;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace HackneyRepairs.Actions
 {
@@ -18,6 +21,19 @@ namespace HackneyRepairs.Actions
 			_requestBuilder = requestBuilder;
 			_logger = logger;
 		}
+
+        public async Task<IEnumerable<RepairRequestEntity>> GetRepairByPropertyReference(string propertyReference)
+        {
+            _logger.LogInformation($"Finding repair requests for Id: {propertyReference}");
+            var result = await _repairsService.GetRepairByPropertyReference(propertyReference);
+            if (((List<RepairRequestEntity>)result).Count == 0)
+            {
+                _logger.LogError($"Repairs not found for Id: {propertyReference}");
+                throw new MissingRepairException();
+            }
+            _logger.LogInformation($"Repair request details returned for: {propertyReference}");
+            return result;
+        }
 
 		public async Task<object> CreateRepair(RepairRequest request)
 		{

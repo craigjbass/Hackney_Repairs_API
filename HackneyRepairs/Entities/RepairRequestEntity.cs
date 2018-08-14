@@ -60,7 +60,7 @@ namespace HackneyRepairs.Entities
         public int? rq_wedsr { get; set; }
         public int? rq_thusr { get; set; }
         public int? rq_frisr { get; set; }
-        public string tstamp { get; set; }
+        public byte[] tstamp { get; set; }
         public string rq_overall_status { get; set; }
         public DateTime? rq_overall_status_date { get; set; }
         public DateTime? rq_cancel_date { get; set; }

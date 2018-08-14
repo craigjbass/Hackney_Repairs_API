@@ -33,7 +33,7 @@ namespace HackneyRepairs.Controllers
             _repairRequestValidator = new RepairRequestValidator();
             _loggerAdapter = loggerAdapter;
         }
-            
+
         /// <summary>
         /// Creates a repair request
         /// </summary>
@@ -114,6 +114,73 @@ namespace HackneyRepairs.Controllers
                 //json.StatusCode = 404;
                 //return json;
 
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = ex.Message,
+                        userMessage = @"Cannot find repair."
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 404;
+                return json;
+
+            }
+            catch (Exception ex)
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+
+                        developerMessage = ex.Message,
+                        userMessage = "We had some problems processing your request"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 500;
+                return json;
+            }
+
+        }
+
+        // GET repair by reference
+        /// <summary>
+        /// Retrieves a repair request
+        /// </summary>
+        /// <param name="propertyReference">The reference number of the repair request</param>
+        /// <returns>A repair request</returns>
+        /// <response code="200">Returns a repair request</response>
+        /// <response code="404">If the request is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet]
+        public async Task<JsonResult> GetByPropertyReference(string propertyReference)
+        {
+            if (String.IsNullOrWhiteSpace(propertyReference))
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = "Missing parameter - propertyReference",
+                        userMessage = "Missing parameter - propertyReference"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 400;
+                return json;
+            }
+
+            try
+            {
+                RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
+                var json = Json(await repairActions.GetRepairByPropertyReference(propertyReference));
+                json.StatusCode = 200;
+                return json;
+            }
+            catch (MissingRepairException ex)
+            {
                 var errors = new List<ApiErrorMessage>
                 {
                     new ApiErrorMessage

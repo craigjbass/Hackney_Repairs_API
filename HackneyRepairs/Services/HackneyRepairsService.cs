@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
+using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using RepairsService;
@@ -20,6 +22,15 @@ namespace HackneyRepairs.Services
 			_uhwRepository = uhwRepository;
 			_logger = logger;
 		}
+
+        public Task<IEnumerable<RepairRequestEntity>> GetRepairByPropertyReference(string propertyReference)
+        {
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
+            var response = _uhtRepository.GetRepairRequests(propertyReference);
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Work order details returned for: {workOrderReference})");
+            return response;
+        }
+
 		public Task<RepairCreateResponse> CreateRepairAsync(NewRepairRequest request)
 		{
 			_logger.LogInformation($"HackneyRepairsService/CreateRepairAsync(): Sent request to upstream RepairServiceClient (Request ref: {request.RepairRequest.RequestReference})");

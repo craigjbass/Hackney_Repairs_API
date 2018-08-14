@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Models;
+using HackneyRepairs.Entities;
 
 namespace HackneyRepairs.Services
 {
@@ -194,6 +195,11 @@ namespace HackneyRepairs.Services
         public Task AddOrderDocumentAsync(string documentType, string workOrderReference, int workOrderId, string processComment)
         {
             return Task.FromResult(false);
+        }
+
+        public Task<IEnumerable<RepairRequestEntity>> GetRepairByPropertyReference(string propertyReference)
+        {
+            throw new NotImplementedException();
         }
     }
 }
