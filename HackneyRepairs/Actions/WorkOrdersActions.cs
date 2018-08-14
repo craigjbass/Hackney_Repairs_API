@@ -43,7 +43,21 @@ namespace HackneyRepairs.Actions
             _logger.LogInformation($"Work order details returned for: {propertyId}");
             return result;
         }
-    }
 
+		public async Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference)
+		{
+			_logger.LogInformation($"Finding notes by work order: {workOrderReference}");
+			var result = await _workOrdersService.GetNotesByWorkOrderReference(workOrderReference);
+			if (((List<NotesEntity>)result).Count == 0)
+            {
+				_logger.LogError($"Notes not found for: {workOrderReference}");
+                throw new MissingNotesException();
+            }
+			_logger.LogInformation($"Notes returned for: {workOrderReference}");
+            return result;
+		}
+    }
+    
     public class MissingWorkOrderException : Exception { }
+	public class MissingNotesException : Exception { }
 }

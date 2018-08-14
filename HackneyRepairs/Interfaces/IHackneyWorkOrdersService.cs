@@ -9,5 +9,6 @@ namespace HackneyRepairs.Interfaces
     {
 		Task<WorkOrderEntity> GetWorkOrder(string workOrderReference);
         Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyReference);
+		Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference);
     }
 }

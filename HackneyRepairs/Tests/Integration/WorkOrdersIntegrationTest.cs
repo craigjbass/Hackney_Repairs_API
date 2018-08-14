@@ -42,10 +42,31 @@ namespace HackneyRepairs.Tests.Integration
             var result = await _client.GetAsync("v1/workorders/9999999999");
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
+		#endregion
+
+		#region GetWorkOrder Notes endpoint
+		public async Task return_a_200_result_with_notes_json_for_valid_request_by_reference()
+        {
+            var result = await _client.GetAsync("v1/workorders/12345678/notes");
+            var jsonResult = await result.Content.ReadAsStringAsync();
+			var notes = JsonConvert.DeserializeObject<NotesEntity>(jsonResult);
+
+			Assert.IsType<IEnumerable<NotesEntity>>(notes);
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+		[Fact]
+        public async Task return_a_404_result_when_no_notes_found_for_workorder()
+        {
+            var result = await _client.GetAsync("v1/workorders/9999999999");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
         #endregion
 
-        #region GetWorkOrderByPropertyReference endpoint
-        [Fact]
+		#region GetWorkOrderByPropertyReference endpoint
+		[Fact]
         public async Task return_a_200_result_with_list_workOrders_json_for_valid_request()
         {
             var result = await _client.GetAsync("v1/workorders?propertyreference=12345678");

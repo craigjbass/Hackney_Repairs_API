@@ -145,6 +145,15 @@ namespace HackneyRepairs.Controllers
 
         }
 
+		// GET Repair Requests by property reference
+        /// <summary>
+        /// Returns a list of Repair Requests by property reference
+        /// </summary>
+		/// <param name="propertyReference">Universal Housing property reference</param>
+        /// <returns>A list of Repair Requests</returns>
+		/// <response code="200">Returns a list of Repair Requests</response>
+        /// <response code="404">If no Repair Request was found for the property</response>   
+        /// <response code="500">If any errors are encountered</response> 
         [HttpGet]
         public async Task<JsonResult> GetByPropertyReference(string propertyReference)
         {

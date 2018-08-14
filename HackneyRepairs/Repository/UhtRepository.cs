@@ -239,13 +239,13 @@ namespace HackneyRepairs.Repository
 
 		public async Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
 		{
-            WorkOrderEntity workOrder;
+			WorkOrderEntity workOrder;
 			try
 			{
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
 				{
-                    string query = $"SELECT * FROM rmworder WHERE wo_ref = '{workOrderReference}'";
-                    workOrder = connection.Query<WorkOrderEntity>(query).FirstOrDefault();
+					string query = $"SELECT * FROM rmworder WHERE wo_ref = '{workOrderReference}'";
+					workOrder = connection.Query<WorkOrderEntity>(query).FirstOrDefault();
 				}
 			}
 			catch (Exception ex)
