@@ -47,7 +47,7 @@ namespace HackneyRepairs
             services.AddMvc();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "Hackney Repairs API",
+				c.SwaggerDoc("v1", new Info { Version = "v1", Title = $"Hackney Repairs API - {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}",
                     Description="This is the Hackney Repairs API which allows client applications </br>" +
                         "to securely access publicly available information on repairs to Hackney properties, </br>" +
                         "and to raise new repair requests." });

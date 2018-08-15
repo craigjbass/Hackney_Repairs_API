@@ -147,5 +147,20 @@ namespace HackneyRepairs.Services
             return Task.Run(() =>
                 new selectBookingResponse(new xmbSelectBookingResponse { status = responseStatus.success }));
         }
-    }
+
+		public Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+		{
+			if (string.Equals(workOrderReference, "99999999"))
+            {
+				return Task.Run(() => (IEnumerable<UhtAppointmentEntity>)new List<UhtAppointmentEntity>());
+            }
+			var appointmentEntitites = new List<UhtAppointmentEntity>
+			{
+				new UhtAppointmentEntity{
+					visit_prop_appointment = DateTime.Today
+                }
+            };
+			return Task.Run(() => (IEnumerable<UhtAppointmentEntity>)appointmentEntitites);
+		}
+	}
 }

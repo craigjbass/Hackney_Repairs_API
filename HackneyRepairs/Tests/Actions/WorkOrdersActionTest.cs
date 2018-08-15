@@ -125,6 +125,8 @@ namespace HackneyRepairs.Tests.Actions
 		[Fact]
         public async Task get_notes_by_work_order_reference_returns_a_list_of_notes()
         {
+			Random rnd = new Random();
+            string randomReference = rnd.Next(100000000, 999999999).ToString();
 			List<NotesEntity> fakeResponse = new List<NotesEntity>
             {
 				new NotesEntity()
@@ -134,7 +136,7 @@ namespace HackneyRepairs.Tests.Actions
 			                 .Returns(Task.FromResult<IEnumerable<NotesEntity>>(fakeResponse));
             WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object,
                                                                         _mockLogger.Object);
-            var response = await workOrdersActions.GetNotesByWorkOrderReference("12345678");
+			var response = await workOrdersActions.GetNotesByWorkOrderReference(randomReference);
             
 			Assert.True(response is List<NotesEntity>);
         }
@@ -143,7 +145,7 @@ namespace HackneyRepairs.Tests.Actions
         public async Task get_notes_by_workorder_reference_throws_not_found_exception_when_no_results()
         {
             Random rnd = new Random();
-            string randomReference = rnd.Next(100000000, 999999990).ToString();
+            string randomReference = rnd.Next(100000000, 999999999).ToString();
             Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
             _workOrderService.Setup(service => service.GetNotesByWorkOrderReference(randomReference))
 			                 .Returns(Task.FromResult<IEnumerable<NotesEntity>>((new List<NotesEntity>())));

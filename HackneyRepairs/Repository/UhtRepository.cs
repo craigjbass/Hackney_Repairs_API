@@ -292,6 +292,28 @@ namespace HackneyRepairs.Repository
                 throw new UhtRepositoryException();
             }
         }
+
+		public async Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+		{
+			List<UhtAppointmentEntity> appointments;
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+					string query = $@"SELECT visit.*
+                                    FROM rmworder
+                                    INNER JOIN visit ON rmworder.rmworder_sid = visit.reference_sid
+                                    WHERE rmworder.wo_ref = '{workOrderReference}'";
+					appointments = connection.Query<UhtAppointmentEntity>(query).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+			return appointments;
+		}
 	}
 
 	public static class DateReaderExtensions

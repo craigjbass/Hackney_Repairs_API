@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HackneyRepairs.Controllers
 {
 	[Produces("application/json")]
-	[Route("/v1/workorders")]
+	[Route("/v1/work_orders")]
 	public class WorkOrdersController : Controller
 	{
 		private IHackneyWorkOrdersService _workOrdersService;
@@ -76,7 +76,7 @@ namespace HackneyRepairs.Controllers
 
         // GET Work Order by property reference 
         /// <summary>
-        /// Retrieves a work order by property reference
+        /// Returns all work orders for a property
         /// </summary>
         /// <param name="propertyReference">property reference</param>
         /// <returns>A list of work order entities</returns>
@@ -138,7 +138,7 @@ namespace HackneyRepairs.Controllers
 
 		// GET Notes for a Work Order 
         /// <summary>
-        /// Retrieves a list of notes
+        /// Returns all notes for a work order
         /// </summary>
         /// <param name="workOrderReference">Work order reference</param>
         /// <returns>A list of notes entities</returns>

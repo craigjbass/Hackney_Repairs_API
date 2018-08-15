@@ -12,6 +12,8 @@ using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using HackneyRepairs.Entities;
+using HackneyRepairs.Repository;
 
 namespace HackneyRepairs.Controllers
 {
@@ -31,7 +33,7 @@ namespace HackneyRepairs.Controllers
 		{
 			var serviceFactory = new HackneyAppointmentServiceFactory();
 			_configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
-			_appointmentsService = serviceFactory.build(loggerAdapter);
+			_appointmentsService = serviceFactory.build(loggerAdapter, uhtRepository);
 			var factory = new HackneyRepairsServiceFactory();
 			_repairsService = factory.build(uhtRepository, uhwRepository, repairsLoggerAdapter);
 			_loggerAdapter = loggerAdapter;
@@ -40,9 +42,9 @@ namespace HackneyRepairs.Controllers
 			_repairsServiceRequestBuilder = new HackneyRepairsServiceRequestBuilder(_configBuilder.getConfiguration());
 		}
 
-		// GET available appointments
+		// GET available appointments for a Universal Housing work order
 		/// <summary>
-		/// Retrieves available appointments
+		/// Returns available appointments for a Universal Housing work order
 		/// </summary>
 		/// <param name="workorderreference">The work order reference for which to provide available appointments</param>
 		/// <returns>A list of available appointments</returns>
@@ -54,11 +56,11 @@ namespace HackneyRepairs.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(500)]
 		[Route("v1/work_orders/{workorderreference}/available_appointments")]
-		public async Task<JsonResult> Get(string workorderreference)
+		public async Task<JsonResult> Get(string workOrderReference)
 		{
 			try
 			{
-				if (string.IsNullOrWhiteSpace(workorderreference))
+				if (string.IsNullOrWhiteSpace(workOrderReference))
 				{
 					var errors = new List<ApiErrorMessage>
 					{
@@ -75,7 +77,7 @@ namespace HackneyRepairs.Controllers
 				else
 				{
 					var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-					var response = await appointmentsActions.GetAppointments(workorderreference);
+					var response = await appointmentsActions.GetAppointments(workOrderReference);
 					var json = Json(new { results = response.ToList().FormatAppointmentsDaySlots() });
 					json.StatusCode = 200;
 					json.ContentType = "application/json";
@@ -156,60 +158,53 @@ namespace HackneyRepairs.Controllers
 				return jsonResponse;
 			}
 		}
-
-		// GET appointments
-		/// <summary>
-		/// Retrieves an appointment for a work order
-		/// </summary>
-		/// <param name="workorderreference">The work order reference for which to provide available appointments</param>
-		/// <returns>An appointment</returns>
-		/// <response code="200">Returns the appointment</response>
-		/// <response code="400">The appointment was not found</response>   
-		/// <response code="500">If any errors are encountered</response> 
-		[HttpGet]
-		[Route("v1/work_orders/{workorderreference}/appointments")]
-		public async Task<JsonResult> GetAppointment(string workorderreference)
-		{
-			try
-			{
-				if (string.IsNullOrWhiteSpace(workorderreference))
-				{
-					var errors = new List<ApiErrorMessage>
-					{
-						new ApiErrorMessage
-						{
-							developerMessage = "Invalid parameter - workorderreference",
-							userMessage = "Please provide a valid work order reference"
-						}
-					};
-					var json = Json(errors);
-					json.StatusCode = 400;
-					return json;
-				}
-				else
-				{
-					var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-					var response = await appointmentsActions.GetAppointmentForWorksOrder(workorderreference);
-					var json = Json(response);
-					json.StatusCode = 200;
-					json.ContentType = "application/json";
-					return json;
-				}
-			}
-			catch (Exception ex)
-			{
-				var errors = new List<ApiErrorMessage>
-				{
-					new ApiErrorMessage
-					{
-						developerMessage = ex.Message,
-						userMessage = "We had some problems processing your request"
-					}
-				};
-				var json = Json(errors);
-				json.StatusCode = 500;
-				return json;
-			}
-		}
+      
+		// GET all appointments booked appointments by work order reference 
+        /// <summary>
+        /// Returns all apointments for a work order
+        /// </summary>
+        /// <param name="workOrderReference">UH work order reference</param>
+        /// <returns>A list of UHT appointment entities</returns>
+        /// <response code="200">Returns a list of appointments for a work order reference</response>
+        /// <response code="404">If there are no appointments found for the work orders reference</response>   
+        /// <response code="500">If any errors are encountered</response>
+		[HttpGet("v1/work_orders/{workOrderReference}/appointments")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+		public async Task<JsonResult> GetAppointmentsByWorkOrderReference(string workOrderReference)
+        {         
+			var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
+			IEnumerable<UhtAppointmentEntity> result = new List<UhtAppointmentEntity>();
+            try
+            {
+				result = await appointmentsActions.GetAppointmentsByWorkOrderReference(workOrderReference);
+                var json = Json(result);
+                json.StatusCode = 200;
+                return json;
+            }
+            catch (MissingAppointmentsException ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"Cannot find appointments for the work order reference"
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
+            }
+            catch (UhtRepositoryException ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"We had issues with connecting to the data source."
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+        }
 	}
 }

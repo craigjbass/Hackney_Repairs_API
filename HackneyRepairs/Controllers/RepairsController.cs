@@ -147,7 +147,7 @@ namespace HackneyRepairs.Controllers
 
 		// GET Repair Requests by property reference
         /// <summary>
-        /// Returns a list of Repair Requests by property reference
+        /// Returns all Repair Requests for a property
         /// </summary>
 		/// <param name="propertyReference">Universal Housing property reference</param>
         /// <returns>A list of Repair Requests</returns>

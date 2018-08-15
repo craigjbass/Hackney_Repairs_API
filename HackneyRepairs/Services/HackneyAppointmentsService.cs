@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
 using HackneyRepairs.Actions;
+using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 
 namespace HackneyRepairs.Services
@@ -11,10 +12,12 @@ namespace HackneyRepairs.Services
     public class HackneyAppointmentsService : IHackneyAppointmentsService
     {
         private readonly SOAPClient _client;
+		private IUhtRepository _uhtRepository;
         private ILoggerAdapter<AppointmentActions> _logger;
-        public HackneyAppointmentsService(ILoggerAdapter<AppointmentActions> logger)
+		public HackneyAppointmentsService(ILoggerAdapter<AppointmentActions> logger, IUhtRepository uhtRepository)
         {
             _client = new SOAPClient();
+			_uhtRepository = uhtRepository;
             _logger = logger;
         }
 
@@ -73,5 +76,13 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyAppointmentsService/SelectBookingAsync(): Received response from upstream PropertyServiceClient (Id: {selectBooking.id})");
             return response;
         }
+
+		public Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference (string workOrderReference)
+        {
+			_logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Sent request to get appointments for workOrderReference: {workOrderReference})");
+			var response = _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
+			_logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Received response for workOrderReference: {workOrderReference})");
+            return response;
+		}
     }
 }

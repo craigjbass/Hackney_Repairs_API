@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
+using HackneyRepairs.Entities;
 
 namespace HackneyRepairs.Interfaces
 {
@@ -19,5 +20,7 @@ namespace HackneyRepairs.Interfaces
         Task<scheduleBookingResponse> ScheduleBookingAsync(xmbScheduleBooking scheduleBooking);
 
         Task<selectOrderResponse> SelectOrderAsync(xmbSelectOrder selectOrder);
+
+		Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference(string workOrderReference);
     }
 }
