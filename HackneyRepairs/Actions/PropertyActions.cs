@@ -25,7 +25,6 @@ namespace HackneyRepairs.Actions
 
         public async Task<IEnumerable<PropertyLevelModel>> GetPropertyHierarchy(string reference)
         {
-            
             try
             {
                 var results = new List<PropertyLevelModel>();

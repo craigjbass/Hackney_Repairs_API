@@ -34,6 +34,15 @@ namespace HackneyRepairs.Controllers
             _loggerAdapter = loggerAdapter;
         }
 
+        // GET properties
+        /// <summary>
+        /// Returns the hierarchy details of a property  
+        /// </summary>
+        /// <param name="propertyReference">The reference number of the requested property</param>
+        /// <returns>A list of property details and its parent properties</returns>
+        /// <response code="200">Returns a list of property details</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{propertyReference}/hierarchy")]
         public async Task<JsonResult> GetPropertyHierarchy(string propertyReference)
         {
