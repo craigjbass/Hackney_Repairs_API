@@ -46,6 +46,9 @@
     <Content Remove="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Dockerfile" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="app.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
