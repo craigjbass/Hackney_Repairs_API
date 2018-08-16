@@ -38,7 +38,7 @@ namespace HackneyRepairs.Actions
                         throw new MissingPropertyException();
                     }
                     results.Add(response);
-                    parent = response.major_ref;
+                    parent = response.MajorReference;
                 }
 
                 return results;

@@ -33,8 +33,9 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var query = @"SELECT property.prop_ref, property.level_code, property.major_ref, 
-                    lulevel.lu_desc, property.address1, property.post_code
+                    var query = @"SELECT property.prop_ref AS 'PropertyReference', property.level_code AS 'LevelCode',
+                    property.major_ref AS 'MajorReference', lulevel.lu_desc AS 'Description', 
+                    property.address1 AS 'Address', property.post_code AS 'PostCode'
                     FROM StagedDB.dbo.property
                     INNER JOIN lulevel ON property.level_code = lulevel.lu_ref 
                     WHERE prop_ref = '" + reference + "'";
