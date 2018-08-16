@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
+using Microsoft.EntityFrameworkCore.Query;
+
 namespace HackneyRepairs.Actions
 {
     public class PropertyActions
@@ -23,9 +25,35 @@ namespace HackneyRepairs.Actions
 
         public async Task<IEnumerable<PropertyLevelModel>> GetPropertyHierarchy(string reference)
         {
-            var response = new List<PropertyLevelModel>();
-            response.Add(await _service.GetPropertyLevelModel(reference));
-            return response;
+            
+            try
+            {
+                var results = new List<PropertyLevelModel>();
+                string parent = reference;
+
+                while (!String.IsNullOrWhiteSpace(parent))
+                {
+                    var response = await _service.GetPropertyLevelModel(parent);
+                    if (response == null)
+                    {
+                        throw new MissingPropertyException();
+                    }
+                    results.Add(response);
+                    parent = response.major_ref;
+                }
+
+                return results;
+            }
+            catch (MissingPropertyException e)
+            {
+                _logger.LogError($"Finding a property with the property reference: {reference} returned an error: {e.Message}");
+                throw;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Finding a property with the property reference: {reference} returned an error: {e.Message}");
+                throw new PropertyServiceException();
+            }
         }
 
         public async Task<object> FindProperty(string postcode)
