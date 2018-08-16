@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
@@ -17,6 +19,13 @@ namespace HackneyRepairs.Actions
             _service = service;
             _requestBuilder = requestBuilder;
             _logger = logger;
+        }
+
+        public async Task<IEnumerable<PropertyLevelModel>> GetPropertyHierarchy(string reference)
+        {
+            var response = new List<PropertyLevelModel>();
+            response.Add(await _service.GetPropertyLevelModel(reference));
+            return response;
         }
 
         public async Task<object> FindProperty(string postcode)

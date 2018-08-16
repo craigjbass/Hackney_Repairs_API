@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Interfaces;
@@ -20,6 +19,12 @@ namespace HackneyRepairs.Services
             _uhtRepository = uhtRepository;
             _uhWarehouseRepository = uHWWarehouseRepository;
             _logger = logger;
+        }
+
+        public Task<PropertyLevelModel> GetPropertyLevelModel(string reference)
+        {
+            var response = _uhWarehouseRepository.GetPropertyLevelInfo(reference);
+            return response;
         }
 
         public Task<PropertyInfoResponse> GetPropertyListByPostCodeAsync(ListByPostCodeRequest request)

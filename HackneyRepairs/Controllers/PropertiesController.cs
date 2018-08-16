@@ -34,6 +34,48 @@ namespace HackneyRepairs.Controllers
             _loggerAdapter = loggerAdapter;
         }
 
+        [HttpGet("{propertyReference}/hierarchy")]
+        public async Task<JsonResult> GetPropertyHierarchy(string propertyReference)
+        {
+            try
+            {
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+                var json = Json(await actions.GetPropertyHierarchy(propertyReference));
+                json.StatusCode = 200;
+                json.ContentType = "application/json";
+                return json;
+            }
+            catch (MissingPropertyException ex)
+            {
+                var errors = new List<ApiErrorMessage>()
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = ex.Message,
+                        userMessage = "Resource identification error"
+                    }
+                };
+                var jsonResponse = Json(errors);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
+            }
+            catch (Exception e)
+            {
+                var errors = new List<ApiErrorMessage>()
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = "Internal Server Error",
+                        userMessage = "Internal Error"
+                    }
+                };
+                var jsonResponse = Json(errors);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+        }
+
+
         // GET properties
         /// <summary>
         /// Gets a property or properties for a particular postcode

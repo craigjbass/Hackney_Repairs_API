@@ -27,7 +27,7 @@ namespace HackneyRepairs.Repository
         public async Task<PropertyLevelModel> GetPropertyLevelInfo(string reference)
         {
             var propertyLevelInfo = new PropertyLevelModel();
-            var connectionString = Environment.GetEnvironmentVariable("UhwarehouseDb");
+            var connectionString = Environment.GetEnvironmentVariable("UhWarehouseDb");
 
             try
             {
