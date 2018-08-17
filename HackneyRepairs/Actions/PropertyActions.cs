@@ -37,6 +37,7 @@ namespace HackneyRepairs.Actions
                     {
                         throw new MissingPropertyException();
                     }
+                    TrimSringAttributes(response);
                     results.Add(response);
                     parent = response.MajorReference;
                 }
@@ -179,6 +180,18 @@ namespace HackneyRepairs.Actions
                 propertyReference = property.PropertyReference.Trim(),
                 maintainable = property.Maintainable
             };
+        }
+
+        private void TrimSringAttributes(object model)
+        {
+            foreach (var prop in model.GetType().GetProperties())
+            {
+                if (prop.PropertyType.Name == "String")
+                {
+                    string value = (string)prop.GetValue(model, null);
+                    prop.SetValue(model, value.Trim());
+                }
+            }
         }
     }
 
