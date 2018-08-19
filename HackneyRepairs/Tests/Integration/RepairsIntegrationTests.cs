@@ -213,5 +213,23 @@ namespace HackneyRepairs.Tests.Integration
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
         #endregion
+
+		#region Get Repair Tests
+        [Fact]
+        public async Task return_a_200_result_for_valid_request_by_property_reference()
+        {
+			var result = await _client.GetAsync("v1/repairs/?propertyReference=12345678");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task return_a_404_result_for_no_request_found_for_property_reference()
+        {
+			var result = await _client.GetAsync("v1/repairs/?propertyReference=999999999");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        #endregion
     }
 }

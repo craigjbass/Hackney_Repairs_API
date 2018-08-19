@@ -133,7 +133,7 @@ namespace HackneyRepairs.Tests.Actions
             var fakeRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
             fakeRequestBuilder.Setup(service => service.BuildRepairRequest("52525252534")).Returns(request);
             RepairsActions repairsActions = new RepairsActions(fakeService.Object, fakeRequestBuilder.Object, mockLogger.Object);
-            await Assert.ThrowsAsync<HackneyRepairs.Actions.MissingRepairException>(async () => await repairsActions.GetRepairByReference("52525252534"));
+			await Assert.ThrowsAsync<HackneyRepairs.Actions.MissingRepairRequestException>(async () => await repairsActions.GetRepairByReference("52525252534"));
         }
 
         [Fact]
@@ -301,6 +301,56 @@ namespace HackneyRepairs.Tests.Actions
             };
 
             Assert.Equal(JsonConvert.SerializeObject(response1), JsonConvert.SerializeObject(result));
+        }
+
+		[Fact]
+		public async Task get_repair_request_by_property_reference_returns_a_list_of_repairs_for_a_valid_request()
+		{
+			IEnumerable<RepairRequest> expected = new List<RepairRequest>()
+            {
+                new RepairRequest
+                {
+                    repairRequestReference = "43453543  ",
+                    ProblemDescription = "tap leaking ",
+                    Priority = "N",
+                    PropertyReference = "123456890",
+                },
+                new RepairRequest
+                {
+                    repairRequestReference = "43453542  ",
+                    ProblemDescription = "tap still leaking ",
+                    Priority = "N",
+                    PropertyReference = "123456890",
+                }
+            };
+
+			var fakeRepairService = new Mock<IHackneyRepairsService>();
+			fakeRepairService.Setup(service => service.GetRepairByPropertyReference("12345678"))
+                .ReturnsAsync(expected);
+            
+            var fakeRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
+			var mockLogger = new Mock<ILoggerAdapter<RepairsActions>>();
+
+            var repairsActions = new RepairsActions(fakeRepairService.Object, fakeRequestBuilder.Object, mockLogger.Object);
+
+			var response = repairsActions.GetRepairByPropertyReference("12345678");
+			Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(response.Result));
+		}
+
+		[Fact]
+        public async Task get_repair_request_by_property_reference_throws_an_exception_when_no_repair_request_found()
+        {
+			IEnumerable<RepairRequest> expected = new List<RepairRequest>();
+            var fakeRepairService = new Mock<IHackneyRepairsService>();
+            fakeRepairService.Setup(service => service.GetRepairByPropertyReference("12345678"))
+                .ReturnsAsync(expected);
+
+            var fakeRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
+            var mockLogger = new Mock<ILoggerAdapter<RepairsActions>>();
+
+            var repairsActions = new RepairsActions(fakeRepairService.Object, fakeRequestBuilder.Object, mockLogger.Object);
+
+			await Assert.ThrowsAsync<HackneyRepairs.Actions.MissingRepairRequestException>(async () => await repairsActions.GetRepairByPropertyReference("12345678"));
         }
     }
 }

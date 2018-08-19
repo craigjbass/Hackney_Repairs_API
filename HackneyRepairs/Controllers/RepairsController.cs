@@ -108,7 +108,7 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-            catch (MissingRepairException ex)
+			catch (MissingRepairRequestException ex)
             {
                 //var json = Json(new object());
                 //json.StatusCode = 404;
@@ -147,7 +147,7 @@ namespace HackneyRepairs.Controllers
 
 		// GET Repair Requests by property reference
         /// <summary>
-        /// Returns all Repair Requests for a property
+		/// Returns all Repair Requests for a property, for the work orders and contact details call /v1/repairs/{repairRequestReference}
         /// </summary>
 		/// <param name="propertyReference">Universal Housing property reference</param>
         /// <returns>A list of Repair Requests</returns>
@@ -179,7 +179,7 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-            catch (MissingRepairException ex)
+			catch (MissingRepairRequestException ex)
             {
                 var errors = new List<ApiErrorMessage>
                 {

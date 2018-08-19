@@ -197,9 +197,33 @@ namespace HackneyRepairs.Services
             return Task.FromResult(false);
         }
 
-        public Task<IEnumerable<RepairRequestEntity>> GetRepairByPropertyReference(string propertyReference)
+		public Task<IEnumerable<RepairRequest>> GetRepairByPropertyReference(string propertyReference)
         {
-            throw new NotImplementedException();
+			IEnumerable<RepairRequest> requests = new List<RepairRequest>()
+			{
+				new RepairRequest
+				{
+					repairRequestReference = "43453543  ",
+					ProblemDescription = "tap leaking ",
+					Priority = "N",
+					PropertyReference = "123456890",
+				},
+				new RepairRequest
+                {
+                    repairRequestReference = "43453542  ",
+                    ProblemDescription = "tap still leaking ",
+                    Priority = "N",
+                    PropertyReference = "123456890",
+                }
+			};
+
+			switch (propertyReference)
+            {
+                case "999999999":
+					return Task.Run(() => new List<RepairRequest>().AsEnumerable());
+                default:
+					return Task.Run(() => requests);
+            }
         }
     }
 }

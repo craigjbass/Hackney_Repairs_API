@@ -275,15 +275,26 @@ namespace HackneyRepairs.Repository
             return queryResult;
         }
 
-        public async Task<IEnumerable<RepairRequestEntity>> GetRepairRequests(string propertyReference)
+		public async Task<IEnumerable<RepairRequest>> GetRepairRequests(string propertyReference)
         {
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    string query = $"SELECT * FROM rmreqst WHERE prop_ref = '{propertyReference}'";
-                    var queryResult = connection.Query<RepairRequestEntity>(query).ToList();
-                    return queryResult;
+					//string query = $"SELECT rq_ref FROM rmreqst WHERE prop_ref = '{propertyReference}'";
+                    // Get repairs requests
+					string query = $@"select    r.rq_ref as repairRequestReference,
+                                                r.rq_problem as problemDescription,
+                                                r.rq_priority as priority,
+                                                r.prop_ref as propertyReference,
+                                                r.rq_name as name,
+                                                r.rq_phone as TelephoneNumber
+
+                                                FROM rmreqst r
+                                              
+                                                where r.prop_ref = '{propertyReference}'";
+					var repairs = connection.Query<RepairRequest>(query).ToList();
+                    return repairs;
                 }
             }
             catch (Exception ex)

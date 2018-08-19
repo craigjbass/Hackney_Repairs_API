@@ -8,6 +8,7 @@ namespace HackneyRepairs.Models
 {
     public class RepairRequest
     {
+		public string repairRequestReference { get; set; }
         public string Priority { get; set; }
         public string PropertyReference { get; set; }
         public string ProblemDescription { get; set; }

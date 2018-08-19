@@ -22,19 +22,19 @@ namespace HackneyRepairs.Actions
 			_logger = logger;
 		}
 
-        public async Task<IEnumerable<RepairRequestEntity>> GetRepairByPropertyReference(string propertyReference)
+        public async Task<IEnumerable<RepairRequest>> GetRepairByPropertyReference(string propertyReference)
         {
             _logger.LogInformation($"Finding repair requests for Id: {propertyReference}");
-            var result = await _repairsService.GetRepairByPropertyReference(propertyReference);
-            if (((List<RepairRequestEntity>)result).Count == 0)
+            var repairRequests = await _repairsService.GetRepairByPropertyReference(propertyReference);
+			if (((List<RepairRequest>)repairRequests).Count == 0)
             {
                 _logger.LogError($"Repairs not found for Id: {propertyReference}");
-                throw new MissingRepairException();
+				throw new MissingRepairRequestException();
             }
             _logger.LogInformation($"Repair request details returned for: {propertyReference}");
-            return result;
+			return repairRequests;
         }
-
+        
 		public async Task<object> CreateRepair(RepairRequest request)
 		{
 			if (request.WorkOrders != null)
@@ -56,10 +56,10 @@ namespace HackneyRepairs.Actions
 			{
 				throw new RepairsServiceException();
 			}
-			var repairResponse = response.RepairRequest;
+			RepairRequestDto repairResponse = response.RepairRequest;
 			if (repairResponse == null)
 			{
-				throw new MissingRepairException();
+				throw new MissingRepairRequestException();
 			}
 			var tasksListResponse = await GetRepairTasksList(reference);
 			var tasksList = tasksListResponse.TaskList;
@@ -175,9 +175,6 @@ namespace HackneyRepairs.Actions
 	}
 
 	public class RepairsServiceException : Exception
-	{
-	}
-	public class MissingRepairException : Exception
 	{
 	}
 }
