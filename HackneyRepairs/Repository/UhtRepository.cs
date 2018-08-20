@@ -237,9 +237,9 @@ namespace HackneyRepairs.Repository
 		}
 
 
-		public async Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference)
+		public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
-			UHWorkOrderExtended workOrder;
+			UHWorkOrder workOrder;
 			try
 			{
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -264,7 +264,7 @@ namespace HackneyRepairs.Repository
                                     INNER JOIN rmtrade tr ON tr.trade = t.trade
                                     WHERE wo.wo_ref = '{workOrderReference}'";
 					
-					workOrder = connection.Query<UHWorkOrderExtended>(query).FirstOrDefault();
+					workOrder = connection.Query<UHWorkOrder>(query).FirstOrDefault();
 				}
 			}
 			catch (Exception ex)
@@ -275,9 +275,9 @@ namespace HackneyRepairs.Repository
 			return workOrder;
 		}
 
-		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+		public async Task<IEnumerable<UHWorkOrderBase>> GetWorkOrderByPropertyReference(string propertyReference)
         {
-			List<UHWorkOrder> queryResult;
+			List<UHWorkOrderBase> queryResult;
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -297,7 +297,7 @@ namespace HackneyRepairs.Repository
                                     FROM rmworder wo
                                     INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                     WHERE wo.prop_ref = '{propertyReference}'";
-					queryResult = connection.Query<UHWorkOrder>(query).ToList();
+					queryResult = connection.Query<UHWorkOrderBase>(query).ToList();
                 }
             }
             catch (Exception ex)
@@ -314,7 +314,6 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-					//string query = $"SELECT rq_ref FROM rmreqst WHERE prop_ref = '{propertyReference}'";
                     // Get repairs requests
 					string query = $@"select    r.rq_ref as repairRequestReference,
                                                 r.rq_problem as problemDescription,

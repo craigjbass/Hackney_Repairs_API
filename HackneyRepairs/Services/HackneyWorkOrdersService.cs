@@ -29,7 +29,7 @@ namespace HackneyRepairs.Services
             return response;
 		}
 
-		public Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference)
+		public Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
             var response = _uhtRepository.GetWorkOrder(workOrderReference);
@@ -37,7 +37,7 @@ namespace HackneyRepairs.Services
             return response;
         }
 
-		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+		public Task<IEnumerable<UHWorkOrderBase>> GetWorkOrderByPropertyReference(string propertyReference)
         {
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
             var response = _uhtRepository.GetWorkOrderByPropertyReference(propertyReference);

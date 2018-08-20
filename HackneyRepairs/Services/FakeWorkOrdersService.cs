@@ -10,33 +10,33 @@ namespace HackneyRepairs.Services
 {
 	public class FakeWorkOrdersService : IHackneyWorkOrdersService
     {      
-		public Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference)
+		public Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
 			if (string.Equals(workOrderReference, "9999999999"))
 			{
-				return Task.Run(() => (UHWorkOrderExtended)null);
+				return Task.Run(() => (UHWorkOrder)null);
 			}
-			var workOrder = new UHWorkOrderExtended
+			var workOrder = new UHWorkOrder
 			{
 				WorkOrderReference = workOrderReference
 			};
 			return Task.Run(() => workOrder);
 		}
 
-		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+		public Task<IEnumerable<UHWorkOrderBase>> GetWorkOrderByPropertyReference(string propertyReference)
         {
             if (string.Equals(propertyReference, "9999999999"))
             {
-				return Task.Run(() => (IEnumerable<UHWorkOrder>)new List<UHWorkOrder>());
+				return Task.Run(() => (IEnumerable<UHWorkOrderBase>)new List<UHWorkOrderBase>());
             }
-			var workOrder = new List<UHWorkOrder>
+			var workOrder = new List<UHWorkOrderBase>
             {
-				new UHWorkOrder
+				new UHWorkOrderBase
                 {
                     PropertyReference = propertyReference
                 }
             };
-			return Task.Run(() => (IEnumerable<UHWorkOrder>)workOrder);
+			return Task.Run(() => (IEnumerable<UHWorkOrderBase>)workOrder);
         }
 
 		public Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference)

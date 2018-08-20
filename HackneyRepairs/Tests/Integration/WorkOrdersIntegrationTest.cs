@@ -30,9 +30,9 @@ namespace HackneyRepairs.Tests.Integration
         {
             var result = await _client.GetAsync("v1/work_orders/12345678");
             var jsonResult = await result.Content.ReadAsStringAsync();
-			var workOrder = JsonConvert.DeserializeObject<UHWorkOrderExtended>(jsonResult);
+			var workOrder = JsonConvert.DeserializeObject<UHWorkOrder>(jsonResult);
 
-			Assert.IsType<UHWorkOrderExtended>(workOrder);
+			Assert.IsType<UHWorkOrder>(workOrder);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
@@ -72,9 +72,9 @@ namespace HackneyRepairs.Tests.Integration
         {
             var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678");
             var jsonresult = await result.Content.ReadAsStringAsync();
-            var workOrder = JsonConvert.DeserializeObject<List<WorkOrderEntity>>(jsonresult).ToList();
+			var workOrder = JsonConvert.DeserializeObject<List<UHWorkOrderBase>>(jsonresult).ToList();
 
-            Assert.IsType<List<WorkOrderEntity>>(workOrder);
+			Assert.IsType<List<UHWorkOrderBase>>(workOrder);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }

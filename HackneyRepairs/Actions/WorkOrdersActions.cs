@@ -19,7 +19,7 @@ namespace HackneyRepairs.Actions
 			_logger = logger;
         }
 
-		public async Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference)
+		public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
 			_logger.LogInformation($"Finding work order details for reference: {workOrderReference}");
 		    var result = await _workOrdersService.GetWorkOrder(workOrderReference);            
@@ -32,11 +32,11 @@ namespace HackneyRepairs.Actions
 			return result;
 		}
         
-        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyId)
+		public async Task<IEnumerable<UHWorkOrderBase>> GetWorkOrderByPropertyReference(string propertyId)
         {
             _logger.LogInformation($"Finding work order details for Id: {propertyId}");
             var result = await _workOrdersService.GetWorkOrderByPropertyReference(propertyId);
-			if (((List<UHWorkOrder>)result).Count == 0)
+			if (((List<UHWorkOrderBase>)result).Count == 0)
             {
                 _logger.LogError($"Work order not found for Id: {propertyId}");
                 throw new MissingWorkOrderException();
