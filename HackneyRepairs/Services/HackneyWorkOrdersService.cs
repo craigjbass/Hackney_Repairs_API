@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Services
 {
@@ -28,7 +29,7 @@ namespace HackneyRepairs.Services
             return response;
 		}
 
-		public Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
+		public Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference)
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
             var response = _uhtRepository.GetWorkOrder(workOrderReference);
@@ -36,7 +37,7 @@ namespace HackneyRepairs.Services
             return response;
         }
 
-        public Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyReference)
+		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
             var response = _uhtRepository.GetWorkOrderByPropertyReference(propertyReference);

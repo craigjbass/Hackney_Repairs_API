@@ -237,15 +237,34 @@ namespace HackneyRepairs.Repository
 		}
 
 
-		public async Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
+		public async Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference)
 		{
-			WorkOrderEntity workOrder;
+			UHWorkOrderExtended workOrder;
 			try
 			{
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
 				{
-					string query = $"SELECT * FROM rmworder WHERE wo_ref = '{workOrderReference}'";
-					workOrder = connection.Query<WorkOrderEntity>(query).FirstOrDefault();
+					string query = $@"SELECT    LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
+                                                LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
+                                                r.rq_problem AS ProblemDescription,
+                                                wo.created AS Created,
+                                                wo.est_cost AS EstimatedCost,
+                                                wo.act_cost AS ActualCost,
+                                                wo.completed AS CompletedOn,
+                                                wo.date_due AS DateDue,
+                                                LTRIM(RTRIM(wo.wo_status)) AS WorkOrderStatus,
+                                                LTRIM(RTRIM(wo.u_dlo_status)) AS DLOStatus,
+                                                LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
+                                                LTRIM(RTRIM(wo.prop_ref)) AS PropertyReference,
+                                                LTRIM(RTRIM(t.job_code)) AS SORCode,
+                                                LTRIM(RTRIM(tr.trade_desc)) AS Trade
+                                    FROM rmworder wo
+                                    INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
+                                    INNER JOIN rmtask t ON t.wo_ref = wo.wo_ref
+                                    INNER JOIN rmtrade tr ON tr.trade = t.trade
+                                    WHERE wo.wo_ref = '{workOrderReference}'";
+					
+					workOrder = connection.Query<UHWorkOrderExtended>(query).FirstOrDefault();
 				}
 			}
 			catch (Exception ex)
@@ -256,15 +275,29 @@ namespace HackneyRepairs.Repository
 			return workOrder;
 		}
 
-        public async Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyReference)
+		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
-            List<WorkOrderEntity> queryResult;
+			List<UHWorkOrder> queryResult;
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    string query = $"SELECT * FROM rmworder WHERE prop_ref = '{propertyReference}'";
-                    queryResult = connection.Query<WorkOrderEntity>(query).ToList();
+					string query = $@"SELECT    LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
+                                                LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
+                                                r.rq_problem AS ProblemDescription,
+                                                wo.created AS Created,
+                                                wo.est_cost AS EstimatedCost,
+                                                wo.act_cost AS ActualCost,
+                                                wo.completed AS CompletedOn,
+                                                wo.date_due AS DateDue,
+                                                LTRIM(RTRIM(wo.wo_status)) AS WorkOrderStatus,
+                                                LTRIM(RTRIM(wo.u_dlo_status)) AS DLOStatus,
+                                                LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
+                                                LTRIM(RTRIM(wo.prop_ref)) AS PropertyReference
+                                    FROM rmworder wo
+                                    INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
+                                    WHERE wo.prop_ref = '{propertyReference}'";
+					queryResult = connection.Query<UHWorkOrder>(query).ToList();
                 }
             }
             catch (Exception ex)
@@ -275,7 +308,7 @@ namespace HackneyRepairs.Repository
             return queryResult;
         }
 
-		public async Task<IEnumerable<RepairRequest>> GetRepairRequests(string propertyReference)
+		public async Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference)
         {
             try
             {
@@ -286,14 +319,10 @@ namespace HackneyRepairs.Repository
 					string query = $@"select    r.rq_ref as repairRequestReference,
                                                 r.rq_problem as problemDescription,
                                                 r.rq_priority as priority,
-                                                r.prop_ref as propertyReference,
-                                                r.rq_name as name,
-                                                r.rq_phone as TelephoneNumber
-
+                                                r.prop_ref as propertyReference
                                                 FROM rmreqst r
-                                              
                                                 where r.prop_ref = '{propertyReference}'";
-					var repairs = connection.Query<RepairRequest>(query).ToList();
+					var repairs = connection.Query<RepairRequestBase>(query).ToList();
                     return repairs;
                 }
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 using HackneyRepairs.Repository;
 
 namespace HackneyRepairs.Actions
@@ -18,7 +19,7 @@ namespace HackneyRepairs.Actions
 			_logger = logger;
         }
 
-		public async Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
+		public async Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference)
 		{
 			_logger.LogInformation($"Finding work order details for reference: {workOrderReference}");
 		    var result = await _workOrdersService.GetWorkOrder(workOrderReference);            
@@ -30,16 +31,17 @@ namespace HackneyRepairs.Actions
 			_logger.LogInformation($"Work order details returned for: {workOrderReference}");
 			return result;
 		}
-
-        public async Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyId)
+        
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyId)
         {
             _logger.LogInformation($"Finding work order details for Id: {propertyId}");
             var result = await _workOrdersService.GetWorkOrderByPropertyReference(propertyId);
-            if (((List<WorkOrderEntity>)result).Count == 0)
+			if (((List<UHWorkOrder>)result).Count == 0)
             {
                 _logger.LogError($"Work order not found for Id: {propertyId}");
                 throw new MissingWorkOrderException();
             }
+            //
             _logger.LogInformation($"Work order details returned for: {propertyId}");
             return result;
         }

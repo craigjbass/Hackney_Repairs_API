@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using HackneyRepairs.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Tests.Integration
 {
@@ -29,9 +30,9 @@ namespace HackneyRepairs.Tests.Integration
         {
             var result = await _client.GetAsync("v1/work_orders/12345678");
             var jsonResult = await result.Content.ReadAsStringAsync();
-            var workOrder = JsonConvert.DeserializeObject<WorkOrderEntity>(jsonResult);
+			var workOrder = JsonConvert.DeserializeObject<UHWorkOrderExtended>(jsonResult);
 
-            Assert.IsType<WorkOrderEntity>(workOrder);
+			Assert.IsType<UHWorkOrderExtended>(workOrder);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }

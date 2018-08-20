@@ -23,7 +23,7 @@ namespace HackneyRepairs.Services
 			_logger = logger;
 		}
 
-		public Task<IEnumerable<RepairRequest>> GetRepairByPropertyReference(string propertyReference)
+		public Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference)
         {
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
             var response = _uhtRepository.GetRepairRequests(propertyReference);

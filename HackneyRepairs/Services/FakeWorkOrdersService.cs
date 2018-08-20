@@ -4,38 +4,39 @@ using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Services
 {
 	public class FakeWorkOrdersService : IHackneyWorkOrdersService
     {      
-        public Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
+		public Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference)
 		{
 			if (string.Equals(workOrderReference, "9999999999"))
 			{
-				return Task.Run(() => (WorkOrderEntity)null);
+				return Task.Run(() => (UHWorkOrderExtended)null);
 			}
-			var workOrderEntity = new WorkOrderEntity
+			var workOrder = new UHWorkOrderExtended
 			{
-				wo_ref = workOrderReference
+				WorkOrderReference = workOrderReference
 			};
-			return Task.Run(() => workOrderEntity);
+			return Task.Run(() => workOrder);
 		}
 
-        public Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyReference)
+		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
             if (string.Equals(propertyReference, "9999999999"))
             {
-                return Task.Run(() => (IEnumerable<WorkOrderEntity>)new List<WorkOrderEntity>());
+				return Task.Run(() => (IEnumerable<UHWorkOrder>)new List<UHWorkOrder>());
             }
-            var workOrderEntity = new List<WorkOrderEntity>
+			var workOrder = new List<UHWorkOrder>
             {
-                new WorkOrderEntity
+				new UHWorkOrder
                 {
-                    prop_ref = propertyReference
+                    PropertyReference = propertyReference
                 }
             };
-            return Task.Run(() => (IEnumerable<WorkOrderEntity>)workOrderEntity);
+			return Task.Run(() => (IEnumerable<UHWorkOrder>)workOrder);
         }
 
 		public Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference)

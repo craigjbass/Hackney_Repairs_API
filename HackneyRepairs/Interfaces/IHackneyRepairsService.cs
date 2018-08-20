@@ -9,7 +9,7 @@ namespace HackneyRepairs.Interfaces
 {
     public interface IHackneyRepairsService
     {
-		Task<IEnumerable<RepairRequest>> GetRepairByPropertyReference(string propertyReference);       
+		Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference);       
         Task<RepairCreateResponse> CreateRepairAsync(NewRepairRequest request);
         Task<RepairGetResponse> GetRepairRequestByReferenceAsync(RepairRefRequest request);
         Task<WorksOrderListResponse> CreateRepairWithOrderAsync(NewRepairTasksRequest repairRequest);

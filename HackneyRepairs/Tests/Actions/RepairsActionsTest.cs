@@ -306,18 +306,18 @@ namespace HackneyRepairs.Tests.Actions
 		[Fact]
 		public async Task get_repair_request_by_property_reference_returns_a_list_of_repairs_for_a_valid_request()
 		{
-			IEnumerable<RepairRequest> expected = new List<RepairRequest>()
+			IEnumerable<RepairRequestBase> expected = new List<RepairRequestBase>()
             {
-                new RepairRequest
+				new RepairRequestBase
                 {
-                    repairRequestReference = "43453543  ",
+                    RepairRequestReference = "43453543  ",
                     ProblemDescription = "tap leaking ",
                     Priority = "N",
                     PropertyReference = "123456890",
                 },
-                new RepairRequest
+				new RepairRequestBase
                 {
-                    repairRequestReference = "43453542  ",
+                    RepairRequestReference = "43453542  ",
                     ProblemDescription = "tap still leaking ",
                     Priority = "N",
                     PropertyReference = "123456890",
@@ -340,7 +340,7 @@ namespace HackneyRepairs.Tests.Actions
 		[Fact]
         public async Task get_repair_request_by_property_reference_throws_an_exception_when_no_repair_request_found()
         {
-			IEnumerable<RepairRequest> expected = new List<RepairRequest>();
+			IEnumerable<RepairRequestBase> expected = new List<RepairRequestBase>();
             var fakeRepairService = new Mock<IHackneyRepairsService>();
             fakeRepairService.Setup(service => service.GetRepairByPropertyReference("12345678"))
                 .ReturnsAsync(expected);

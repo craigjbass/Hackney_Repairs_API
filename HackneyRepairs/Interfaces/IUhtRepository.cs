@@ -13,9 +13,9 @@ namespace HackneyRepairs.Interfaces
         Task<bool> UpdateRequestStatus(string repairRequestReference);
         Task<int?> UpdateVisitAndBlockTrigger(string workOrderReference, DateTime startDate, DateTime endDate, int orderId, int bookingId, string slotDetail);
         Task<bool> GetMaintainableFlag(string propertyReference);
-        Task<WorkOrderEntity> GetWorkOrder(string workOrderReference);
-        Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyId);
-		Task<IEnumerable<RepairRequest>> GetRepairRequests(string propertyReference);
+		Task<UHWorkOrderExtended> GetWorkOrder(string workOrderReference);
+		Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyId);
+		Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference);
 		Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference(string workOrderReference);
     }
 }

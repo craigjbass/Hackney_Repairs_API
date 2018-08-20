@@ -22,11 +22,11 @@ namespace HackneyRepairs.Actions
 			_logger = logger;
 		}
 
-        public async Task<IEnumerable<RepairRequest>> GetRepairByPropertyReference(string propertyReference)
+		public async Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference)
         {
             _logger.LogInformation($"Finding repair requests for Id: {propertyReference}");
             var repairRequests = await _repairsService.GetRepairByPropertyReference(propertyReference);
-			if (((List<RepairRequest>)repairRequests).Count == 0)
+			if (((List<RepairRequestBase>)repairRequests).Count == 0)
             {
                 _logger.LogError($"Repairs not found for Id: {propertyReference}");
 				throw new MissingRepairRequestException();
