@@ -46,7 +46,7 @@ namespace HackneyRepairs.Actions
             return result;
         }
 
-		public async Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference)
+		public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
 		{
 			_logger.LogInformation($"Finding notes by work order: {workOrderReference}");
 			var result = await _workOrdersService.GetNotesByWorkOrderReference(workOrderReference);
@@ -56,7 +56,19 @@ namespace HackneyRepairs.Actions
                 throw new MissingNotesException();
             }
 			_logger.LogInformation($"Notes returned for: {workOrderReference}");
-            return result;
+
+            var noteModelList = new List<Note>();
+            foreach (NotesEntity noteEntity in result)
+            {
+                var note = new Note()
+                {
+                    Text = noteEntity.NoteText,
+                    LoggedAt = noteEntity.NDate,
+                    LoggedBy = noteEntity.UserID
+                };
+                noteModelList.Add(note);
+            }
+            return noteModelList;
 		}
     }
     
