@@ -31,7 +31,7 @@ namespace HackneyRepairs.Actions
 			return result;
 		}
 
-        public async Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyId)
+        public async Task<IEnumerable<WorkOrderEntity>> GetWorkOrdersByPropertyReference(string propertyId)
         {
             _logger.LogInformation($"Finding work order details for Id: {propertyId}");
             var result = await _workOrdersService.GetWorkOrderByPropertyReference(propertyId);

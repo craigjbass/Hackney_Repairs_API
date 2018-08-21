@@ -175,7 +175,7 @@ namespace HackneyRepairs.Controllers
             try
             {
                 RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
-                var json = Json(await repairActions.GetRepairByPropertyReference(propertyReference));
+                var json = Json(await repairActions.GetRepairsByPropertyReference(propertyReference));
                 json.StatusCode = 200;
                 return json;
             }

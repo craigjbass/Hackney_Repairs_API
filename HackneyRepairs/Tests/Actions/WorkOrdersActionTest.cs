@@ -77,7 +77,7 @@ namespace HackneyRepairs.Tests.Actions
 							 .Returns(Task.FromResult<IEnumerable<WorkOrderEntity>>(fakeResponse));
 			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object,
 																		_mockLogger.Object);
-			var response = await workOrdersActions.GetWorkOrderByPropertyReference("12345678");
+			var response = await workOrdersActions.GetWorkOrdersByPropertyReference("12345678");
 
 			Assert.True(response is List<WorkOrderEntity>);
 		}
@@ -98,7 +98,7 @@ namespace HackneyRepairs.Tests.Actions
 							 .Returns(Task.FromResult<IEnumerable<WorkOrderEntity>>(fakeResponse));
 			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
 
-			var response = await workOrdersActions.GetWorkOrderByPropertyReference(randomReference);
+			var response = await workOrdersActions.GetWorkOrdersByPropertyReference(randomReference);
 			var expected = new List<WorkOrderEntity>
 			{
 				new WorkOrderEntity { prop_ref = randomReference }
@@ -117,7 +117,7 @@ namespace HackneyRepairs.Tests.Actions
 							 .Returns(Task.FromResult<IEnumerable<WorkOrderEntity>>((new List<WorkOrderEntity>())));
 			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
 
-			await Assert.ThrowsAsync<MissingWorkOrderException>(async () => await workOrdersActions.GetWorkOrderByPropertyReference(randomReference));
+			await Assert.ThrowsAsync<MissingWorkOrderException>(async () => await workOrdersActions.GetWorkOrdersByPropertyReference(randomReference));
 		}
 		#endregion
 

@@ -22,7 +22,7 @@ namespace HackneyRepairs.Actions
 			_logger = logger;
 		}
 
-        public async Task<IEnumerable<RepairRequestEntity>> GetRepairByPropertyReference(string propertyReference)
+        public async Task<IEnumerable<RepairRequestEntity>> GetRepairsByPropertyReference(string propertyReference)
         {
             _logger.LogInformation($"Finding repair requests for Id: {propertyReference}");
             var result = await _repairsService.GetRepairByPropertyReference(propertyReference);
