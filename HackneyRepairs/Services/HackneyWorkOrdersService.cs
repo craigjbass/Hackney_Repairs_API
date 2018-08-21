@@ -21,7 +21,7 @@ namespace HackneyRepairs.Services
             _logger = logger;
         }
 
-		public Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference)
+		public Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
 		{
 			_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
 			var response = _uhwRepository.GetNotesByWorkOrderReference(workOrderReference);

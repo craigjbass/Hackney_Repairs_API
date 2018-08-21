@@ -50,25 +50,13 @@ namespace HackneyRepairs.Actions
 		{
 			_logger.LogInformation($"Finding notes by work order: {workOrderReference}");
 			var result = await _workOrdersService.GetNotesByWorkOrderReference(workOrderReference);
-			if (((List<NotesEntity>)result).Count == 0)
+			if (((List<Note>)result).Count == 0)
             {
 				_logger.LogError($"Notes not found for: {workOrderReference}");
                 throw new MissingNotesException();
             }
 			_logger.LogInformation($"Notes returned for: {workOrderReference}");
-
-            var noteModelList = new List<Note>();
-            foreach (NotesEntity noteEntity in result)
-            {
-                var note = new Note()
-                {
-                    Text = noteEntity.NoteText,
-                    LoggedAt = noteEntity.NDate,
-                    LoggedBy = noteEntity.UserID
-                };
-                noteModelList.Add(note);
-            }
-            return noteModelList;
+            return result;
 		}
     }
     

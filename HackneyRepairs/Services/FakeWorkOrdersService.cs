@@ -39,22 +39,22 @@ namespace HackneyRepairs.Services
 			return Task.Run(() => (IEnumerable<UHWorkOrderBase>)workOrder);
         }
 
-		public Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference)
+		public Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
         {
 			if (string.Equals(workOrderReference, "99999999"))
             {
-				return Task.Run(() => (IEnumerable<NotesEntity>)new List<NotesEntity>());
+				return Task.Run(() => (IEnumerable<Note>)new List<Note>());
             }
-			var noteEntities = new List<NotesEntity>
+            var noteEntities = new List<Note>
             {
-				new NotesEntity{
-					KeyObject = "UHOrder",
-					NoteText = "Some note"
-
+                new Note()
+                {
+                    Text = "Some note",
+                    LoggedBy = "UHOrder"
 				}
           
             };
-			return Task.Run(() => (IEnumerable<NotesEntity>)noteEntities);
+			return Task.Run(() => (IEnumerable<Note>)noteEntities);
         }
 	}
 }

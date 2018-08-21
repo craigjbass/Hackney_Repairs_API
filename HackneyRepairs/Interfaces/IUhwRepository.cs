@@ -10,6 +10,6 @@ namespace HackneyRepairs.Interfaces
     public interface IUhwRepository
     {
         Task AddOrderDocumentAsync(string documentType, string workOrderReference, int workOrderId, string processComment);
-		Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference);
+		Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference);
     }
 }

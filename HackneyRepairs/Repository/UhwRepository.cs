@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using HackneyRepairs.Entities;
 using Dapper;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Repository
 {
@@ -69,9 +70,9 @@ namespace HackneyRepairs.Repository
 			}
 		}      
 
-		public async Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference)
+		public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
 		{
-			IEnumerable<NotesEntity> notes;
+			IEnumerable<Note> notes;
 			try
 			{
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -82,7 +83,9 @@ namespace HackneyRepairs.Repository
 					{
 						
 						case "Production":
-							query = $@"SELECT note.*
+							query = $@"SELECT
+                                    note.NoteText AS Text, note.NDate as LoggedAt,
+                                    note.UserID as LoggedBy
                                     FROM
                                     uhwlive.dbo.W2ObjectNote AS note
                                     INNER JOIN uhtlive.dbo.rmworder AS work_order
@@ -90,7 +93,9 @@ namespace HackneyRepairs.Repository
                                     where work_order.wo_ref = '{workOrderReference}'";
 							break;
                         default:
-                            query = $@"SELECT note.*
+                            query = $@"SELECT
+                                    note.NoteText AS Text, note.NDate as LoggedAt,
+                                    note.UserID as LoggedBy
                                     FROM
                                     uhwdev.dbo.W2ObjectNote AS note
                                     INNER JOIN uhtdev.dbo.rmworder AS work_order
@@ -98,7 +103,7 @@ namespace HackneyRepairs.Repository
                                     where work_order.wo_ref = '{workOrderReference}'";
                             break;
 					}
-					notes = connection.Query<NotesEntity>(query);
+					notes = connection.Query<Note>(query);
 				}
 			}
 			catch (Exception ex)

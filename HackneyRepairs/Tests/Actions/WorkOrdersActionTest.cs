@@ -128,13 +128,13 @@ namespace HackneyRepairs.Tests.Actions
         {
 			Random rnd = new Random();
             string randomReference = rnd.Next(100000000, 999999999).ToString();
-			List<NotesEntity> fakeResponse = new List<NotesEntity>
+			List<Note> fakeResponse = new List<Note>
             {
-				new NotesEntity()
+				new Note()
             };
             Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
             _workOrderService.Setup(service => service.GetNotesByWorkOrderReference(It.IsAny<string>()))
-			                 .Returns(Task.FromResult<IEnumerable<NotesEntity>>(fakeResponse));
+			                 .Returns(Task.FromResult<IEnumerable<Note>>(fakeResponse));
             WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object,
                                                                         _mockLogger.Object);
 			var response = await workOrdersActions.GetNotesByWorkOrderReference(randomReference);
@@ -149,7 +149,7 @@ namespace HackneyRepairs.Tests.Actions
             string randomReference = rnd.Next(100000000, 999999999).ToString();
             Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
             _workOrderService.Setup(service => service.GetNotesByWorkOrderReference(randomReference))
-			                 .Returns(Task.FromResult<IEnumerable<NotesEntity>>((new List<NotesEntity>())));
+			                 .Returns(Task.FromResult<IEnumerable<Note>>((new List<Note>())));
             WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
 
 			await Assert.ThrowsAsync<MissingNotesException>(async () => await workOrdersActions.GetNotesByWorkOrderReference(randomReference));
