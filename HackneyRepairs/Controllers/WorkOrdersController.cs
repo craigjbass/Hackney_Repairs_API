@@ -104,7 +104,7 @@ namespace HackneyRepairs.Controllers
             }
 
             var workOrdersActions = new WorkOrdersActions(_workOrdersService, _loggerAdapter);
-			var result = new List<UHWorkOrderBase>();
+			var result = new List<UHWorkOrder>();
             try
             {
                 result = (await workOrdersActions.GetWorkOrderByPropertyReference(propertyReference)).ToList();

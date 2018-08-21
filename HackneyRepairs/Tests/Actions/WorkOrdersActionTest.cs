@@ -69,13 +69,13 @@ namespace HackneyRepairs.Tests.Actions
 		[Fact]
 		public async Task get_by_property_reference_returns_list_work_orders()
 		{
-			List<UHWorkOrderBase> fakeResponse = new List<UHWorkOrderBase>
+			List<UHWorkOrder> fakeResponse = new List<UHWorkOrder>
 			{
-				new UHWorkOrderBase()
+				new UHWorkOrder()
 			};
 			Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
 			_workOrderService.Setup(service => service.GetWorkOrderByPropertyReference(It.IsAny<string>()))
-			                 .Returns(Task.FromResult<IEnumerable<UHWorkOrderBase>>(fakeResponse));
+			                 .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(fakeResponse));
 			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object,
 																		_mockLogger.Object);
 			var response = await workOrdersActions.GetWorkOrderByPropertyReference("12345678");
@@ -89,14 +89,14 @@ namespace HackneyRepairs.Tests.Actions
 			Random rnd = new Random();
 			string randomReference = rnd.Next(10000000, 99999999).ToString();
 
-			var fakeResponse = new List<UHWorkOrderBase>
+			var fakeResponse = new List<UHWorkOrder>
 			{
-				new UHWorkOrderBase { PropertyReference = randomReference }
+				new UHWorkOrder { PropertyReference = randomReference }
 			};
 
 			Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
 			_workOrderService.Setup(service => service.GetWorkOrderByPropertyReference(randomReference))
-			                 .Returns(Task.FromResult<IEnumerable<UHWorkOrderBase>>(fakeResponse));
+			                 .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(fakeResponse));
 			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
 
 			var response = await workOrdersActions.GetWorkOrderByPropertyReference(randomReference);
@@ -115,7 +115,7 @@ namespace HackneyRepairs.Tests.Actions
 			string randomReference = rnd.Next(100000000, 999999990).ToString();
 			Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
 			_workOrderService.Setup(service => service.GetWorkOrderByPropertyReference(randomReference))
-			                 .Returns(Task.FromResult<IEnumerable<UHWorkOrderBase>>((new List<UHWorkOrderBase>())));
+			                 .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>((new List<UHWorkOrder>())));
 			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
 
 			await Assert.ThrowsAsync<MissingWorkOrderException>(async () => await workOrdersActions.GetWorkOrderByPropertyReference(randomReference));

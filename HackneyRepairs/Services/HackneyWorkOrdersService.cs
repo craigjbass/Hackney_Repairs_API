@@ -37,7 +37,7 @@ namespace HackneyRepairs.Services
             return response;
         }
 
-		public Task<IEnumerable<UHWorkOrderBase>> GetWorkOrderByPropertyReference(string propertyReference)
+		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
             var response = _uhtRepository.GetWorkOrderByPropertyReference(propertyReference);

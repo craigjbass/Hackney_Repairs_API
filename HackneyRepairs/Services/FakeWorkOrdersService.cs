@@ -23,20 +23,20 @@ namespace HackneyRepairs.Services
 			return Task.Run(() => workOrder);
 		}
 
-		public Task<IEnumerable<UHWorkOrderBase>> GetWorkOrderByPropertyReference(string propertyReference)
+		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
             if (string.Equals(propertyReference, "9999999999"))
             {
-				return Task.Run(() => (IEnumerable<UHWorkOrderBase>)new List<UHWorkOrderBase>());
+				return Task.Run(() => (IEnumerable<UHWorkOrder>)new List<UHWorkOrder>());
             }
-			var workOrder = new List<UHWorkOrderBase>
+			var workOrder = new List<UHWorkOrder>
             {
-				new UHWorkOrderBase
+				new UHWorkOrder
                 {
                     PropertyReference = propertyReference
                 }
             };
-			return Task.Run(() => (IEnumerable<UHWorkOrderBase>)workOrder);
+			return Task.Run(() => (IEnumerable<UHWorkOrder>)workOrder);
         }
 
 		public Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
