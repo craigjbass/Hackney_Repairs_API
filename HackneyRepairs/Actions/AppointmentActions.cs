@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Text;
 using HackneyRepairs.Formatters;
+using HackneyRepairs.Entities;
 
 namespace HackneyRepairs.Actions
 {
@@ -138,8 +139,20 @@ namespace HackneyRepairs.Actions
             return json;
         }
 
+		public async Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference (string workOrderReference)
+		{
+			_logger.LogInformation($"Getting all apointments for workOrderReference: {workOrderReference}");
+			IEnumerable<UhtAppointmentEntity> result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
+			if (((List<UhtAppointmentEntity>)result).Count == 0)
+            {
+				_logger.LogError($"Appointments not found for workOrderReference: {workOrderReference}");
+				throw new MissingAppointmentsException();
+            }
+			_logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
+			return result;
+		}
 
-
+        // Currently not used, but it might be in the future
         internal async Task<object> GetAppointmentForWorksOrder(string workOrderReference)
         {
             _logger.LogInformation($"Getting booked appointment for work order reference {workOrderReference}");
@@ -311,5 +324,5 @@ namespace HackneyRepairs.Actions
 
     public class InvalidWorkOrderInUHException : System.Exception { }
     public class NoAvailableAppointmentsException : System.Exception { }
-
+	public class MissingAppointmentsException : Exception { }
 }

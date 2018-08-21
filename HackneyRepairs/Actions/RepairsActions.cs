@@ -4,166 +4,180 @@ using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Models;
 using RepairsService;
+using HackneyRepairs.Entities;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace HackneyRepairs.Actions
 {
-    public class RepairsActions
-    {
-        public IHackneyRepairsService _repairsService;
-        public IHackneyRepairsServiceRequestBuilder _requestBuilder;
-        public ILoggerAdapter<RepairsActions> _logger;
-        public RepairsActions(IHackneyRepairsService repairsService, IHackneyRepairsServiceRequestBuilder requestBuilder, ILoggerAdapter<RepairsActions> logger)
+	public class RepairsActions
+	{
+		public IHackneyRepairsService _repairsService;
+		public IHackneyRepairsServiceRequestBuilder _requestBuilder;
+		public ILoggerAdapter<RepairsActions> _logger;
+		public RepairsActions(IHackneyRepairsService repairsService, IHackneyRepairsServiceRequestBuilder requestBuilder, ILoggerAdapter<RepairsActions> logger)
+		{
+			_repairsService = repairsService;
+			_requestBuilder = requestBuilder;
+			_logger = logger;
+		}
+
+        public async Task<IEnumerable<RepairRequestEntity>> GetRepairsByPropertyReference(string propertyReference)
         {
-            _repairsService = repairsService;
-            _requestBuilder = requestBuilder;
-            _logger = logger;
-        }
-
-
-
-        public async Task<object> CreateRepair(RepairRequest request)
-        {
-            if(request.WorkOrders != null)
+            _logger.LogInformation($"Finding repair requests for Id: {propertyReference}");
+            var result = await _repairsService.GetRepairByPropertyReference(propertyReference);
+            if (((List<RepairRequestEntity>)result).Count == 0)
             {
-                return await CreateRepairWithOrder(request);
-            }
-            else
-            {
-                return await CreateRepairWithoutOrder(request);
-            }
-        }
-
-        public async Task<object> GetRepairByReference(string reference)
-        {
-            _logger.LogInformation($"Getting repair by reference: {reference}");
-            var request = _requestBuilder.BuildRepairRequest(reference);
-            var response = await _repairsService.GetRepairRequestByReferenceAsync(request);
-            if (!response.Success)
-            {
-                throw new RepairsServiceException();
-            }
-            var repairResponse = response.RepairRequest;
-            if (repairResponse == null)
-            {
+                _logger.LogError($"Repairs not found for Id: {propertyReference}");
                 throw new MissingRepairException();
             }
-            var tasksListResponse = await GetRepairTasksList(reference);
-            var tasksList = tasksListResponse.TaskList;
-            if (tasksList != null)
-            {
-                return new
-                {
-                    repairRequestReference = repairResponse.Reference.Trim(),
-                    problemDescription = repairResponse.Problem.Trim(),
-                    priority = repairResponse.PriorityCode.Trim(),
-                    propertyReference = repairResponse.PropertyReference.Trim(),
-                    contact = new { name = repairResponse.Name.Trim() },
-                    workOrders = tasksList.Select(s => new
-                    {
-                        workOrderReference = s.WorksOrderReference.Trim(),
-                        sorCode = s.JobCode.Trim(),
-                        supplierReference = s.SupplierReference.Trim()
-                    })
-                };
-            }
-            return new
-            {
-                repairRequestReference = repairResponse.Reference.Trim(),
-                problemDescription = repairResponse.Problem.Trim(),
-                priority = repairResponse.PriorityCode.Trim(),
-                propertyReference = repairResponse.PropertyReference.Trim(),
-                contact = new {name = repairResponse.Name.Trim()}
-            };
+            _logger.LogInformation($"Repair request details returned for: {propertyReference}");
+            return result;
         }
 
-        private async Task<object> CreateRepairWithOrder(RepairRequest request)
-        {
-            _logger.LogInformation($"Creating repair with order (prop ref: {request.PropertyReference})");
-            var repairRequest = _requestBuilder.BuildNewRepairTasksRequest(request);
+		public async Task<object> CreateRepair(RepairRequest request)
+		{
+			if (request.WorkOrders != null)
+			{
+				return await CreateRepairWithOrder(request);
+			}
+			else
+			{
+				return await CreateRepairWithoutOrder(request);
+			}
+		}
 
-            var response = await _repairsService.CreateRepairWithOrderAsync(repairRequest);
+		public async Task<object> GetRepairByReference(string reference)
+		{
+			_logger.LogInformation($"Getting repair by reference: {reference}");
+			var request = _requestBuilder.BuildRepairRequest(reference);
+			var response = await _repairsService.GetRepairRequestByReferenceAsync(request);
+			if (!response.Success)
+			{
+				throw new RepairsServiceException();
+			}
+			var repairResponse = response.RepairRequest;
+			if (repairResponse == null)
+			{
+				throw new MissingRepairException();
+			}
+			var tasksListResponse = await GetRepairTasksList(reference);
+			var tasksList = tasksListResponse.TaskList;
+			if (tasksList != null)
+			{
+				return new
+				{
+					repairRequestReference = repairResponse.Reference.Trim(),
+					problemDescription = repairResponse.Problem.Trim(),
+					priority = repairResponse.PriorityCode.Trim(),
+					propertyReference = repairResponse.PropertyReference.Trim(),
+					contact = new { name = repairResponse.Name.Trim() },
+					workOrders = tasksList.Select(s => new
+					{
+						workOrderReference = s.WorksOrderReference.Trim(),
+						sorCode = s.JobCode.Trim(),
+						supplierReference = s.SupplierReference.Trim()
+					})
+				};
+			}
+			return new
+			{
+				repairRequestReference = repairResponse.Reference.Trim(),
+				problemDescription = repairResponse.Problem.Trim(),
+				priority = repairResponse.PriorityCode.Trim(),
+				propertyReference = repairResponse.PropertyReference.Trim(),
+				contact = new { name = repairResponse.Name.Trim() }
+			};
+		}
 
-            if (!response.Success)
-            {
-                throw new RepairsServiceException();
-            }
-            var workOrderList = response.WorksOrderList;
-            if (workOrderList == null)
-            {
-                throw new MissingRepairRequestException();
-            }
-            var workOrderItem = workOrderList.FirstOrDefault();
-            // update the request status to 000
-            _repairsService.UpdateRequestStatus(workOrderItem.RepairRequestReference.Trim());
+		private async Task<object> CreateRepairWithOrder(RepairRequest request)
+		{
+			_logger.LogInformation($"Creating repair with order (prop ref: {request.PropertyReference})");
+			var repairRequest = _requestBuilder.BuildNewRepairTasksRequest(request);
 
-            var repairTasksResponse = await GetRepairTasksList(workOrderItem.RepairRequestReference);
-            var tasksList = repairTasksResponse.TaskList;
-            return new
-            {
-                repairRequestReference = workOrderItem.RepairRequestReference.Trim(),
-                propertyReference = workOrderItem.PropertyReference.Trim(),
-                problemDescription = request.ProblemDescription.Trim(),
-                priority = request.Priority.Trim(),
-                contact = new { name = request.Contact.Name, telephoneNumber = request.Contact.TelephoneNumber },
-                workOrders = tasksList.Select(s => new
-                {
-                    workOrderReference= s.WorksOrderReference.Trim(),
-                    sorCode = s.JobCode.Trim(),
-                    supplierReference = s.SupplierReference.Trim()
-                }).ToArray()
-            };
-        }
+			var response = await _repairsService.CreateRepairWithOrderAsync(repairRequest);
 
-        private async Task<object> CreateRepairWithoutOrder(RepairRequest request)
-        {
-            _logger.LogInformation($"Creating repair with no work order");
-            var repairRequest = _requestBuilder.BuildNewRepairRequest(request);
+			if (!response.Success)
+			{
+				throw new RepairsServiceException();
+			}
+			var workOrderList = response.WorksOrderList;
+			if (workOrderList == null)
+			{
+				throw new MissingRepairRequestException();
+			}
+			var workOrderItem = workOrderList.FirstOrDefault();
+			// update the request status to 000
+			_repairsService.UpdateRequestStatus(workOrderItem.RepairRequestReference.Trim());
 
-            var response = await _repairsService.CreateRepairAsync(repairRequest);
+			var repairTasksResponse = await GetRepairTasksList(workOrderItem.RepairRequestReference);
+			var tasksList = repairTasksResponse.TaskList;
+			return new
+			{
+				repairRequestReference = workOrderItem.RepairRequestReference.Trim(),
+				propertyReference = workOrderItem.PropertyReference.Trim(),
+				problemDescription = request.ProblemDescription.Trim(),
+				priority = request.Priority.Trim(),
+				contact = new { name = request.Contact.Name, telephoneNumber = request.Contact.TelephoneNumber },
+				workOrders = tasksList.Select(s => new
+				{
+					workOrderReference = s.WorksOrderReference.Trim(),
+					sorCode = s.JobCode.Trim(),
+					supplierReference = s.SupplierReference.Trim()
+				}).ToArray()
+			};
+		}
 
-            if (!response.Success)
-            {
-                throw new RepairsServiceException();
-            }
-                        var repairResponse = response.RepairRequest;
-            if (repairResponse == null)
-            {
-                throw new MissingRepairRequestException();
-            }
-            // update the request status to 000
-            _repairsService.UpdateRequestStatus(repairResponse.Reference.Trim());
+		private async Task<object> CreateRepairWithoutOrder(RepairRequest request)
+		{
+			_logger.LogInformation($"Creating repair with no work order");
+			var repairRequest = _requestBuilder.BuildNewRepairRequest(request);
 
-            return new
-            {
-                repairRequestReference = repairResponse.Reference.Trim(),
-                problemDescription = repairResponse.Problem.Trim(),
-                priority = repairResponse.PriorityCode.Trim(),
-                propertyReference = repairResponse.PropertyReference.Trim(),
-                contact = new {name = repairResponse.Name, telephoneNumber = request.Contact.TelephoneNumber}
-            };
-        }
+			var response = await _repairsService.CreateRepairAsync(repairRequest);
 
-        private async Task<TaskListResponse> GetRepairTasksList(string requestReference)
-        {
-            _logger.LogInformation($"Getting repair task list ({requestReference})");
-            var request = _requestBuilder.BuildRepairRequest(requestReference);
-            var response = await _repairsService.GetRepairTasksAsync(request);
-            if (!response.Success)
-            {
-                throw new RepairsServiceException();
-            }
-            return response;
-        }
-    }
+			if (!response.Success)
+			{
+				throw new RepairsServiceException();
+			}
+			var repairResponse = response.RepairRequest;
+			if (repairResponse == null)
+			{
+				throw new MissingRepairRequestException();
+			}
+			// update the request status to 000
+			_repairsService.UpdateRequestStatus(repairResponse.Reference.Trim());
 
-    public class MissingRepairRequestException : Exception
-    {
-    }
+			return new
+			{
+				repairRequestReference = repairResponse.Reference.Trim(),
+				problemDescription = repairResponse.Problem.Trim(),
+				priority = repairResponse.PriorityCode.Trim(),
+				propertyReference = repairResponse.PropertyReference.Trim(),
+				contact = new { name = repairResponse.Name, telephoneNumber = request.Contact.TelephoneNumber }
+			};
+		}
 
-    public class RepairsServiceException : Exception
-    {
-    }
-    public class MissingRepairException : Exception
-    {
-    }
+		private async Task<TaskListResponse> GetRepairTasksList(string requestReference)
+		{
+			_logger.LogInformation($"Getting repair task list ({requestReference})");
+			var request = _requestBuilder.BuildRepairRequest(requestReference);
+			var response = await _repairsService.GetRepairTasksAsync(request);
+			if (!response.Success)
+			{
+				throw new RepairsServiceException();
+			}
+			return response;
+		}
+	}
+
+	public class MissingRepairRequestException : Exception
+	{
+	}
+
+	public class RepairsServiceException : Exception
+	{
+	}
+	public class MissingRepairException : Exception
+	{
+	}
 }

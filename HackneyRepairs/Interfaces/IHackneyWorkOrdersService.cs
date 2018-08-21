@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Entities;
-using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Interfaces
 {
-    public interface IUhwRepository
+    public interface IHackneyWorkOrdersService
     {
-        Task AddOrderDocumentAsync(string documentType, string workOrderReference, int workOrderId, string processComment);
+		Task<WorkOrderEntity> GetWorkOrder(string workOrderReference);
+        Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyReference);
 		Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference);
     }
 }

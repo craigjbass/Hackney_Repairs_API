@@ -142,6 +142,73 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 500;
                 return json;
             }
+
+        }
+
+		// GET Repair Requests by property reference
+        /// <summary>
+        /// Returns all Repair Requests for a property
+        /// </summary>
+		/// <param name="propertyReference">Universal Housing property reference</param>
+        /// <returns>A list of Repair Requests</returns>
+		/// <response code="200">Returns a list of Repair Requests</response>
+        /// <response code="404">If no Repair Request was found for the property</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet]
+        public async Task<JsonResult> GetByPropertyReference(string propertyReference)
+        {
+            if (String.IsNullOrWhiteSpace(propertyReference))
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = "Missing parameter - propertyReference",
+                        userMessage = "Missing parameter - propertyReference"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 400;
+                return json;
+            }
+
+            try
+            {
+                RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
+                var json = Json(await repairActions.GetRepairsByPropertyReference(propertyReference));
+                json.StatusCode = 200;
+                return json;
+            }
+            catch (MissingRepairException ex)
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = ex.Message,
+                        userMessage = @"Cannot find repair."
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 404;
+                return json;
+
+            }
+            catch (Exception ex)
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+
+                        developerMessage = ex.Message,
+                        userMessage = "We had some problems processing your request"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 500;
+                return json;
+            }
         }
     }
 }

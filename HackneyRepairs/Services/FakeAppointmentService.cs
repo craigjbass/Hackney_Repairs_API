@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
+using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 
 namespace HackneyRepairs.Services
@@ -143,8 +144,23 @@ namespace HackneyRepairs.Services
 
         public Task<selectBookingResponse> SelectBookingAsync(xmbSelectBooking selectBooking)
         {
-                    return Task.Run(() =>
-                        new selectBookingResponse(new xmbSelectBookingResponse { status = responseStatus.success }));
+            return Task.Run(() =>
+                new selectBookingResponse(new xmbSelectBookingResponse { status = responseStatus.success }));
         }
-    }
+
+		public Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+		{
+			if (string.Equals(workOrderReference, "99999999"))
+            {
+				return Task.Run(() => (IEnumerable<UhtAppointmentEntity>)new List<UhtAppointmentEntity>());
+            }
+			var appointmentEntitites = new List<UhtAppointmentEntity>
+			{
+				new UhtAppointmentEntity{
+					visit_prop_appointment = DateTime.Today
+                }
+            };
+			return Task.Run(() => (IEnumerable<UhtAppointmentEntity>)appointmentEntitites);
+		}
+	}
 }
