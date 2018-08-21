@@ -80,22 +80,7 @@ namespace HackneyRepairs.Repository
 					string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 					switch (env)
 					{
-						case "Development":
-							query = $@"SELECT note.*
-                                    FROM
-                                    uhwdev.dbo.W2ObjectNote AS note
-                                    INNER JOIN uhtdev.dbo.rmworder AS work_order
-                                    on note.KeyNumb = work_order.rmworder_sid
-                                    where work_order.wo_ref = '{workOrderReference}'";
-							break;
-						case "Test":
-							query = $@"SELECT note.*
-                                    FROM
-                                    uhwtest.dbo.W2ObjectNote AS note
-                                    INNER JOIN uhttest.dbo.rmworder AS work_order
-                                    on note.KeyNumb = work_order.rmworder_sid
-                                    where work_order.wo_ref = '{workOrderReference}'";
-							break;
+						
 						case "Production":
 							query = $@"SELECT note.*
                                     FROM
@@ -104,6 +89,14 @@ namespace HackneyRepairs.Repository
                                     on note.KeyNumb = work_order.rmworder_sid
                                     where work_order.wo_ref = '{workOrderReference}'";
 							break;
+                        default:
+                            query = $@"SELECT note.*
+                                    FROM
+                                    uhwdev.dbo.W2ObjectNote AS note
+                                    INNER JOIN uhtdev.dbo.rmworder AS work_order
+                                    on note.KeyNumb = work_order.rmworder_sid
+                                    where work_order.wo_ref = '{workOrderReference}'";
+                            break;
 					}
 					notes = connection.Query<NotesEntity>(query);
 				}
