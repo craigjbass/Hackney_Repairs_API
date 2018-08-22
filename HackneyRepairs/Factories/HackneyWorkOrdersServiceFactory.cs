@@ -6,11 +6,11 @@ namespace HackneyRepairs.Factories
 {
     public class HackneyWorkOrdersServiceFactory
     {
-		public IHackneyWorkOrdersService build(IUhtRepository uhtRepository, IUhwRepository uhwRepository, ILoggerAdapter<WorkOrdersActions> logger)
+		public IHackneyWorkOrdersService build(IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository, ILoggerAdapter<WorkOrdersActions> logger)
         {
             if (TestStatus.IsRunningInTests == false)
             {
-				return new Services.HackneyWorkOrdersService(uhtRepository, uhwRepository, logger);
+				return new Services.HackneyWorkOrdersService(uhtRepository, uhwRepository, uhWarehouseRepository, logger);
             }
             else
             {

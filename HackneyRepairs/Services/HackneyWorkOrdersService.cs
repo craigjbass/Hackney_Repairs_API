@@ -12,12 +12,14 @@ namespace HackneyRepairs.Services
     {
         private IUhtRepository _uhtRepository;
 		private IUhwRepository _uhwRepository;
+		private IUHWWarehouseRepository _uhWarehouseRepository;
         private ILoggerAdapter<WorkOrdersActions> _logger;
 
-		public HackneyWorkOrdersService(IUhtRepository uhtRepository, IUhwRepository uhwRepository, ILoggerAdapter<WorkOrdersActions> logger)
+		public HackneyWorkOrdersService(IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository, ILoggerAdapter<WorkOrdersActions> logger)
         {
             _uhtRepository = uhtRepository;
 			_uhwRepository = uhwRepository;
+			_uhWarehouseRepository = uhWarehouseRepository;
             _logger = logger;
         }
 
@@ -36,13 +38,16 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Work order details returned for: {workOrderReference})");
             return response;
         }
-
+        
 		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
-            var response = _uhtRepository.GetWorkOrderByPropertyReference(propertyReference);
+
+            var liveData = await _uhtRepository.GetWorkOrderByPropertyReference(propertyReference);
+			var warehouseData =  await _uhWarehouseRepository.GetWorkOrderByPropertyReference(propertyReference);
+
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Work orders returned for: {propertyReference})");
-            return response;
+			return Task.Run(() => (IEnumerable<UHWorkOrder>)liveData);
         }
     }
 }

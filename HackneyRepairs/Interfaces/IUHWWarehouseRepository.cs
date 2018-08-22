@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
 
@@ -11,5 +12,6 @@ namespace HackneyRepairs.Interfaces
         Task<PropertyDetails> GetPropertyDetailsByReference(string reference);
         Task<PropertyDetails> GetPropertyBlockByReference(string reference);
         Task<PropertyDetails> GetPropertyEstateByReference(string reference);
+		Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference);
     }
 }
