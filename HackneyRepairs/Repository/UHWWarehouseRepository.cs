@@ -189,7 +189,8 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    string query = $@"SELECT
+					string query = $@"set dateformat ymd;
+                                    SELECT
                                        LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
                                        LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
                                        r.rq_problem AS ProblemDescription,
@@ -210,7 +211,7 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}'AND t.task_no = 1";
+                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}'AND t.task_no = 1;";
 					workOrders = connection.Query<UHWorkOrder>(query).ToList();
                 }
             }
