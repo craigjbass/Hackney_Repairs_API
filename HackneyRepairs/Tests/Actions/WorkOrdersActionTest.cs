@@ -80,7 +80,7 @@ namespace HackneyRepairs.Tests.Actions
 																		_mockLogger.Object);
 			var response = await workOrdersActions.GetWorkOrderByPropertyReference("12345678");
 
-			Assert.True(response is List<UHWorkOrderBase>);
+			Assert.True(response is List<UHWorkOrder>);
 		}
 
 		[Fact]
@@ -139,7 +139,7 @@ namespace HackneyRepairs.Tests.Actions
                                                                         _mockLogger.Object);
 			var response = await workOrdersActions.GetNotesByWorkOrderReference(randomReference);
             
-			Assert.True(response is List<NotesEntity>);
+			Assert.True(response is List<Note>);
         }
 
         [Fact]

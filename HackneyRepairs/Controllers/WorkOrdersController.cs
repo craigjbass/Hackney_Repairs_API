@@ -19,11 +19,11 @@ namespace HackneyRepairs.Controllers
 		private IHackneyWorkOrdersService _workOrdersService;
 		private ILoggerAdapter<WorkOrdersActions> _loggerAdapter;
 
-		public WorkOrdersController(ILoggerAdapter<WorkOrdersActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
+		public WorkOrdersController(ILoggerAdapter<WorkOrdersActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository)
 		{
 			_loggerAdapter = loggerAdapter;
 			var factory = new HackneyWorkOrdersServiceFactory();
-			_workOrdersService = factory.build(uhtRepository, uhwRepository, _loggerAdapter);
+			_workOrdersService = factory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _loggerAdapter);
 		}
 
 		// GET Work Order 

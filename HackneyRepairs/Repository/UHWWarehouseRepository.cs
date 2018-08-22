@@ -189,10 +189,6 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    DateTime now = DateTime.Now;
-                    DateTime dtCutoff = new DateTime(now.Year, now.Month, now.Day, 23, 0, 0);
-                    dtCutoff = dtCutoff.AddDays(-1);
-                    var sCutoff = dtCutoff.ToString("yyyy-MM-dd hh:mm:ss");
                     string query = $@"SELECT
                                        LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
                                        LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
@@ -207,14 +203,14 @@ namespace HackneyRepairs.Repository
                                        LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
                                        LTRIM(RTRIM(wo.prop_ref)) AS PropertyReference,
                                        LTRIM(RTRIM(t.job_code)) AS SORCode,
-                                       LTRIM(RTRIM(tr.trade_desc) AS Trade
+                                       LTRIM(RTRIM(tr.trade_desc)) AS Trade
 
                                     FROM
                                        rmworder wo
                                        INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created < '{sCutoff}' AND wo.prop_ref = '{propertyReference}'AND t.task_no = 1";
+                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}'AND t.task_no = 1";
 					workOrders = connection.Query<UHWorkOrder>(query).ToList();
                 }
             }
@@ -224,6 +220,14 @@ namespace HackneyRepairs.Repository
                 throw new UhtRepositoryException();
             }
 			return workOrders;
+        }
+
+		public static string GetCutoffTime()
+        {
+            DateTime now = DateTime.Now;
+            DateTime dtCutoff = new DateTime(now.Year, now.Month, now.Day, 23, 0, 0);
+            dtCutoff = dtCutoff.AddDays(-1);
+            return dtCutoff.ToString("yyyy-MM-dd hh:mm:ss");
         }
     }
 

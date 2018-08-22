@@ -23,31 +23,39 @@ namespace HackneyRepairs.Services
             _logger = logger;
         }
 
-		public Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
+		public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
 		{
 			_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
-			var response = _uhwRepository.GetNotesByWorkOrderReference(workOrderReference);
+			var response = await _uhwRepository.GetNotesByWorkOrderReference(workOrderReference);
 			_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Notes returned for: {workOrderReference})");
             return response;
 		}
 
-		public Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
+		public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
-            var response = _uhtRepository.GetWorkOrder(workOrderReference);
+            var response = await _uhtRepository.GetWorkOrder(workOrderReference);
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Work order details returned for: {workOrderReference})");
             return response;
         }
         
-		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
-			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
-
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to _UhtRepository to get data from live (Property reference: {propertyReference})");
             var liveData = await _uhtRepository.GetWorkOrderByPropertyReference(propertyReference);
-			var warehouseData =  await _uhWarehouseRepository.GetWorkOrderByPropertyReference(propertyReference);
+			var lLiveData = (List<UHWorkOrder>)liveData;
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {lLiveData.Count} work orders returned for: {propertyReference})");
 
-			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Work orders returned for: {propertyReference})");
-			return Task.Run(() => (IEnumerable<UHWorkOrder>)liveData);
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to _UHWarehouseRepository to get data from warehouse (Property reference: {propertyReference})");
+            var warehouseData =  await _uhWarehouseRepository.GetWorkOrderByPropertyReference(propertyReference);
+			var lWarehouseData = (List<UHWorkOrder>)warehouseData;
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {lWarehouseData.Count} work orders returned for: {propertyReference})");
+
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Merging list from repositories to a single list");
+			List<UHWorkOrder> result = lLiveData;
+			result.InsertRange(0,lWarehouseData);
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Total {result.Count} ork orders returned for: {propertyReference})");
+			return result;
         }
     }
 }
