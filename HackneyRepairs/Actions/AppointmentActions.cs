@@ -140,13 +140,18 @@ namespace HackneyRepairs.Actions
 
         public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference (string workOrderReference)
 		{
-			_logger.LogInformation($"Getting all apointments for workOrderReference: {workOrderReference}");
-            IEnumerable<DetailedAppointment> result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
-            if (((List<DetailedAppointment>)result).Count == 0)
+            _logger.LogInformation($"Getting all apointments for workOrderReference: {workOrderReference}");
+            var result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
+            if (!result.Any())
             {
 				_logger.LogError($"Appointments not found for workOrderReference: {workOrderReference}");
 				throw new MissingAppointmentsException();
             }
+            if (result.FirstOrDefault().BeginDate == null)
+            {
+                return new List<DetailedAppointment>();
+            }
+
 			_logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
 			return result;
 		}

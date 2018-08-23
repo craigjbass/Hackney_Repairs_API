@@ -33,7 +33,7 @@ namespace HackneyRepairs.Repository
                 {
                     string query = $@"
                         SELECT
-                            c_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
+                            c_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate ,
                             c_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
                             c_job.status AS Status,
                             c_job.ASSIGNEDWORKERS AS AssignedWorker,

@@ -81,13 +81,18 @@ namespace HackneyRepairs.Services
             return response;
         }
 
-		public Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference (string workOrderReference)
+        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference (string workOrderReference)
         {
 			_logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Sent request to get appointments for workOrderReference: {workOrderReference})");
-			var response = _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
-			_logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Received response for workOrderReference: {workOrderReference})");
-            return Task.FromResult<IEnumerable<DetailedAppointment>>(new List<DetailedAppointment>());
-            //return response;
+            var drsResponse = await _drsRepository.GetAppointmentByWorkOrderReference(workOrderReference);
+
+            if (!drsResponse.Any())
+            {
+              var uhtResponse = await _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
+              return uhtResponse;
+            }
+            _logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Received response for workOrderReference: {workOrderReference})");
+            return drsResponse;
 		}
     }
 }
