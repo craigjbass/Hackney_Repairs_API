@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DrsAppointmentsService;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Services
 {
@@ -148,19 +149,23 @@ namespace HackneyRepairs.Services
                 new selectBookingResponse(new xmbSelectBookingResponse { status = responseStatus.success }));
         }
 
-		public Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+		public Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
 		{
 			if (string.Equals(workOrderReference, "99999999"))
             {
-				return Task.Run(() => (IEnumerable<UhtAppointmentEntity>)new List<UhtAppointmentEntity>());
+				return Task.Run(() => (IEnumerable<DetailedAppointment>)new List<DetailedAppointment>());
             }
-			var appointmentEntitites = new List<UhtAppointmentEntity>
+			if (string.Equals(workOrderReference, "non_existing_workOrderReference"))
 			{
-				new UhtAppointmentEntity{
-					visit_prop_appointment = DateTime.Today
+				return null;
+			}
+			var appointmentEntitites = new List<DetailedAppointment>
+			{
+				new DetailedAppointment{
+					BeginDate = DateTime.Today
                 }
             };
-			return Task.Run(() => (IEnumerable<UhtAppointmentEntity>)appointmentEntitites);
+			return Task.Run(() => (IEnumerable<DetailedAppointment>)appointmentEntitites);
 		}
 	}
 }
