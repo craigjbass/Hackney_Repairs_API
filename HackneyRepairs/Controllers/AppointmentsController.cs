@@ -55,7 +55,7 @@ namespace HackneyRepairs.Controllers
 		[ProducesResponseType(200)]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(500)]
-		[Route("v1/work_orders/{workorderreference}/available_appointments")]
+		[Route("v1/work_orders/{workOrderReference}/available_appointments")]
 		public async Task<JsonResult> Get(string workOrderReference)
 		{
 			try
@@ -111,22 +111,22 @@ namespace HackneyRepairs.Controllers
 		/// <summary>
 		/// Creates an appointment
 		/// </summary>
-		/// <param name="workorderreference">The reference number of the work order for the appointment</param>
+		/// <param name="workOrderReference">The reference number of the work order for the appointment</param>
 		/// <param name="appointment">Details of the appointment to be booked</param>
 		/// <returns>A JSON object for a successfully created appointment</returns>
 		/// <response code="200">A successfully created repair request</response>
 		[HttpPost]
-		[Route("v1/work_orders/{workorderreference}/appointments")]
-		public async Task<JsonResult> Post(string workorderreference, [FromBody]ScheduleAppointmentRequest request)
+		[Route("v1/work_orders/{workOrderReference}/appointments")]
+		public async Task<JsonResult> Post(string workOrderReference, [FromBody]ScheduleAppointmentRequest request)
 		{
 			try
 			{
-				var validationResult = _scheduleBookingRequestValidator.Validate(workorderreference, request);
+				var validationResult = _scheduleBookingRequestValidator.Validate(workOrderReference, request);
 				if (validationResult.Valid)
 				{
 					var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService,
 																	 _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-					var result = await appointmentsActions.BookAppointment(workorderreference,
+					var result = await appointmentsActions.BookAppointment(workOrderReference,
 						DateTime.Parse(request.BeginDate),
 						DateTime.Parse(request.EndDate));
 					var json = Json(result);
