@@ -167,5 +167,5 @@ namespace HackneyRepairs.Services
             };
 			return Task.Run(() => (IEnumerable<DetailedAppointment>)appointmentEntitites);
 		}
-	}
+    }
 }

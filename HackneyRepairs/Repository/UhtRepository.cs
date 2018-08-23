@@ -340,9 +340,9 @@ namespace HackneyRepairs.Repository
             }
         }
 
-		public async Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
 		{
-			List<UhtAppointmentEntity> appointments;
+            List<DetailedAppointment> appointments;
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -351,7 +351,7 @@ namespace HackneyRepairs.Repository
                                     FROM rmworder
                                     INNER JOIN visit ON rmworder.rmworder_sid = visit.reference_sid
                                     WHERE rmworder.wo_ref = '{workOrderReference}'";
-					appointments = connection.Query<UhtAppointmentEntity>(query).ToList();
+                    appointments = connection.Query<DetailedAppointment>(query).ToList();
                 }
             }
             catch (Exception ex)

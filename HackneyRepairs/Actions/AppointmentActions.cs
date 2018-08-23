@@ -5,7 +5,6 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
 using HackneyRepairs.Interfaces;
-using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.Repository;
 using System.Collections.Specialized;
@@ -139,11 +138,11 @@ namespace HackneyRepairs.Actions
             return json;
         }
 
-		public async Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference (string workOrderReference)
+        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference (string workOrderReference)
 		{
 			_logger.LogInformation($"Getting all apointments for workOrderReference: {workOrderReference}");
-			IEnumerable<UhtAppointmentEntity> result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
-			if (((List<UhtAppointmentEntity>)result).Count == 0)
+            IEnumerable<DetailedAppointment> result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
+            if (((List<DetailedAppointment>)result).Count == 0)
             {
 				_logger.LogError($"Appointments not found for workOrderReference: {workOrderReference}");
 				throw new MissingAppointmentsException();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using HackneyRepairs.DbContext;
@@ -21,9 +22,9 @@ namespace HackneyRepairs.Repository
             _logger = logger;
         }
 
-        public Task<IEnumerable<DetailedAppointment>> GetAppointmentByWorkOrderReference(string workOrderReference)
+        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentByWorkOrderReference(string workOrderReference)
 		{
-            DetailedAppointment appointments = new DetailedAppointment();
+            List<DetailedAppointment> appointments;
             _logger.LogInformation($"Getting appointment details from DRS for {workOrderReference}");
 
             try
@@ -43,18 +44,17 @@ namespace HackneyRepairs.Repository
                         INNER JOIN c_job ON c_job.PARENTID = s_serviceorder.USERID
                         INNER JOIN s_worker ON c_job.assignedworkersids = s_worker.userid
                         WHERE
-                            qs_serviceorder.NAME = '{workOrderReference}'";
+                            s_serviceorder.NAME = '{workOrderReference}'";
 
-                    appointments = connection.Query<DetailedAppointment>(query).ToLost();
-                    return appointments;
+                    appointments = connection.Query<DetailedAppointment>(query).ToList();
                 }
+                return appointments;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw new DrsRepositoryException();
             }
-            throw new NotImplementedException();
 		}
 	}
 

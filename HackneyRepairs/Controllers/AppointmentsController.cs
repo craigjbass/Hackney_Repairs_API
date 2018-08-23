@@ -29,11 +29,12 @@ namespace HackneyRepairs.Controllers
 		private HackneyConfigurationBuilder _configBuilder;
 
 		public AppointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository,
-			ILoggerAdapter<HackneyAppointmentsServiceRequestBuilder> requestBuildLoggerAdapter, ILoggerAdapter<RepairsActions> repairsLoggerAdapter)
+			ILoggerAdapter<HackneyAppointmentsServiceRequestBuilder> requestBuildLoggerAdapter, ILoggerAdapter<RepairsActions> repairsLoggerAdapter,
+                                      IDRSRepository drsRepository)
 		{
 			var serviceFactory = new HackneyAppointmentServiceFactory();
 			_configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
-			_appointmentsService = serviceFactory.build(loggerAdapter, uhtRepository);
+            _appointmentsService = serviceFactory.build(loggerAdapter, uhtRepository, drsRepository);
 			var factory = new HackneyRepairsServiceFactory();
 			_repairsService = factory.build(uhtRepository, uhwRepository, repairsLoggerAdapter);
 			_loggerAdapter = loggerAdapter;
@@ -173,9 +174,9 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
 		public async Task<JsonResult> GetAppointmentsByWorkOrderReference(string workOrderReference)
-        {         
+        {
 			var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-			IEnumerable<UhtAppointmentEntity> result = new List<UhtAppointmentEntity>();
+            IEnumerable<DetailedAppointment> result = new List<DetailedAppointment>();
             try
             {
 				result = await appointmentsActions.GetAppointmentsByWorkOrderReference(workOrderReference);
@@ -200,6 +201,17 @@ namespace HackneyRepairs.Controllers
                 {
                     developerMessage = ex.Message,
                     userMessage = @"We had issues with connecting to the data source."
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+            catch (Exception ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"We had issues processing your request"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 500;

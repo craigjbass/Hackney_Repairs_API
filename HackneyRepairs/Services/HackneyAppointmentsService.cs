@@ -6,6 +6,7 @@ using DrsAppointmentsService;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Services
 {
@@ -14,10 +15,13 @@ namespace HackneyRepairs.Services
         private readonly SOAPClient _client;
 		private IUhtRepository _uhtRepository;
         private ILoggerAdapter<AppointmentActions> _logger;
-		public HackneyAppointmentsService(ILoggerAdapter<AppointmentActions> logger, IUhtRepository uhtRepository)
+        private IDRSRepository _drsRepository;
+
+        public HackneyAppointmentsService(ILoggerAdapter<AppointmentActions> logger, IUhtRepository uhtRepository, IDRSRepository dRSRepository)
         {
             _client = new SOAPClient();
 			_uhtRepository = uhtRepository;
+            _drsRepository = dRSRepository;
             _logger = logger;
         }
 
@@ -77,12 +81,13 @@ namespace HackneyRepairs.Services
             return response;
         }
 
-		public Task<IEnumerable<UhtAppointmentEntity>> GetAppointmentsByWorkOrderReference (string workOrderReference)
+		public Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference (string workOrderReference)
         {
 			_logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Sent request to get appointments for workOrderReference: {workOrderReference})");
 			var response = _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
 			_logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Received response for workOrderReference: {workOrderReference})");
-            return response;
+            return Task.FromResult<IEnumerable<DetailedAppointment>>(new List<DetailedAppointment>());
+            //return response;
 		}
     }
 }

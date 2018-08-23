@@ -739,9 +739,9 @@ namespace HackneyRepairs.Tests.Actions
 		[Fact]
         public async Task get_appointments_by_work_order_reference_returns_a_list_of_appointments()
         {
-			List<UhtAppointmentEntity> fakeResponse = new List<UhtAppointmentEntity>
+            List<DetailedAppointment> fakeResponse = new List<DetailedAppointment>
             {
-				new UhtAppointmentEntity()
+                new DetailedAppointment()
             };
 
 			Random rnd = new Random();
@@ -753,7 +753,7 @@ namespace HackneyRepairs.Tests.Actions
 			var repairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();   
 			var repairsService = new Mock<IHackneyRepairsService>();
 			appointmentService.Setup(service => service.GetAppointmentsByWorkOrderReference(It.IsAny<string>()))
-			                 .Returns(Task.FromResult<IEnumerable<UhtAppointmentEntity>>(fakeResponse));
+                              .Returns(Task.FromResult<IEnumerable<DetailedAppointment>>(fakeResponse));
 			AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, appointmentService.Object, requestBuilder.Object, repairsService.Object, repairRequestBuilder.Object, configuration);
 			var response = await appointmentActions.GetAppointmentsByWorkOrderReference(randomReference);
 
@@ -771,7 +771,7 @@ namespace HackneyRepairs.Tests.Actions
             var repairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
             var repairsService = new Mock<IHackneyRepairsService>();
             appointmentService.Setup(service => service.GetAppointmentsByWorkOrderReference(It.IsAny<string>()))
-			                  .Returns(Task.FromResult<IEnumerable<UhtAppointmentEntity>>((new List<UhtAppointmentEntity>())));
+			                  .Returns(Task.FromResult<IEnumerable<DetailedAppointment>>((new List<DetailedAppointment>())));
             AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, appointmentService.Object, requestBuilder.Object, repairsService.Object, repairRequestBuilder.Object, configuration);
 
 			await Assert.ThrowsAsync<MissingAppointmentsException>(async () => await appointmentActions.GetAppointmentsByWorkOrderReference(randomReference));

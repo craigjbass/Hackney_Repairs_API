@@ -14,6 +14,7 @@ namespace HackneyRepairs.Extension
             services.AddScoped(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
             services.AddTransient<IUhtRepository, UhtRepository>();
             services.AddTransient<IUhwRepository, UhwRepository>();
+            services.AddTransient<IDRSRepository, DRSRepository>();
             services.AddTransient(typeof(IUHWWarehouseRepository), typeof(UHWWarehouseRepository));
         }
     }
