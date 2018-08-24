@@ -85,7 +85,6 @@ namespace HackneyRepairs.Services
         {
 			_logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Sent request to get appointments for workOrderReference: {workOrderReference})");
             var drsResponse = await _drsRepository.GetAppointmentByWorkOrderReference(workOrderReference);
-
             if (!drsResponse.Any())
             {
               var uhtResponse = await _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);

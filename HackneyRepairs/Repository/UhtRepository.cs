@@ -347,16 +347,16 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-					string query = $@"
-                        SELECT
-                            visit.visit_prop_appointment as BeginDate,
-                            visit.visit_prop_end as EndDate    
-                        FROM 
-                            visit
-                        RIGHT OUTER JOIN 
-                            rmworder ON rmworder.rmworder_sid = visit.reference_sid
-                        WHERE 
-                            rmworder.wo_ref = '{workOrderReference}'";
+					string query = $@"SELECT 
+                                        visit.visit_prop_appointment AS BeginDate,
+                                        visit.visit_prop_end AS EndDate,
+                                        'UHT' AS SourceSystem
+                                    FROM 
+                                        visit
+                                    RIGHT OUTER JOIN 
+                                        rmworder ON rmworder.rmworder_sid = visit.reference_sid
+                                    WHERE 
+                                        rmworder.wo_ref = '{workOrderReference}'";
                     appointments = connection.Query<DetailedAppointment>(query).ToList();
                 }
             }

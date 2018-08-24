@@ -33,12 +33,13 @@ namespace HackneyRepairs.Repository
                 {
                     string query = $@"
                         SELECT
-                            c_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate ,
+                            c_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
                             c_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
                             c_job.status AS Status,
                             c_job.ASSIGNEDWORKERS AS AssignedWorker,
                             c_job.priority AS Priority,
-                            s_worker.MOBILEPHONE AS Mobilephone
+                            s_worker.MOBILEPHONE AS Mobilephone,
+                            'DRS' AS SourceSystem
                         FROM
                             s_serviceorder 
                         INNER JOIN c_job ON c_job.PARENTID = s_serviceorder.USERID
