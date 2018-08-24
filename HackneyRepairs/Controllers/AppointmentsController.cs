@@ -12,7 +12,6 @@ using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
-using HackneyRepairs.Entities;
 using HackneyRepairs.Repository;
 
 namespace HackneyRepairs.Controllers

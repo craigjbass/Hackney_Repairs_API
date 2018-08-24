@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DrsAppointmentsService;
 using HackneyRepairs.Actions;
-using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 

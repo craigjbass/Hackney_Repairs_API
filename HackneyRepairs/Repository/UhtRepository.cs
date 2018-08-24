@@ -9,10 +9,8 @@ using HackneyRepairs.DbContext;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Data.SqlClient;
 using System.Configuration;
-using HackneyRepairs.Entities;
 using Dapper;
 
 namespace HackneyRepairs.Repository
@@ -350,7 +348,7 @@ namespace HackneyRepairs.Repository
 					string query = $@"SELECT 
                                         visit.visit_prop_appointment AS BeginDate,
                                         visit.visit_prop_end AS EndDate,
-                                        'UHT' AS SourceSystem
+                                        'UH' AS SourceSystem
                                     FROM 
                                         visit
                                     RIGHT OUTER JOIN 

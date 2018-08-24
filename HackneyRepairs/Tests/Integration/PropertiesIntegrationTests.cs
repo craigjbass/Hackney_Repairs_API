@@ -1,15 +1,11 @@
 ﻿using System.Threading.Tasks;
 using System;
-using Newtonsoft.Json;
 using Xunit;
 using System.Net.Http;
 using System.Net;
-using HackneyRepairs.Controllers;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Hosting;
 using System.Text;
-using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Tests
 {
