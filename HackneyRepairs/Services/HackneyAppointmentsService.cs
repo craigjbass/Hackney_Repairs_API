@@ -87,8 +87,9 @@ namespace HackneyRepairs.Services
             var drsResponse = await _drsRepository.GetAppointmentByWorkOrderReference(workOrderReference);
             if (!drsResponse.Any())
             {
-              var uhtResponse = await _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
-              return uhtResponse;
+                _logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): No appointments returned from DRS, sending request to UH for workOrderReference: {workOrderReference}");
+                var uhtResponse = await _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
+                return uhtResponse;
             }
             _logger.LogInformation($"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): Received response for workOrderReference: {workOrderReference})");
             return drsResponse;

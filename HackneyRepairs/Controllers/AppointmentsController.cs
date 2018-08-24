@@ -176,7 +176,7 @@ namespace HackneyRepairs.Controllers
 		public async Task<JsonResult> GetAppointmentsByWorkOrderReference(string workOrderReference)
         {
 			var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-            IEnumerable<DetailedAppointment> result = new List<DetailedAppointment>();
+            IEnumerable<DetailedAppointment> result;
             try
             {
 				result = await appointmentsActions.GetAppointmentsByWorkOrderReference(workOrderReference);
@@ -184,12 +184,16 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-            catch (MissingAppointmentsException ex)
+            catch(MissingAppointmentsException)
+            {
+                return new JsonResult(new string[0]);
+            }
+            catch (InvalidWorkOrderInUHException ex)
             {
                 var error = new ApiErrorMessage
                 {
                     developerMessage = ex.Message,
-                    userMessage = @"Cannot find appointments for the work order reference"
+                    userMessage = @"workOrderReference not found"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 404;

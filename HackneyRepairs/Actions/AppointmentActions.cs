@@ -144,12 +144,13 @@ namespace HackneyRepairs.Actions
             var result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
             if (!result.Any())
             {
-				_logger.LogError($"Appointments not found for workOrderReference: {workOrderReference}");
-				throw new MissingAppointmentsException();
+				_logger.LogError($"No appointments returned due workOrderReference not being found: {workOrderReference}");
+                throw new InvalidWorkOrderInUHException();
             }
             if (result.FirstOrDefault().BeginDate == null)
             {
-                return new List<DetailedAppointment>();
+                _logger.LogError($"No appointments found for : {workOrderReference}");
+                throw new MissingAppointmentsException();
             }
 
 			_logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
