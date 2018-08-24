@@ -23,7 +23,10 @@ namespace HackneyRepairs.Tests.Integration
 
 		public AppointmentsIntegrationTests()
 		{
-			_server = new TestServer(new WebHostBuilder()
+            Environment.SetEnvironmentVariable("UhtDb", "database=Test");
+            Environment.SetEnvironmentVariable("UhwDb", "database=Test");
+            Environment.SetEnvironmentVariable("DRSLiveMirrorDb", "database=Test");
+            _server = new TestServer(new WebHostBuilder()
 				.UseStartup<TestStartup>());
 			_client = _server.CreateClient();
 		}
@@ -170,7 +173,7 @@ namespace HackneyRepairs.Tests.Integration
 		[Fact]
 		public async Task return_a_404_result_for_no_Work_order_found()
 		{
-			var result = await _client.GetAsync("v1/work_orders/99999999/appointments");
+            var result = await _client.GetAsync("v1/work_orders/888888888/appointments");
 			Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
 		}
 

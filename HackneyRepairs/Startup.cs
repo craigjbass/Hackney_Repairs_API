@@ -36,16 +36,16 @@ namespace HackneyRepairs
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-			services.AddDbContext<UhtDbContext>(options =>
-			{
-				options.UseSqlServer(Configuration.GetSection("UhtDb").Value);
-			});
+            services.AddDbContext<UhtDbContext>(options =>
+                                                options.UseSqlServer(Configuration.GetSection("UhtDb").Value));
+
             services.AddDbContext<UhwDbContext>(options =>
                                                 options.UseSqlServer(Configuration.GetSection("UhwDb").Value));
             services.AddDbContext<UHWWarehouseDbContext>(options =>
                                                          options.UseSqlServer(Configuration.GetSection("UhWarehouseDb").Value));
             services.AddDbContext<DRSDbContext>(options =>
                                                 options.UseMySql(Configuration.GetSection("DRSLiveMirrorDb").Value));
+            
             services.AddMvc();
             services.AddSwaggerGen(c =>
             {

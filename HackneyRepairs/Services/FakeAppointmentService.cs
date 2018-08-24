@@ -153,11 +153,14 @@ namespace HackneyRepairs.Services
 		{
 			if (string.Equals(workOrderReference, "99999999"))
             {
-				return Task.Run(() => (IEnumerable<DetailedAppointment>)new List<DetailedAppointment>());
+                return Task.Run(() => (IEnumerable<DetailedAppointment>)new List<DetailedAppointment>
+                {
+                    new DetailedAppointment()
+                });
             }
-			if (string.Equals(workOrderReference, "non_existing_workOrderReference"))
+			if (string.Equals(workOrderReference, "888888888"))
 			{
-				return null;
+                return Task.Run(() => ((IEnumerable<DetailedAppointment>)new List<DetailedAppointment>()));
 			}
 			var appointmentEntitites = new List<DetailedAppointment>
 			{
