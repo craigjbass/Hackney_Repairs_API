@@ -38,6 +38,7 @@ namespace HackneyRepairs.Repository
                             c_job.status AS Status,
                             c_job.ASSIGNEDWORKERS AS AssignedWorker,
                             c_job.priority AS Priority,
+                            c_job.CREATIONDATE as CreationDate,
                             s_worker.MOBILEPHONE AS Mobilephone,
                             'DRS' AS SourceSystem
                         FROM

@@ -348,13 +348,15 @@ namespace HackneyRepairs.Repository
 					string query = $@"SELECT 
                                         visit.visit_prop_appointment AS BeginDate,
                                         visit.visit_prop_end AS EndDate,
+                                        ROW_NUMBER() OVER (ORDER BY visit.visit_sid) AS CreationOrder,
                                         'UH' AS SourceSystem
                                     FROM 
                                         visit
                                     RIGHT OUTER JOIN 
                                         rmworder ON rmworder.rmworder_sid = visit.reference_sid
                                     WHERE 
-                                        rmworder.wo_ref = '{workOrderReference}'";
+                                        rmworder.wo_ref = '{workOrderReference}'
+                                    ORDER BY visit.visit_sid";
                     appointments = connection.Query<DetailedAppointment>(query).ToList();
                 }
             }
