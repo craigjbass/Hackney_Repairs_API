@@ -8,6 +8,8 @@ namespace HackneyRepairs.Models
         public string Mobilephone { get; set; }
         public string Priority { get; set; }
         public string SourceSystem { get; set; }
+        public string SittingAt { get; set; }
+        public string Comment { get; set; }
         public int? CreationOrder { get; set; }
         public DateTime? CreationDate { get; set; }
         public DateTime? BeginDate { get; set; }
