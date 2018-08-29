@@ -38,9 +38,11 @@ namespace HackneyRepairs.Repository
                             c_job.status AS Status,
                             c_job.ASSIGNEDWORKERS AS AssignedWorker,
                             c_job.priority AS Priority,
-                            c_job.CREATIONDATE as CreationDate,
+                            c_job.CREATIONDATE AS CreationDate,
+                            c_job.BD_APPOINTMENT_REASON AS Comment,
                             s_worker.MOBILEPHONE AS Mobilephone,
-                            'DRS' AS SourceSystem
+                            'DRS' AS SourceSystem,
+                            'DLO' AS SittingAt
                         FROM
                             s_serviceorder 
                         INNER JOIN c_job ON c_job.PARENTID = s_serviceorder.USERID
