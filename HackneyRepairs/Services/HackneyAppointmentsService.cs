@@ -12,14 +12,14 @@ namespace HackneyRepairs.Services
     public class HackneyAppointmentsService : IHackneyAppointmentsService
     {
         private readonly SOAPClient _client;
-		private IUhtRepository _uhtRepository;
+        private IUhtRepository _uhtRepository;
         private ILoggerAdapter<AppointmentActions> _logger;
         private IDRSRepository _drsRepository;
 
         public HackneyAppointmentsService(ILoggerAdapter<AppointmentActions> logger, IUhtRepository uhtRepository, IDRSRepository dRSRepository)
         {
             _client = new SOAPClient();
-			_uhtRepository = uhtRepository;
+            _uhtRepository = uhtRepository;
             _drsRepository = dRSRepository;
             _logger = logger;
         }
@@ -80,9 +80,9 @@ namespace HackneyRepairs.Services
             return response;
         }
 
-        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference (string workOrderReference)
+        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
         {
-			_logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
+            _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
                 Sent request to get appointments for workOrderReference from UHT: {workOrderReference})");
             var uhtResponse = await _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
             if (!uhtResponse.Any())
@@ -100,23 +100,36 @@ namespace HackneyRepairs.Services
             {
                 _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
                     Appointments fround from UHT and DRS: {workOrderReference})");
-                // nested loops to set wich one belongs 
+                AssignSittingAtProperty(uhtResponse, drsResponse);
                 return uhtResponse.Concat(drsResponse).ToList();
             }
             else if (drsResponse.Any())
             {
                 _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
                     Appointments found only from DRS: {workOrderReference})");
-                // SittingAt property all to DLO
                 return drsResponse;
             }
             else
             {
                 _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
                     No appointments found from DRS, returning UHT results: {workOrderReference})");
-                // if response is a valid appointment, SittingAt property all to External
                 return uhtResponse;
             }
-		}
+        }
+
+        private void AssignSittingAtProperty(IEnumerable<DetailedAppointment> responseA, IEnumerable<DetailedAppointment> responseB)
+        {
+            foreach (var appointmentA  in responseA)
+            {
+                foreach (var appointmentB in responseB)
+                {
+                    if (appointmentA.BeginDate == appointmentB.BeginDate && appointmentA.EndDate == appointmentB.EndDate)
+                    {
+                        appointmentA.SittingAt = "DLO";
+                        appointmentB.SittingAt = "DLO";
+                    }
+                }
+            }
+        }
     }
 }

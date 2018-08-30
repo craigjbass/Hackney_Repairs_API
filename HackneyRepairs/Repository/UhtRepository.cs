@@ -357,7 +357,7 @@ namespace HackneyRepairs.Repository
                                     RIGHT OUTER JOIN 
                                         rmworder ON rmworder.rmworder_sid = visit.reference_sid
                                     WHERE 
-                                        rmworder.wo_ref = '{workOrderReference}'
+                                        rmworder.wo_ref = '00913042'
                                     ORDER BY visit.visit_sid";
                     appointments = connection.Query<DetailedAppointment>(query).ToList();
                 }
