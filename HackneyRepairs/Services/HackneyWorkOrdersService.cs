@@ -57,5 +57,11 @@ namespace HackneyRepairs.Services
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Total {result.Count} ork orders returned for: {propertyReference})");
 			return result;
         }
+
+        public async Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
+        {
+            // uhw and data warehouse query using cuttoff date.
+            throw new NotImplementedException();
+        }
     }
 }

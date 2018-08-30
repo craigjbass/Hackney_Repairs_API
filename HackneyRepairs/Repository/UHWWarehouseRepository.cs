@@ -184,7 +184,7 @@ namespace HackneyRepairs.Repository
 
 		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
-            List<UHWorkOrder> workOrders;
+            IEnumerable<UHWorkOrder> workOrders;
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -212,15 +212,47 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
                                        WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}'AND t.task_no = 1;";
-					workOrders = connection.Query<UHWorkOrder>(query).ToList();
+					workOrders = connection.Query<UHWorkOrder>(query);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                throw new UhtRepositoryException();
+                throw new UHWWarehouseRepositoryException();
             }
 			return workOrders;
+        }
+
+        public async Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
+        {
+            IEnumerable<DetailedNote> notes;
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $@"
+                                SELECT
+                                    worder.wo_ref AS WorkOrderReference,
+                                    notes.NDate AS LoggedAt,
+                                    notes.UserID AS LoggedBy,
+                                    notes.NoteText As [Text],
+                                    notes.NoteID as NoteId
+                                FROM 
+                                    W2ObjectNote as notes
+                                INNER JOIN
+                                    StagedDB.dbo.rmworder as worder ON notes.KeyNumb = worder.rmworder_sid
+                                where 
+                                    KeyObject in ('UHOrder', 'UHOrderNA') AND NoteID >= '{noteId}'
+                                    AND NDate < '{GetCutoffTime()}'";
+                    notes = connection.Query<DetailedNote>(query);
+                    return notes;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
+            }
         }
 
 		public static string GetCutoffTime()

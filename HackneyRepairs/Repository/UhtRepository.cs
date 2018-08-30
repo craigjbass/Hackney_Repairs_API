@@ -327,7 +327,7 @@ namespace HackneyRepairs.Repository
                                                 r.prop_ref as propertyReference
                                                 FROM rmreqst r
                                                 where r.prop_ref = '{propertyReference}'";
-					var repairs = connection.Query<RepairRequestBase>(query).ToList();
+                    var repairs = connection.Query<RepairRequestBase>(query).ToList();
                     return repairs;
                 }
             }

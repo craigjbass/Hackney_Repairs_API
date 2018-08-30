@@ -113,6 +113,69 @@ namespace HackneyRepairs.Repository
 			}
 			return notes;
 		}
+
+        public async Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
+        {
+            IEnumerable<DetailedNote> notes;
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = "";
+                    string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    switch (env)
+                    {
+                        case "Production":
+                            query = $@"
+                                SELECT
+                                    work_order.wo_ref AS WorkOrderReference,
+                                    note.NDate AS LoggedAt,
+                                    note.UserID AS LoggedBy,
+                                    note.NoteText As [Text],
+                                    note.NoteID AS NoteId
+                                FROM 
+                                    uhwlive.dbo.W2ObjectNote AS note
+                                INNER JOIN
+                                    uhtlive.dbo.rmworder as work_order ON note.KeyNumb = work_order.rmworder_sid
+                                where 
+                                    note.KeyObject in ('UHOrder', 'UHOrderNA') AND note.NoteID > '{noteId}'
+                                    AND work_order.created > '{GetCutoffTime()}'";
+                            break;
+                        default:
+                            query = $@" 
+                                SELECT
+                                    work_order.wo_ref AS WorkOrderReference,
+                                    note.NDate AS LoggedAt,
+                                    note.UserID AS LoggedBy,
+                                    note.NoteText As [Text],
+                                    note.NoteID AS NoteId
+                                FROM 
+                                    uhwdev.dbo.W2ObjectNote AS note
+                                INNER JOIN
+                                    uhtdev.dbo.rmworder as work_order ON note.KeyNumb = work_order.rmworder_sid
+                                where 
+                                    note.KeyObject in ('UHOrder', 'UHOrderNA') AND note.NoteID > '{noteId}'
+                                    AND work_order.created > '{GetCutoffTime()}'";
+                            break;
+                    }
+                    notes = connection.Query<DetailedNote>(query);
+                    return notes;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhwRepositoryException();
+            }
+        }
+
+        public static string GetCutoffTime()
+        {
+            DateTime now = DateTime.Now;
+            DateTime dtCutoff = new DateTime(now.Year, now.Month, now.Day, 23, 0, 0);
+            dtCutoff = dtCutoff.AddDays(-1);
+            return dtCutoff.ToString("yyyy-MM-dd hh:mm:ss");
+        }
 	}
     public class UhwRepositoryException : Exception
     {

@@ -136,7 +136,7 @@ namespace HackneyRepairs.Controllers
             }
         }
 
-		// GET Notes for a Work Order 
+        // GET Notes for a Work Order 
         /// <summary>
         /// Returns all notes for a work order
         /// </summary>
@@ -182,6 +182,24 @@ namespace HackneyRepairs.Controllers
                 jsonResponse.StatusCode = 500;
                 return jsonResponse;
             }
+        }
+
+        // GET the recent orders for a Work Order 
+        /// <summary>
+        /// Returns recent notes for a work order from a note id
+        /// </summary>
+        /// <param name="noteId">Note id</param>
+        /// <returns>A list of notes entities</returns>
+        /// <response code="200">Returns a list of recent notes from a note id</response>
+        /// <response code="404">note id is the most recent note</response>   
+        /// <response code="500">If any errors are encountered</response>
+        [HttpGet("{NoteId}/recentnotes")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<JsonResult> GetRecentNotesByNoteId(string noteId)
+        {
+            throw new NotImplementedException();
         }
 	}
 }

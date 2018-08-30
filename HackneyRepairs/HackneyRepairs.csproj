@@ -68,4 +68,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controllers\NotesController.cs" />
+  </ItemGroup>
 </Project>

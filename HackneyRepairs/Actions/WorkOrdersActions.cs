@@ -57,6 +57,11 @@ namespace HackneyRepairs.Actions
 			_logger.LogInformation($"Notes returned for: {workOrderReference}");
             return result;
 		}
+
+        public async Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
+        {
+            throw new NotImplementedException();
+        }
     }
     
     public class MissingWorkOrderException : Exception { }
