@@ -149,7 +149,8 @@ namespace HackneyRepairs.Actions
             }
 
 			_logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
-			return result;
+            GenericFormatter.TrimStringAttributes(result);
+            return result;
 		}
 
         // Currently not used, but it might be in the future

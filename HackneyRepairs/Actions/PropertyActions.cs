@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HackneyRepairs.Formatters;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
@@ -40,7 +41,7 @@ namespace HackneyRepairs.Actions
                     results.Add(response);
                     parent = response.MajorReference;
                 }
-
+                GenericFormatter.TrimStringAttributes(results);
                 return results;
             }
             catch (MissingPropertyException e)

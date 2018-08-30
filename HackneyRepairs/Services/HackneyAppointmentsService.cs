@@ -88,7 +88,7 @@ namespace HackneyRepairs.Services
             if (!uhtResponse.Any())
             {
                 _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
-                    workOrderReference not found: {workOrderReference})");
+                    workOrderReference not found, returning an empty list for: {workOrderReference})");
                 return uhtResponse;
             }
 
@@ -99,7 +99,7 @@ namespace HackneyRepairs.Services
             if (uhtResponse.FirstOrDefault().BeginDate != null && drsResponse.Any())
             {
                 _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
-                    Appointments fround from UHT and DRS: {workOrderReference})");
+                    Appointments fround from UHT and DRS, returning the joint response for: {workOrderReference})");
                 AssignSittingAtProperty(uhtResponse, drsResponse);
                 return uhtResponse.Concat(drsResponse).ToList();
             }
