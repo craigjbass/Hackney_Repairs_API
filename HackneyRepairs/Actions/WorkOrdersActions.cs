@@ -14,10 +14,10 @@ namespace HackneyRepairs.Actions
 		private readonly ILoggerAdapter<WorkOrdersActions> _logger;
 
 		public WorkOrdersActions(IHackneyWorkOrdersService workOrdersService, ILoggerAdapter<WorkOrdersActions> logger)
-        {
+    {
 			_workOrdersService = workOrdersService;
 			_logger = logger;
-        }
+    }
 
 		public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
@@ -33,33 +33,32 @@ namespace HackneyRepairs.Actions
 		}
         
 		public async Task<IEnumerable<UHWorkOrderBase>> GetWorkOrderByPropertyReference(string propertyId)
-        {
-            _logger.LogInformation($"Finding work order details for Id: {propertyId}");
-            var result = await _workOrdersService.GetWorkOrderByPropertyReference(propertyId);
-			if (((List<UHWorkOrderBase>)result).Count == 0)
-            {
-                _logger.LogError($"Work order not found for Id: {propertyId}");
-                throw new MissingWorkOrderException();
-            }
-            //
-            _logger.LogInformation($"Work order details returned for: {propertyId}");
-            return result;
-        }
+    {
+      _logger.LogInformation($"Finding work order details for Id: {propertyId}");
+      var result = await _workOrdersService.GetWorkOrderByPropertyReference(propertyId);
+      if (((List<UHWorkOrderBase>)result).Count == 0)
+      {
+        _logger.LogError($"Work order not found for Id: {propertyId}");
+        throw new MissingWorkOrderException();
+      }
+      _logger.LogInformation($"Work order details returned for: {propertyId}");
+      return result;
+    }
 
 		public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
 		{
 			_logger.LogInformation($"Finding notes by work order: {workOrderReference}");
 			var result = await _workOrdersService.GetNotesByWorkOrderReference(workOrderReference);
 			if (((List<Note>)result).Count == 0)
-            {
-				_logger.LogError($"Notes not found for: {workOrderReference}");
-                throw new MissingNotesException();
-            }
+      {
+        _logger.LogError($"Notes not found for: {workOrderReference}");
+        throw new MissingNotesException();
+      }
 			_logger.LogInformation($"Notes returned for: {workOrderReference}");
-            return result;
+      return result;
 		}
-    }
+  }
     
-    public class MissingWorkOrderException : Exception { }
+  public class MissingWorkOrderException : Exception { }
 	public class MissingNotesException : Exception { }
 }

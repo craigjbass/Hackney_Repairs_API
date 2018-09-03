@@ -107,7 +107,7 @@ namespace HackneyRepairs.Controllers
 			var result = new List<UHWorkOrderBase>();
             try
             {
-                result = (await workOrdersActions.GetWorkOrderByPropertyReference(propertyReference)).ToList();
+                result = (await workOrdersActions.GetWorkOrdersByPropertyReference(propertyReference)).ToList();
                 var json = Json(result);
                 json.StatusCode = 200;
                 return json;
