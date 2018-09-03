@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Entities;
@@ -60,8 +61,43 @@ namespace HackneyRepairs.Services
 
         public async Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
         {
-            // uhw and data warehouse query using cuttoff date.
-            throw new NotImplementedException();
+            var exoectedResultNumber = 50;
+            _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying Uh Warehouse for: {noteId}");
+            var warehouseResult = await _uhWarehouseRepository.GetRecentNotes(noteId);
+            var warehouseResultCount = warehouseResult.Count();
+            _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {warehouseResultCount} results returned for: {noteId}");
+
+            if (warehouseResultCount == exoectedResultNumber)
+            {
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Returning UH warehouse only results to actions for: {noteId}");
+                return warehouseResult;
+            }
+
+            IEnumerable<DetailedNote> uhResult;
+            if (warehouseResultCount == 0)
+            {
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying UH and expecting up to 50 results for: {noteId}");
+                uhResult = await _uhwRepository.GetRecentNotes(noteId, null);
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {noteId}");
+                return uhResult;
+            }
+            else
+            {
+                var remainingCount = exoectedResultNumber - warehouseResultCount;
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying UH and expecting up to {remainingCount} results for: {noteId}");
+                uhResult = await _uhwRepository.GetRecentNotes(noteId, remainingCount);
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {noteId}");
+
+                if (uhResult.Any())
+                {
+                    _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Joining warehouse and uh results into a single list for: {noteId}");
+                    List<DetailedNote> jointResult = (List<DetailedNote>)uhResult;
+                    jointResult.InsertRange(0, warehouseResult);
+                    _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Joint list contains {jointResult.Count()} notes for: {noteId}");
+                    return jointResult;
+                }
+                return warehouseResult;
+            }
         }
     }
 }
