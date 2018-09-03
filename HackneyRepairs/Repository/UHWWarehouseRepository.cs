@@ -230,20 +230,21 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    string query = $@"
-                                SELECT
-                                    worder.wo_ref AS WorkOrderReference,
-                                    notes.NDate AS LoggedAt,
-                                    notes.UserID AS LoggedBy,
-                                    notes.NoteText As [Text],
-                                    notes.NoteID as NoteId
-                                FROM 
-                                    W2ObjectNote as notes
-                                INNER JOIN
-                                    StagedDB.dbo.rmworder as worder ON notes.KeyNumb = worder.rmworder_sid
-                                where 
-                                    KeyObject in ('UHOrder', 'UHOrderNA') AND NoteID >= '{noteId}'
-                                    AND NDate < '{GetCutoffTime()}'";
+                    string query = $@"set dateformat ymd;
+                    SELECT TOP 50
+                        work_order.wo_ref AS WorkOrderReference,
+                        notes.NDate AS LoggedAt,
+                        notes.UserID AS LoggedBy,
+                        notes.NoteText As [Text],
+                        notes.NoteID AS NoteId
+                    FROM 
+                        StagedDBW2.dbo.W2ObjectNote AS notes
+                    INNER JOIN
+                        StagedDB.dbo.rmworder AS work_order ON notes.KeyNumb = work_order.rmworder_sid
+                    WHERE 
+                        KeyObject in ('UHOrder', 'UHOrderNA') AND NoteID > {noteId} AND NDate < '{GetCutoffTime()}'
+                    ORDER BY NoteId";
+
                     notes = connection.Query<DetailedNote>(query);
                     return notes;
                 }
@@ -260,7 +261,7 @@ namespace HackneyRepairs.Repository
             DateTime now = DateTime.Now;
             DateTime dtCutoff = new DateTime(now.Year, now.Month, now.Day, 23, 0, 0);
             dtCutoff = dtCutoff.AddDays(-1);
-            return dtCutoff.ToString("yyyy-MM-dd hh:mm:ss");
+            return dtCutoff.ToString("yyyy-MM-dd HH:mm:ss");
         }
     }
 

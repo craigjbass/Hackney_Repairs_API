@@ -375,7 +375,7 @@ namespace HackneyRepairs.Repository
             DateTime now = DateTime.Now;
             DateTime dtCutoff = new DateTime(now.Year, now.Month, now.Day, 23, 0, 0);
             dtCutoff = dtCutoff.AddDays(-1);
-            return dtCutoff.ToString("yyyy-MM-dd hh:mm:ss");
+            return dtCutoff.ToString("yyyy-MM-dd HH:mm:ss");
         }
 	}
 
