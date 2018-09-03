@@ -56,5 +56,10 @@ namespace HackneyRepairs.Services
             };
 			return Task.Run(() => (IEnumerable<Note>)noteEntities);
         }
-	}
+
+        public Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
