@@ -23,7 +23,7 @@ namespace HackneyRepairs.Tests.Integration
 		{
             Environment.SetEnvironmentVariable("UhtDb", "database=Test");
             Environment.SetEnvironmentVariable("UhwDb", "database=Test");
-            Environment.SetEnvironmentVariable("DRSLiveMirrorDb", "database=Test");
+            Environment.SetEnvironmentVariable("DRSDb", "database=Test");
             _server = new TestServer(new WebHostBuilder()
 				.UseStartup<TestStartup>());
 			_client = _server.CreateClient();

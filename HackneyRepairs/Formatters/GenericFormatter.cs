@@ -14,7 +14,10 @@ namespace HackneyRepairs.Formatters
                     if (property.PropertyType.Name == "String")
                     {
                         string value = (string)property.GetValue(obj, null);
-                        property.SetValue(obj, value.Trim());
+                        if (!string.IsNullOrWhiteSpace(value))
+                        {
+                            property.SetValue(obj, value.Trim());
+                        }
                     }
                 }
             }
