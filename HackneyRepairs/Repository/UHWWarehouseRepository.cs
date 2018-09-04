@@ -223,7 +223,7 @@ namespace HackneyRepairs.Repository
 			return workOrders;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
+        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int? size)
         {
             IEnumerable<DetailedNote> notes;
             try

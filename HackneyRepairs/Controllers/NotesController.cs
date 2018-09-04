@@ -27,10 +27,10 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<JsonResult> GetFeedNotes(string startId, string noteTarget, int ResultSize)
+        public async Task<JsonResult> GetFeedNotes(int startId, string noteTarget, int? resultSize)
         {
             //var noteActions = new NotesActions(_workOrdersService, _loggerAdapter);
-            //return Json(await noteActions.GetNoteFeed(startId));
+            //return Json(await noteActions.GetNoteFeed(startId, noteTarget, resultSize));
             throw new NotImplementedException();
         }
     }

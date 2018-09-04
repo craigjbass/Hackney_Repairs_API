@@ -17,9 +17,9 @@ namespace HackneyRepairs.Actions
             _workOrdersService = workOrdersService;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(string noteId)
+        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int startId, string noteTarget, int? size)
         {
-            var results = await _workOrdersService.GetRecentNotes(noteId);
+            var results = await _workOrdersService.GetNoteFeed(startId, noteTarget, size);
             return results;
         }
     }

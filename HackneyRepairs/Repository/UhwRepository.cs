@@ -114,7 +114,7 @@ namespace HackneyRepairs.Repository
             return notes;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId, int? remainingCount)
+        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int? size, int? remainingCount)
         {
             IEnumerable<DetailedNote> notes;
             try

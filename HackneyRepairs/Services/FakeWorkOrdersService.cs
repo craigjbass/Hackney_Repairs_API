@@ -57,9 +57,23 @@ namespace HackneyRepairs.Services
 			return Task.Run(() => (IEnumerable<Note>)noteEntities);
         }
 
-        public Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
+        public Task<IEnumerable<DetailedNote>> GetNoteFeed(int startId, string noteTarget, int? resultSize)
         {
-            throw new NotImplementedException();
+            if (startId == 99999999)
+            {
+                return Task.Run(() => (IEnumerable<DetailedNote>)new List<DetailedNote>());
+            }
+            if (startId == 11550853)
+            {
+                throw new FakeWorkOrdersServiceException();
+            }
+            var fakeNoteResponse = new List<DetailedNote>
+            {
+                new DetailedNote()
+            };
+            return Task.Run(() => (IEnumerable<DetailedNote>)fakeNoteResponse);
         }
     }
+
+    class FakeWorkOrdersServiceException : Exception {}
 }

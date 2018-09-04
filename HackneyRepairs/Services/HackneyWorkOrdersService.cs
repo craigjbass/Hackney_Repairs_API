@@ -59,41 +59,41 @@ namespace HackneyRepairs.Services
 			return result;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetRecentNotes(string noteId)
+        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int startId, string noteTarget, int? size)
         {
             var exoectedResultNumber = 50;
-            _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying Uh Warehouse for: {noteId}");
-            var warehouseResult = await _uhWarehouseRepository.GetRecentNotes(noteId);
+            _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying Uh Warehouse for: {startId}");
+            var warehouseResult = await _uhWarehouseRepository.GetNoteFeed(startId, noteTarget, size);
             var warehouseResultCount = warehouseResult.Count();
-            _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {warehouseResultCount} results returned for: {noteId}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {warehouseResultCount} results returned for: {startId}");
 
             if (warehouseResultCount == exoectedResultNumber)
             {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Returning UH warehouse only results to actions for: {noteId}");
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Returning UH warehouse only results to actions for: {startId}");
                 return warehouseResult;
             }
 
             IEnumerable<DetailedNote> uhResult;
             if (warehouseResultCount == 0)
             {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying UH and expecting up to 50 results for: {noteId}");
-                uhResult = await _uhwRepository.GetRecentNotes(noteId, null);
-                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {noteId}");
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying UH and expecting up to 50 results for: {startId}");
+                uhResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size, null);
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {startId}");
                 return uhResult;
             }
             else
             {
                 var remainingCount = exoectedResultNumber - warehouseResultCount;
-                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying UH and expecting up to {remainingCount} results for: {noteId}");
-                uhResult = await _uhwRepository.GetRecentNotes(noteId, remainingCount);
-                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {noteId}");
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying UH and expecting up to {remainingCount} results for: {startId}");
+                uhResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size, remainingCount);
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {startId}");
 
                 if (uhResult.Any())
                 {
-                    _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Joining warehouse and uh results into a single list for: {noteId}");
+                    _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Joining warehouse and uh results into a single list for: {startId}");
                     List<DetailedNote> jointResult = (List<DetailedNote>)uhResult;
                     jointResult.InsertRange(0, warehouseResult);
-                    _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Joint list contains {jointResult.Count()} notes for: {noteId}");
+                    _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Joint list contains {jointResult.Count()} notes for: {startId}");
                     return jointResult;
                 }
                 return warehouseResult;
