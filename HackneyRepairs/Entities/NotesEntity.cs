@@ -3,7 +3,7 @@ namespace HackneyRepairs.Entities
 {
     public class NotesEntity
     {
-	public string KeyObject { get; set; }
+	    public string KeyObject { get; set; }
 		public int KeyNumb { get; set; }
 		public string KeyText { get; set; }
 		public DateTime  NDate { get; set; }
