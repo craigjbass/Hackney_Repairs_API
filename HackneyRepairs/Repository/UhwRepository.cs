@@ -114,7 +114,7 @@ namespace HackneyRepairs.Repository
             return notes;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int? size, int? remainingCount)
+        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int size, int? remainingCount)
         {
             IEnumerable<DetailedNote> notes;
             try
@@ -123,7 +123,7 @@ namespace HackneyRepairs.Repository
                 {
                     if (remainingCount == null)
                     {
-                        remainingCount = 50;
+                        remainingCount = size;
                     }
 
                     string environmentDbWord = "";
@@ -141,7 +141,7 @@ namespace HackneyRepairs.Repository
 
                     var query = $@"set dateformat ymd;
                         SELECT TOP {remainingCount}
-                            work_order.wo_ref AS WorkOrderReference,
+                            LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
                             note.NDate AS LoggedAt,
                             note.UserID AS LoggedBy,
                             note.NoteText AS [Text],
@@ -151,8 +151,8 @@ namespace HackneyRepairs.Repository
                         INNER JOIN
                             uht{environmentDbWord}.dbo.rmworder AS work_order ON note.KeyNumb = work_order.rmworder_sid
                         WHERE
-                            note.KeyObject IN ('UHOrder', 'UHOrderNA') AND note.NoteID > {noteId}
-                            AND work_order.created > '{GetCutoffTime()}'
+                            note.KeyObject IN ('{noteTarget}') AND note.NoteID > {noteId}
+                            AND notes.NDate > '{GetCutoffTime()}'
                         ORDER BY NoteID";
 
                     notes = connection.Query<DetailedNote>(query);

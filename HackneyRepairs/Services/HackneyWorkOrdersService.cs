@@ -61,13 +61,18 @@ namespace HackneyRepairs.Services
 
         public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int startId, string noteTarget, int? size)
         {
-            var exoectedResultNumber = 50;
+            var feedMaxBatchSize = Int32.Parse(Environment.GetEnvironmentVariable("NoteFeedMaxBatchSize"));
+            if (size == null || size > feedMaxBatchSize)
+            {
+                size = feedMaxBatchSize;
+            }
+
             _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying Uh Warehouse for: {startId}");
-            var warehouseResult = await _uhWarehouseRepository.GetNoteFeed(startId, noteTarget, size);
+            var warehouseResult = await _uhWarehouseRepository.GetNoteFeed(startId, noteTarget, size.Value);
             var warehouseResultCount = warehouseResult.Count();
             _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {warehouseResultCount} results returned for: {startId}");
 
-            if (warehouseResultCount == exoectedResultNumber)
+            if (warehouseResultCount == size)
             {
                 _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Returning UH warehouse only results to actions for: {startId}");
                 return warehouseResult;
@@ -77,15 +82,15 @@ namespace HackneyRepairs.Services
             if (warehouseResultCount == 0)
             {
                 _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying UH and expecting up to 50 results for: {startId}");
-                uhResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size, null);
+                uhResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size.Value, null);
                 _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {startId}");
                 return uhResult;
             }
             else
             {
-                var remainingCount = exoectedResultNumber - warehouseResultCount;
+                var remainingCount = size - warehouseResultCount;
                 _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): Querying UH and expecting up to {remainingCount} results for: {startId}");
-                uhResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size, remainingCount);
+                uhResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size.Value, remainingCount);
                 _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {startId}");
 
                 if (uhResult.Any())

@@ -223,7 +223,7 @@ namespace HackneyRepairs.Repository
 			return workOrders;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int? size)
+        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int size)
         {
             IEnumerable<DetailedNote> notes;
             try
@@ -231,8 +231,8 @@ namespace HackneyRepairs.Repository
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
                     string query = $@"set dateformat ymd;
-                    SELECT TOP 50
-                        work_order.wo_ref AS WorkOrderReference,
+                    SELECT TOP {size}
+                        LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
                         notes.NDate AS LoggedAt,
                         notes.UserID AS LoggedBy,
                         notes.NoteText As [Text],
@@ -242,8 +242,9 @@ namespace HackneyRepairs.Repository
                     INNER JOIN
                         StagedDB.dbo.rmworder AS work_order ON notes.KeyNumb = work_order.rmworder_sid
                     WHERE 
-                        KeyObject in ('UHOrder', 'UHOrderNA') AND NoteID > {noteId} AND NDate < '{GetCutoffTime()}'
-                    ORDER BY NoteId";
+                        KeyObject in ('{noteTarget}') AND NoteID > {noteId} 
+                        AND notes.NDate < '{GetCutoffTime()}'
+                    ORDER BY NoteID";
 
                     notes = connection.Query<DetailedNote>(query);
                     return notes;
