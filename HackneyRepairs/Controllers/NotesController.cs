@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Factories;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
+using HackneyRepairs.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HackneyRepairs.Controllers
@@ -29,9 +31,71 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(500)]
         public async Task<JsonResult> GetFeedNotes(int startId, string noteTarget, int? resultSize)
         {
-            //var noteActions = new NotesActions(_workOrdersService, _loggerAdapter);
-            //return Json(await noteActions.GetNoteFeed(startId, noteTarget, resultSize));
-            throw new NotImplementedException();
+            if (startId < 1)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = "Invalid parameter - Please use a valid startId",
+                    userMessage = @"Bad Request"
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 400;
+                return jsonResponse;   
+            }
+            if (string.IsNullOrWhiteSpace(noteTarget))
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = "Bad Request - Missing parameter",
+                    userMessage = @"Bad Request"
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 400;
+                return jsonResponse;
+            }
+            
+            var notesActions = new NotesActions(_workOrdersService, _loggerAdapter);
+            try
+            {
+                var result = await notesActions.GetNoteFeed(startId, noteTarget, resultSize);
+                var json = Json(result);
+                json.StatusCode = 200;
+                return json;
+            }
+            catch (UHWWarehouseRepositoryException ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"We had issues with connecting to the data source."
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+            catch (UhwRepositoryException ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"We had issues with connecting to the data source."
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+            catch (Exception ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"We had issues processing your request."
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+
         }
     }
 }
