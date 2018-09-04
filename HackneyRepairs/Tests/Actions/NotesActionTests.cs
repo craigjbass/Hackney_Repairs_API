@@ -13,6 +13,7 @@ namespace HackneyRepairs.Tests.Actions
     public class NotesActionTests
     {
         Mock<ILoggerAdapter<NotesActions>> _mockLogger;
+
         public NotesActionTests()
         {
             _mockLogger = new Mock<ILoggerAdapter<NotesActions>>();
@@ -29,10 +30,9 @@ namespace HackneyRepairs.Tests.Actions
                 new DetailedNote()
             };
             Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
-            _workOrderService.Setup(service => service.GetNoteFeed(It.IsAny<int>(), It.IsIn<string>(), It.IsAny<int>()))
+            _workOrderService.Setup(service => service.GetNoteFeed(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
                              .Returns(Task.FromResult<IEnumerable<DetailedNote>>(fakeResponse));
-            NotesActions notesActions = new NotesActions(_workOrderService.Object,
-                                                                        _mockLogger.Object);
+            NotesActions notesActions = new NotesActions(_workOrderService.Object, _mockLogger.Object);
             var response = await notesActions.GetNoteFeed(randomReference, "", randomReference);
 
             Assert.True(response is List<DetailedNote>);

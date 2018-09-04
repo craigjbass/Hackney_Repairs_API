@@ -161,7 +161,7 @@ namespace HackneyRepairs.Tests.Integration
 		{
 			var result = await _client.GetAsync("v1/work_orders/01550854/appointments");
 			var jsonresult = await result.Content.ReadAsStringAsync();
-			var appointments = JsonConvert.DeserializeObject<List<DetailedAppointment>>(jsonresult).ToList();
+			var appointments = JsonConvert.DeserializeObject<List<DetailedAppointment>>(jsonresult);
 
 			Assert.IsType<List<DetailedAppointment>>(appointments);
 			Assert.Equal(HttpStatusCode.OK, result.StatusCode);
