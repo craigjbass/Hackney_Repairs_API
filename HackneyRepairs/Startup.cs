@@ -44,7 +44,7 @@ namespace HackneyRepairs
             services.AddDbContext<UHWWarehouseDbContext>(options =>
                                                          options.UseSqlServer(Configuration.GetSection("UhWarehouseDb").Value));
             services.AddDbContext<DRSDbContext>(options =>
-                                                options.UseMySql(Configuration.GetSection("DRSLiveMirrorDb").Value));
+                                                options.UseMySql(Configuration.GetSection("DRSDb").Value));
             
             services.AddMvc();
             services.AddSwaggerGen(c =>
