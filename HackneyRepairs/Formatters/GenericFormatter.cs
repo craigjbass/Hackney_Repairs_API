@@ -11,7 +11,7 @@ namespace HackneyRepairs.Formatters
             {
                 foreach (var property in obj.GetType().GetProperties())
                 {
-                    if (property.PropertyType.Name == "String")
+                    if (property.PropertyType.Name == "String") 
                     {
                         string value = (string)property.GetValue(obj, null);
                         if (!string.IsNullOrWhiteSpace(value))
