@@ -152,7 +152,7 @@ namespace HackneyRepairs.Repository
                             uht{environmentDbWord}.dbo.rmworder AS work_order ON note.KeyNumb = work_order.rmworder_sid
                         WHERE
                             note.KeyObject IN ('{noteTarget}') AND note.NoteID > {noteId}
-                            AND notes.NDate > '{GetCutoffTime()}'
+                            AND note.NDate > '{GetCutoffTime()}'
                         ORDER BY NoteID";
 
                     notes = connection.Query<DetailedNote>(query);

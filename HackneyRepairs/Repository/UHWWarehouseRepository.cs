@@ -225,7 +225,6 @@ namespace HackneyRepairs.Repository
 
         public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int size)
         {
-            IEnumerable<DetailedNote> notes;
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -233,21 +232,41 @@ namespace HackneyRepairs.Repository
                     string query = $@"set dateformat ymd;
                     SELECT TOP {size}
                         LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
-                        notes.NDate AS LoggedAt,
-                        notes.UserID AS LoggedBy,
-                        notes.NoteText As [Text],
-                        notes.NoteID AS NoteId
+                        note.NDate AS LoggedAt,
+                        note.UserID AS LoggedBy,
+                        note.NoteText As [Text],
+                        note.NoteID AS NoteId
                     FROM 
-                        StagedDBW2.dbo.W2ObjectNote AS notes
+                        StagedDBW2.dbo.W2ObjectNote AS note
                     INNER JOIN
-                        StagedDB.dbo.rmworder AS work_order ON notes.KeyNumb = work_order.rmworder_sid
+                        StagedDB.dbo.rmworder AS work_order ON note.KeyNumb = work_order.rmworder_sid
                     WHERE 
                         KeyObject in ('{noteTarget}') AND NoteID > {noteId} 
-                        AND notes.NDate < '{GetCutoffTime()}'
+                        AND note.NDate < '{GetCutoffTime()}'
                     ORDER BY NoteID";
 
-                    notes = connection.Query<DetailedNote>(query);
+                    var notes = connection.Query<DetailedNote>(query);
                     return notes;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
+            }
+        }
+
+        public async Task<IEnumerable<string>> GetDistinctNoteKeyObjects()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = @"
+                        SELECT DISTINCT LOWER([KeyObject])
+                        FROM StagedDBW2.dbo.[W2ObjectNote]";
+                    var keyObjets = connection.Query<string>(query);
+                    return keyObjets;
                 }
             }
             catch (Exception ex)
