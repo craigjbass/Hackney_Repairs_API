@@ -158,32 +158,32 @@ namespace HackneyRepairs.Controllers
 				return jsonResponse;
 			}
 		}
-      
-		// GET all appointments booked appointments by work order reference 
+
+		// GET the current appointment by work order reference from UH or DRS
         /// <summary>
-        /// Returns all apointments for a work order
+        /// Returns the current apointment for a work order
         /// </summary>
         /// <param name="workOrderReference">UH work order reference</param>
-        /// <returns>A list of UHT appointment entities</returns>
-        /// <response code="200">Returns a list of appointments for a work order reference</response>
-        /// <response code="404">If there are no appointments found for the work orders reference</response>   
+        /// <returns>An appointment</returns>
+        /// <response code="200">Returns an appointment for a work order reference</response>
+        /// <response code="404">If there is no appointment found for the work order reference</response>   
         /// <response code="500">If any errors are encountered</response>
-		[HttpGet("v1/work_orders/{workOrderReference}/appointments")]
+        [HttpGet("v1/work_orders/{workOrderReference}/appointments/current")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-		public async Task<JsonResult> GetAppointmentsByWorkOrderReference(string workOrderReference)
+        public async Task<JsonResult> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
         {
-			var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-            IEnumerable<DetailedAppointment> result;
+            var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
+            DetailedAppointment result;
             try
             {
-				result = await appointmentsActions.GetAppointmentsByWorkOrderReference(workOrderReference);
+                result = await appointmentsActions.GetCurrentAppointmentByWorkOrderReference(workOrderReference);
                 var json = Json(result);
                 json.StatusCode = 200;
                 return json;
             }
-            catch(MissingAppointmentsException)
+            catch (MissingAppointmentException)
             {
                 return new JsonResult(new string[0]);
             }

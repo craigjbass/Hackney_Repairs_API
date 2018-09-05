@@ -22,10 +22,10 @@ namespace HackneyRepairs.Repository
             _logger = logger;
         }
 
-        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentByWorkOrderReference(string workOrderReference)
-		{
-            List<DetailedAppointment> appointments;
-            _logger.LogInformation($"Getting appointment details from DRS for {workOrderReference}");
+		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+        {
+			DetailedAppointment appointment;
+            _logger.LogInformation($"Getting current appointment details from DRS for {workOrderReference}");
 
             try
             {
@@ -33,33 +33,34 @@ namespace HackneyRepairs.Repository
                 {
                     string query = $@"
                         SELECT
-                            c_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
-                            c_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
-                            c_job.status AS Status,
-                            c_job.ASSIGNEDWORKERS AS AssignedWorker,
-                            c_job.priority AS Priority,
-                            c_job.CREATIONDATE AS CreationDate,
-                            c_job.BD_APPOINTMENT_REASON AS Comment,
+                            s_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
+                            s_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
+                            s_job.status AS Status,
+                            s_job.ASSIGNEDWORKERS AS AssignedWorker,
+                            s_job.priority AS Priority,
+                            s_job.CREATIONDATE AS CreationDate,
+                            s_job.BD_APPOINTMENT_REASON AS Comment,
                             s_worker.MOBILEPHONE AS Mobilephone,
-                            'DRS' AS SourceSystem,
-                            'DLO' AS SittingAt
+                            'DRS' AS SourceSystem
                         FROM
                             s_serviceorder 
-                        INNER JOIN c_job ON c_job.PARENTID = s_serviceorder.USERID
-                        INNER JOIN s_worker ON c_job.assignedworkersids = s_worker.userid
+                        INNER JOIN s_job ON s_job.PARENTID = s_serviceorder.USERID
+                        INNER JOIN s_worker ON s_job.assignedworkersids = s_worker.userid
                         WHERE
-                            s_serviceorder.NAME = '{workOrderReference}'";
+                            s_serviceorder.NAME = '{workOrderReference}'
+                            AND s_job.status = 'planned'";
 
-                    appointments = connection.Query<DetailedAppointment>(query).ToList();
+					appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
                 }
-                return appointments;
+                return appointment;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw new DrsRepositoryException();
             }
-		}
+        }
+
 	}
 
     public class DrsRepositoryException : Exception {}

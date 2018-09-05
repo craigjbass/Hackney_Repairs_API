@@ -28,6 +28,7 @@ namespace HackneyRepairs.Actions
             _repairsServiceRequestBuilder = repairsServiceRequestBuilder;
             _configuration = configuration;
         }
+
         public async Task<IList<Slot>> GetAppointments(string workOrderReference)
         {
             _logger.LogInformation($"Getting appointments from DRS for work order reference {workOrderReference}");
@@ -133,24 +134,24 @@ namespace HackneyRepairs.Actions
             return json;
         }
 
-        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference (string workOrderReference)
-		{
-            _logger.LogInformation($"Getting all apointments for workOrderReference: {workOrderReference}");
-            var result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
-            if (!result.Any())
+		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+        {
+			_logger.LogInformation($"Getting current apointment for workOrderReference: {workOrderReference}");
+            var result = await _appointmentsService.GetCurrentAppointmentByWorkOrderReference(workOrderReference);
+            if (result == null)
             {
-				_logger.LogError($"No appointments returned due workOrderReference not being found: {workOrderReference}");
+                _logger.LogError($"No appointment returned due workOrderReference not being found: {workOrderReference}");
                 throw new InvalidWorkOrderInUHException();
             }
-            if (result.FirstOrDefault().BeginDate == null)
+            if (result.BeginDate == null)
             {
-                _logger.LogError($"No appointments found for : {workOrderReference}");
-                throw new MissingAppointmentsException();
+                _logger.LogError($"No appointment found for : {workOrderReference}");
+                throw new MissingAppointmentException();
             }
 
-			_logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
-			return result;
-		}
+            _logger.LogInformation($"Appointment returned for workOrderReference: {workOrderReference}");
+            return result;
+        }
 
         // Currently not used, but it might be in the future
         internal async Task<object> GetAppointmentForWorksOrder(string workOrderReference)
@@ -325,4 +326,5 @@ namespace HackneyRepairs.Actions
     public class InvalidWorkOrderInUHException : System.Exception { }
     public class NoAvailableAppointmentsException : System.Exception { }
 	public class MissingAppointmentsException : Exception { }
+	public class MissingAppointmentException : Exception { }
 }
