@@ -25,11 +25,24 @@ namespace HackneyRepairs.Controllers
             _workOrdersService = factory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _workOrdersLoggerAdapter);
         }
 
+        // GET A feed of notes
+        /// <summary>
+        /// Returns a list of notes matching the noteTarget and with a note id greater than startId
+        /// </summary>
+        /// <param name="startId">A note id, results will have a grater id than this parameter</param>
+        /// <param name="noteTarget">The kind of note defined in Universal housing</param>
+        /// <param name="resultSize">The number of notes returned. Default value is 50</param>
+        /// <returns>A list of notes</returns>
+        /// <response code="200">Returns a list of notes</response>
+        /// <response code="400">If a parameter is invalid</response>   
+        /// <response code="404">If the noteTarget parameter does not exist un Universal Housing</response>   
+        /// <response code="500">If any errors are encountered</response>
         [HttpGet("feed")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<JsonResult> GetFeedNotes(int startId, string noteTarget, int? resultSize)
+        public async Task<JsonResult> GetFeedNotes(int startId, string noteTarget, int resultSize = 0)
         {
             if (startId < 1)
             {
@@ -62,40 +75,34 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-            catch (UHWWarehouseRepositoryException ex)
-            {
-                var error = new ApiErrorMessage
-                {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues with connecting to the data source."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
-            }
-            catch (UhwRepositoryException ex)
-            {
-                var error = new ApiErrorMessage
-                {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues with connecting to the data source."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
-            }
             catch (Exception ex)
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues processing your request."
+                    developerMessage = ex.Message
                 };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
+
+                JsonResult jsonResponse;
+                if (ex is MissingNoteTargetException)
+                {
+                    error.userMessage = "noteTarget parameter does not exist in the data source";
+                    jsonResponse = Json(error);
+                    jsonResponse.StatusCode = 404;
+                }
+                else if (ex is UHWWarehouseRepositoryException || ex.InnerException is UhwRepositoryException)
+                {
+                    error.userMessage = "We had issues with connecting to the data source.";
+                    jsonResponse = Json(error);
+                    jsonResponse.StatusCode = 500;
+                }
+                else
+                {
+                    error.userMessage = "We had issues processing your request.";
+                    jsonResponse = Json(error);
+                    jsonResponse.StatusCode = 500;
+                }
                 return jsonResponse;
             }
-
         }
     }
 }

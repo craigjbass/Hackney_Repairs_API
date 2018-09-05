@@ -57,7 +57,7 @@ namespace HackneyRepairs.Services
 			return Task.Run(() => (IEnumerable<Note>)noteEntities);
         }
 
-        public Task<IEnumerable<DetailedNote>> GetNoteFeed(int startId, string noteTarget, int? resultSize)
+        public Task<IEnumerable<DetailedNote>> GetNoteFeed(int startId, string noteTarget, int resultSize)
         {
             if (startId == 99999999)
             {
