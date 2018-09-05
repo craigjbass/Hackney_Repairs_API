@@ -32,7 +32,7 @@ namespace HackneyRepairs.Tests.Integration
         {
             var result = await _client.GetAsync("v1/notes/feed?startId=12345678&noteTarget=UHOrder");
             var jsonResult = await result.Content.ReadAsStringAsync();
-            var notes = JsonConvert.DeserializeObject<IEnumerable<DetailedNote>>(jsonResult);
+            var notes = JsonConvert.DeserializeObject<List<DetailedNote>>(jsonResult);
 
             Assert.IsType<List<DetailedNote>>(notes);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);

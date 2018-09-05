@@ -28,6 +28,9 @@ namespace HackneyRepairs.Tests.Actions
             List<DetailedNote> fakeResponse = new List<DetailedNote>
             {
                 new DetailedNote()
+                {
+                    WorkOrderReference = "123"
+                }
             };
             Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
             _workOrderService.Setup(service => service.GetNoteFeed(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))

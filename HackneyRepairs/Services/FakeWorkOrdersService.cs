@@ -70,6 +70,9 @@ namespace HackneyRepairs.Services
             var fakeNoteResponse = new List<DetailedNote>
             {
                 new DetailedNote()
+                {
+                    WorkOrderReference = "123"
+                }
             };
             return Task.Run(() => (IEnumerable<DetailedNote>)fakeNoteResponse);
         }
