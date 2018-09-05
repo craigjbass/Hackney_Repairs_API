@@ -26,26 +26,26 @@ namespace HackneyRepairs.Actions
         {
             _logger.LogInformation($"Finding repair requests for Id: {propertyReference}");
             var repairRequests = await _repairsService.GetRepairByPropertyReference(propertyReference);
-			if (((List<RepairRequestBase>)repairRequests).Count == 0)
+            if (((List<RepairRequestBase>)repairRequests).Count == 0)
             {
                 _logger.LogError($"Repairs not found for Id: {propertyReference}");
-				throw new MissingRepairRequestException();
+                throw new MissingRepairRequestException();
             }
             _logger.LogInformation($"Repair request details returned for: {propertyReference}");
-			return repairRequests;
+            return repairRequests;
         }
         
-		public async Task<object> CreateRepair(RepairRequest request)
-		{
-			if (request.WorkOrders != null)
-			{
-				return await CreateRepairWithOrder(request);
-			}
-			else
-			{
-				return await CreateRepairWithoutOrder(request);
-			}
-		}
+        public async Task<object> CreateRepair(RepairRequest request)
+        {
+            if (request.WorkOrders != null)
+            {
+                return await CreateRepairWithOrder(request);
+            }
+            else
+            {
+                return await CreateRepairWithoutOrder(request);
+            }
+        }
 
 		public async Task<object> GetRepairByReference(string reference)
 		{

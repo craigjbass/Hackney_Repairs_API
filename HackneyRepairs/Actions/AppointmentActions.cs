@@ -139,7 +139,7 @@ namespace HackneyRepairs.Actions
             var result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
             if (!result.Any())
             {
-				_logger.LogError($"No appointments returned due workOrderReference not being found: {workOrderReference}");
+                _logger.LogError($"No appointments returned due workOrderReference not being found: {workOrderReference}");
                 throw new InvalidWorkOrderInUHException();
             }
             if (result.FirstOrDefault().BeginDate == null)
@@ -148,10 +148,10 @@ namespace HackneyRepairs.Actions
                 throw new MissingAppointmentsException();
             }
 
-			_logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
+            _logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
             GenericFormatter.TrimStringAttributes(result);
             return result;
-		}
+        }
 
         // Currently not used, but it might be in the future
         internal async Task<object> GetAppointmentForWorksOrder(string workOrderReference)
