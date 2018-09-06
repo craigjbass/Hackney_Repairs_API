@@ -8,5 +8,6 @@ namespace HackneyRepairs.Interfaces
     public interface IDRSRepository
     {
 		Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference);
+		Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference);
     }
 }

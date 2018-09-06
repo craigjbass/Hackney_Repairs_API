@@ -338,6 +338,39 @@ namespace HackneyRepairs.Repository
             }
         }
 
+		public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+        {
+            List<DetailedAppointment> appointments;
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $@"SELECT 
+                                        visit.visit_sid AS Id,
+                                        visit.visit_prop_appointment AS BeginDate,
+                                        visit.visit_prop_end AS EndDate,
+                                        ROW_NUMBER() OVER (ORDER BY visit.visit_sid) AS CreationOrder,
+                                        'UH' AS SourceSystem,
+                                        'External' AS SittingAt,
+                                        visit.visit_comment AS Comment
+                                    FROM 
+                                        visit
+                                    RIGHT OUTER JOIN 
+                                        rmworder ON rmworder.rmworder_sid = visit.reference_sid
+                                    WHERE 
+                                        rmworder.wo_ref = '{workOrderReference}'
+                                    ORDER BY visit.visit_sid";
+                    appointments = connection.Query<DetailedAppointment>(query).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+            return appointments;
+        }
+
 		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
         {
             DetailedAppointment appointment;
@@ -346,35 +379,37 @@ namespace HackneyRepairs.Repository
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
 					string query = $@"SELECT
-                                        Status,
-                                        AssignedWorker,
-                                        Mobilephone,
-                                        Priority,
-                                        SourceSystem,
-                                        COMMENT,
-                                        BeginDate,
-                                        EndDate,
-                                        CreationDate
-                                    FROM (
-                                        SELECT
-                                            'Unknown' AS Status,
-                                            supplier.sup_name AS AssignedWorker,
-                                            supplier.sup_tel AS Mobilephone,
-                                            rmworder.u_priority AS Priority,
-                                            'UH' AS SourceSystem,
-                                            visit.visit_comment AS COMMENT,
-                                            visit.visit_prop_appointment AS BeginDate,
-                                            visit.visit_prop_end AS EndDate,
-                                            NULL AS CreationDate,
-                                            rmworder.expected_completion AS ExpectedOn
-                                        FROM
-                                            visit
-                                        RIGHT OUTER JOIN rmworder ON rmworder.rmworder_sid = visit.reference_sid
-                                        INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
+                                            Id,
+                                            Status,
+                                            AssignedWorker,
+                                            Mobilephone,
+                                            Priority,
+                                            SourceSystem,
+                                            Comment,
+                                            BeginDate,
+                                            EndDate,
+                                            CreationDate
+                                        FROM (
+                                            SELECT
+                                                visit.visit_sid AS Id,
+                                                'Unknown' AS Status,
+                                                supplier.sup_name AS AssignedWorker,
+                                                supplier.sup_tel AS Mobilephone,
+                                                rmworder.u_priority AS Priority,
+                                                'UH' AS SourceSystem,
+                                                visit.visit_comment AS Comment,
+                                                visit.visit_prop_appointment AS BeginDate,
+                                                visit.visit_prop_end AS EndDate,
+                                                NULL AS CreationDate,
+                                                rmworder.expected_completion AS ExpectedOn
+                                            FROM
+                                                visit
+                                            RIGHT OUTER JOIN rmworder ON rmworder.rmworder_sid = visit.reference_sid
+                                            INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
+                                            WHERE
+                                                rmworder.wo_ref = '01550297') AS allApps
                                         WHERE
-                                            rmworder.wo_ref = '{workOrderReference}') AS allApps
-                                    WHERE
-                                        allApps.EndDate = allApps.ExpectedOn"; 
+                                            allApps.EndDate = allApps.ExpectedOn"; 
 					
 					appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
                 }

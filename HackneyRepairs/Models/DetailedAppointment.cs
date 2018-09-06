@@ -3,6 +3,7 @@ namespace HackneyRepairs.Models
 {
     public class DetailedAppointment : Appointment
     {
+		public string Id { get; set; }
         public string Status { get; set; }
         public string AssignedWorker { get; set; }
         public string Mobilephone { get; set; }

@@ -134,6 +134,25 @@ namespace HackneyRepairs.Actions
             return json;
         }
 
+		public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+        {
+            _logger.LogInformation($"Getting all apointments for workOrderReference: {workOrderReference}");
+            var result = await _appointmentsService.GetAppointmentsByWorkOrderReference(workOrderReference);
+            if (!result.Any())
+            {
+                _logger.LogError($"No appointments returned due workOrderReference not being found: {workOrderReference}");
+                throw new InvalidWorkOrderInUHException();
+            }
+            if (result.FirstOrDefault().BeginDate == null)
+            {
+                _logger.LogError($"No appointments found for : {workOrderReference}");
+                throw new MissingAppointmentsException();
+            }
+
+            _logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
+            return result;
+        }
+
 		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
         {
 			_logger.LogInformation($"Getting current apointment for workOrderReference: {workOrderReference}");

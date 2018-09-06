@@ -80,6 +80,42 @@ namespace HackneyRepairs.Services
             return response;
         }
 
+		public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+        {
+            _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
+                Sent request to get appointments for workOrderReference from UHT: {workOrderReference})");
+            var uhtResponse = await _uhtRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
+            if (!uhtResponse.Any())
+            {
+                _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
+                    workOrderReference not found: {workOrderReference})");
+                return uhtResponse;
+            }
+
+            _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
+                    Sent request to get appointments for workOrderReference from DRS: {workOrderReference})");
+            var drsResponse = await _drsRepository.GetAppointmentsByWorkOrderReference(workOrderReference);
+
+            if (uhtResponse.FirstOrDefault().BeginDate != null && drsResponse.Any())
+            {
+                _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
+                    Appointments fround from UHT and DRS: {workOrderReference})");
+                return uhtResponse.Concat(drsResponse).ToList();
+            }
+            else if (drsResponse.Any())
+            {
+                _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
+                    Appointments found only from DRS: {workOrderReference})");
+                return drsResponse;
+            }
+            else
+            {
+                _logger.LogInformation($@"HackneyAppointmentsService/GetAppointmentsByWorkOrderReference(): 
+                    No appointments found from DRS, returning UHT results: {workOrderReference})");
+                return uhtResponse;
+            }
+        }
+
 		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
         {
 			_logger.LogInformation($@"HackneyAppointmentsService/GetCurrentAppointmentByWorkOrderReference(): 
@@ -93,6 +129,7 @@ namespace HackneyRepairs.Services
                                     Appointment not in DRS, check if there is an appointment in UH warehouse for Work Order ref: {workOrderReference}");
 			
 
+            // If it is not in the warehouse then it might be in live, so check live without cutoff
             _logger.LogInformation($@"HackneyAppointmentsService/GetCurrentAppointmentByWorkOrderReference(): 
                                     Check if there is an appointment in UHT live for Work Order ref: {workOrderReference}");
 			var uhAppointment = await _uhtRepository.GetCurrentAppointmentByWorkOrderReference(workOrderReference);

@@ -20,6 +20,8 @@ namespace HackneyRepairs.Interfaces
         Task<scheduleBookingResponse> ScheduleBookingAsync(xmbScheduleBooking scheduleBooking);
 
         Task<selectOrderResponse> SelectOrderAsync(xmbSelectOrder selectOrder);
+
+		Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference);
   
 		Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference);
     }

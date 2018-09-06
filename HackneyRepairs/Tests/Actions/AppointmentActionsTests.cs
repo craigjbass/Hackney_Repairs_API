@@ -734,7 +734,75 @@ namespace HackneyRepairs.Tests.Actions
 			await Assert.ThrowsAsync<AppointmentServiceException>(async () => await appointmentActions.BookAppointment("01550854", new DateTime(2017, 11, 21, 10, 00, 00), new DateTime(2017, 11, 21, 12, 00, 00)));
 		}
 
+		#region Get all appointments for work order
 
+		[Fact]
+        public async Task get_appointments_by_work_order_reference_returns_a_list_of_appointments()
+        {
+            List<DetailedAppointment> fakeResponse = new List<DetailedAppointment>
+            {
+                new DetailedAppointment()
+                {
+                    BeginDate = new DateTime()
+                }
+            };
+
+            Random rnd = new Random();
+            string randomReference = rnd.Next(10000000, 99999999).ToString();
+
+            Mock<IHackneyAppointmentsService> appointmentService = new Mock<IHackneyAppointmentsService>();
+            var mockLogger = new Mock<ILoggerAdapter<AppointmentActions>>();
+            var requestBuilder = new Mock<IHackneyAppointmentsServiceRequestBuilder>();
+            var repairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
+            var repairsService = new Mock<IHackneyRepairsService>();
+            appointmentService.Setup(service => service.GetAppointmentsByWorkOrderReference(It.IsAny<string>()))
+                              .Returns(Task.FromResult<IEnumerable<DetailedAppointment>>(fakeResponse));
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, appointmentService.Object, requestBuilder.Object, repairsService.Object, repairRequestBuilder.Object, configuration);
+            var response = await appointmentActions.GetAppointmentsByWorkOrderReference(randomReference);
+
+            Assert.True(response is List<DetailedAppointment>);
+        }
+
+        [Fact]
+        public async Task get_appointments_by_workorder_reference_throws_invalidWorkOrder_exception_when_no_results()
+        {
+            Random rnd = new Random();
+            string randomReference = rnd.Next(10000000, 99999999).ToString();
+            Mock<IHackneyAppointmentsService> appointmentService = new Mock<IHackneyAppointmentsService>();
+            var mockLogger = new Mock<ILoggerAdapter<AppointmentActions>>();
+            var requestBuilder = new Mock<IHackneyAppointmentsServiceRequestBuilder>();
+            var repairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
+            var repairsService = new Mock<IHackneyRepairsService>();
+
+            appointmentService.Setup(service => service.GetAppointmentsByWorkOrderReference(It.IsAny<string>()))
+                              .Returns(Task.FromResult<IEnumerable<DetailedAppointment>>((new List<DetailedAppointment>())));
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, appointmentService.Object, requestBuilder.Object, repairsService.Object, repairRequestBuilder.Object, configuration);
+
+            await Assert.ThrowsAsync<InvalidWorkOrderInUHException>(async () => await appointmentActions.GetAppointmentsByWorkOrderReference(randomReference));
+        }
+
+        [Fact]
+        public async Task get_appointments_by_workorder_reference_throws_not_found_exception_when_response_object_properties_are_null()
+        {
+            List<DetailedAppointment> fakeResponse = new List<DetailedAppointment>
+            {
+                new DetailedAppointment()
+            };
+
+            Random rnd = new Random();
+            string randomReference = rnd.Next(10000000, 99999999).ToString();
+            Mock<IHackneyAppointmentsService> appointmentService = new Mock<IHackneyAppointmentsService>();
+            var mockLogger = new Mock<ILoggerAdapter<AppointmentActions>>();
+            var requestBuilder = new Mock<IHackneyAppointmentsServiceRequestBuilder>();
+            var repairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
+            var repairsService = new Mock<IHackneyRepairsService>();
+            appointmentService.Setup(service => service.GetAppointmentsByWorkOrderReference(It.IsAny<string>()))
+                              .Returns(Task.FromResult<IEnumerable<DetailedAppointment>>(fakeResponse));
+            AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, appointmentService.Object, requestBuilder.Object, repairsService.Object, repairRequestBuilder.Object, configuration);
+
+            await Assert.ThrowsAsync<MissingAppointmentsException>(async () => await appointmentActions.GetAppointmentsByWorkOrderReference(randomReference));
+        }
+        #endregion
 
 		#region Get current appointment by work order
 		[Fact]
@@ -772,7 +840,7 @@ namespace HackneyRepairs.Tests.Actions
             var repairRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
             var repairsService = new Mock<IHackneyRepairsService>();
 			appointmentService.Setup(service => service.GetCurrentAppointmentByWorkOrderReference(It.IsAny<string>()))
-                              .Returns(Task.FromResult<DetailedAppointment>(new DetailedAppointment()));
+                              .Returns(Task.FromResult<DetailedAppointment>(null));
             AppointmentActions appointmentActions = new AppointmentActions(mockLogger.Object, appointmentService.Object, requestBuilder.Object, repairsService.Object, repairRequestBuilder.Object, configuration);
 
 			await Assert.ThrowsAsync<InvalidWorkOrderInUHException>(async () => await appointmentActions.GetCurrentAppointmentByWorkOrderReference(randomReference));

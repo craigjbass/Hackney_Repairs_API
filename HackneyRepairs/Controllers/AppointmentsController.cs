@@ -159,6 +159,69 @@ namespace HackneyRepairs.Controllers
 			}
 		}
 
+		// GET all appointments booked appointments by work order reference 
+        /// <summary>
+        /// Returns all apointments for a work order
+        /// </summary>
+        /// <param name="workOrderReference">UH work order reference</param>
+        /// <returns>A list of UHT appointment entities</returns>
+        /// <response code="200">Returns a list of appointments for a work order reference</response>
+        /// <response code="404">If there are no appointments found for the work orders reference</response>   
+        /// <response code="500">If any errors are encountered</response>
+        [HttpGet("v1/work_orders/{workOrderReference}/appointments")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<JsonResult> GetAppointmentsByWorkOrderReference(string workOrderReference)
+        {
+            var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
+            IEnumerable<DetailedAppointment> result;
+            try
+            {
+                result = await appointmentsActions.GetAppointmentsByWorkOrderReference(workOrderReference);
+                var json = Json(result);
+                json.StatusCode = 200;
+                return json;
+            }
+            catch (MissingAppointmentsException)
+            {
+                return new JsonResult(new string[0]);
+            }
+            catch (InvalidWorkOrderInUHException ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"workOrderReference not found"
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
+            }
+            catch (UhtRepositoryException ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"We had issues with connecting to the data source."
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+            catch (Exception ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"We had issues processing your request"
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+        }
+
 		// GET the current appointment by work order reference from UH or DRS
         /// <summary>
         /// Returns the current apointment for a work order

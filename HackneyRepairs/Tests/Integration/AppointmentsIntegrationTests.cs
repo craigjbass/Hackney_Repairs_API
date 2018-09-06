@@ -155,6 +155,36 @@ namespace HackneyRepairs.Tests.Integration
 			Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
 		}
 
+		#region Get appointments by by work order
+		[Fact]
+        public async Task return_list_of_DetailedAppointment_json_object_with_200()
+        {
+            var result = await _client.GetAsync("v1/work_orders/01550854/appointments");
+            var jsonresult = await result.Content.ReadAsStringAsync();
+            var appointments = JsonConvert.DeserializeObject<List<DetailedAppointment>>(jsonresult).ToList();
+
+            Assert.IsType<List<DetailedAppointment>>(appointments);
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task return_a_404_result_for_no_Work_order_found()
+        {
+            var result = await _client.GetAsync("v1/work_orders/888888888/appointments");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_an_empty_list_if_no_appointments_found()
+        {
+            var expected = new List<DetailedAppointment>();
+            var result = await _client.GetAsync("v1/work_orders/99999999/appointments");
+            Assert.IsType<List<DetailedAppointment>>(expected);
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+        #endregion
 
 		#region Get current appointment by by work order
         [Fact]
