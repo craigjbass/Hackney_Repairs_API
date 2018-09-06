@@ -24,6 +24,7 @@ namespace HackneyRepairs.Repository
 
 		public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
 		{
+			string[] phoneNumbers;
 			List<DetailedAppointment> appointments;
 			_logger.LogInformation($"Getting appointment details from DRS for {workOrderReference}");
 
@@ -34,15 +35,7 @@ namespace HackneyRepairs.Repository
 					string query = $@"
                         (
                             SELECT
-                                s_job.NAME AS Id,
-                                s_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
-                                s_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
-                                s_job.status AS Status,
-                                s_job.ASSIGNEDWORKERS AS AssignedWorker,
-                                s_job.priority AS Priority,
-                                s_job.CREATIONDATE AS CreationDate,
-                                s_job.BD_APPOINTMENT_REASON AS COMMENT,
-                                'DRS' AS SourceSystem
+                                s_job.NAME AS Id
                             FROM
                                 s_serviceorder
                             INNER JOIN s_job ON s_job.PARENTID = s_serviceorder.USERID
@@ -50,15 +43,7 @@ namespace HackneyRepairs.Repository
                                 s_serviceorder.NAME = '{workOrderReference}')
                         UNION (
                             SELECT
-                                p_job.NAME AS Id,
-                                p_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
-                                p_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
-                                p_job.status AS Status,
-                                p_job.ASSIGNEDWORKERS AS AssignedWorker,
-                                p_job.priority AS Priority,
-                                p_job.CREATIONDATE AS CreationDate,
-                                p_job.BD_APPOINTMENT_REASON AS COMMENT,
-                                'DRS' AS SourceSystem
+                                p_job.NAME AS Id
                             FROM
                                 p_serviceorder
                             INNER JOIN p_job ON p_job.PARENTID = p_serviceorder.USERID
@@ -66,21 +51,67 @@ namespace HackneyRepairs.Repository
                                 p_serviceorder.NAME = '{workOrderReference}')
                         UNION (
                             SELECT
-                                s_job.NAME AS Id,
-                                s_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
-                                s_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
-                                s_job.status AS Status,
-                                s_job.ASSIGNEDWORKERS AS AssignedWorker,
-                                s_job.priority AS Priority,
-                                s_job.CREATIONDATE AS CreationDate,
-                                s_job.BD_APPOINTMENT_REASON AS COMMENT,
-                                'DRS' AS SourceSystem
+                                s_job.NAME AS Id
                             FROM
                                 p_serviceorder
                             INNER JOIN s_job ON s_job.PARENTID = p_serviceorder.USERID
                             WHERE
                                 p_serviceorder.NAME = '{workOrderReference}')";
 
+					phoneNumbers = connection.Query<string>(query).ToArray();
+
+					if (phoneNumbers.Length == 0)
+					{
+						return new List<DetailedAppointment>();
+					}
+					string sPhoneNumbers = "";
+					for (int i = 0; i < phoneNumbers.Length - 1; i++)
+					{
+						sPhoneNumbers += "'" + phoneNumbers[i] + "',";
+					}
+					sPhoneNumbers += "'" + phoneNumbers[phoneNumbers.Length-1] + "'";
+
+					query = $@"SELECT
+                                    jobs.Id,
+                                    jobs.BeginDate,
+                                    jobs.EndDate,
+                                    jobs.Status,
+                                    jobs.AssignedWorker,
+                                    s_worker.mobilephone AS Phonenumber,
+                                    jobs.Priority,
+                                    jobs.CreationDate,
+                                    Comment,
+                                    'DRS' AS SourceSystem
+                                FROM ((
+                                    SELECT
+                                        s_job.NAME AS Id,
+                                        s_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
+                                        s_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
+                                        s_job.status AS Status,
+                                        s_job.ASSIGNEDWORKERS AS AssignedWorker,
+                                        s_job.priority AS Priority,
+                                        s_job.CREATIONDATE AS CreationDate,
+                                        s_job.BD_APPOINTMENT_REASON AS Comment
+                                    FROM
+                                        s_job
+                                    WHERE
+                                        s_job.NAME IN ({sPhoneNumbers}))
+                                UNION (
+                                    SELECT
+                                        p_job.NAME AS Id,
+                                        p_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
+                                        p_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
+                                        p_job.status AS Status,
+                                        p_job.ASSIGNEDWORKERS AS AssignedWorker,
+                                        p_job.priority AS Priority,
+                                        p_job.CREATIONDATE AS CreationDate,
+                                        p_job.BD_APPOINTMENT_REASON AS Comment
+                                    FROM
+                                        p_job
+                                    WHERE
+                                        p_job.NAME IN ({sPhoneNumbers}))) AS jobs
+                                        
+                                INNER JOIN s_worker ON jobs.AssignedWorker = s_worker.name";
 					appointments = connection.Query<DetailedAppointment>(query).ToList();
 				}
 				return appointments;
@@ -95,41 +126,45 @@ namespace HackneyRepairs.Repository
 
 		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
 		{
-			DetailedAppointment appointment;
+			IEnumerable<DetailedAppointment> lAppointments;
 			_logger.LogInformation($"Getting current appointment details from DRS for {workOrderReference}");
 
-			try
-			{
-				using (var connection = new MySqlConnection(_context.Database.GetDbConnection().ConnectionString))
-				{
-					string query = $@"
-                        SELECT
-                            s_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
-                            s_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
-                            s_job.status AS Status,
-                            s_job.ASSIGNEDWORKERS AS AssignedWorker,
-                            s_job.priority AS Priority,
-                            s_job.CREATIONDATE AS CreationDate,
-                            s_job.BD_APPOINTMENT_REASON AS Comment,
-                            s_worker.MOBILEPHONE AS Mobilephone,
-                            'DRS' AS SourceSystem
-                        FROM
-                            s_serviceorder 
-                        INNER JOIN s_job ON s_job.PARENTID = s_serviceorder.USERID
-                        INNER JOIN s_worker ON s_job.assignedworkersids = s_worker.userid
-                        WHERE
-                            s_serviceorder.NAME = '{workOrderReference}'
-                            AND s_job.status = 'planned'";
+			//try
+			//{
+			//using (var connection = new MySqlConnection(_context.Database.GetDbConnection().ConnectionString))
+			//{
+			//	string query = $@"
+			//                    (SELECT
+			//                        s_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
+			//                        s_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
+			//                        s_job.status AS Status,
+			//                        s_job.ASSIGNEDWORKERS AS AssignedWorker,
+			//                        s_job.priority AS Priority,
+			//                        s_job.CREATIONDATE AS CreationDate,
+			//                        s_job.BD_APPOINTMENT_REASON AS Comment,
+			//                        s_worker.MOBILEPHONE AS Phonenumber,
+			//                        'DRS' AS SourceSystem
+			//                    FROM
+			//                        s_serviceorder 
+			//                    INNER JOIN s_job ON s_job.PARENTID = s_serviceorder.USERID
+			//                    INNER JOIN s_worker ON s_job.assignedworkersids = s_worker.userid
+			//                    WHERE
+			//                        s_serviceorder.NAME = '{workOrderReference}'
+			//                        AND s_job.status = 'planned')
+			//                        ";
 
-					appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
-				}
-				return appointment;
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex.Message);
-				throw new DrsRepositoryException();
-			}
+			//	lAppointments = connection.Query<DetailedAppointment>(query).ToList();
+
+			//}
+			lAppointments = await GetAppointmentsByWorkOrderReference(workOrderReference);
+			DetailedAppointment app = lAppointments.OrderByDescending(a => a.CreationDate).FirstOrDefault();
+			return app;
+			//}
+			//catch (Exception ex)
+			//{
+			//	_logger.LogError(ex.Message);
+			//	throw new DrsRepositoryException();
+			//}
 		}
 
 	}

@@ -231,7 +231,7 @@ namespace HackneyRepairs.Controllers
         /// <response code="200">Returns an appointment for a work order reference</response>
         /// <response code="404">If there is no appointment found for the work order reference</response>   
         /// <response code="500">If any errors are encountered</response>
-        [HttpGet("v1/work_orders/{workOrderReference}/appointments/current")]
+        [HttpGet("v1/work_orders/{workOrderReference}/appointments/latest")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
