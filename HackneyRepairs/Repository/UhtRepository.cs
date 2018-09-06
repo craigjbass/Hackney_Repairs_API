@@ -371,7 +371,7 @@ namespace HackneyRepairs.Repository
             return appointments;
         }
 
-		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+		public async Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference)
         {
             DetailedAppointment appointment;
             try
@@ -407,9 +407,9 @@ namespace HackneyRepairs.Repository
                                             RIGHT OUTER JOIN rmworder ON rmworder.rmworder_sid = visit.reference_sid
                                             INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
                                             WHERE
-                                                rmworder.wo_ref = '01550297') AS allApps
+                                                rmworder.wo_ref = '{workOrderReference}') AS allApps
                                         WHERE
-                                            allApps.EndDate = allApps.ExpectedOn"; 
+                                            allApps.EndDate = allApps.ExpectedOn OR allApps.ExpectedOn = 'Jan  1 1900 12:00:00:000AM'"; 
 					
 					appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
                 }

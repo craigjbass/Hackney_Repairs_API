@@ -186,11 +186,11 @@ namespace HackneyRepairs.Tests.Integration
         }
         #endregion
 
-		#region Get current appointment by by work order
+		#region Get latest appointment by work order
         [Fact]
         public async Task return_a_DetailedAppointment_json_object_with_200()
         {
-            var result = await _client.GetAsync("v1/work_orders/01550854/appointments/current");
+            var result = await _client.GetAsync("v1/work_orders/01550854/appointments/latest");
             var jsonresult = await result.Content.ReadAsStringAsync();
             var appointments = JsonConvert.DeserializeObject<DetailedAppointment>(jsonresult);
 
@@ -202,7 +202,7 @@ namespace HackneyRepairs.Tests.Integration
         [Fact]
         public async Task return_a_404_result_when_no_Work_order_found()
         {
-            var result = await _client.GetAsync("v1/work_orders/888888888/appointments/current");
+            var result = await _client.GetAsync("v1/work_orders/888888888/appointments/latest");
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
 
@@ -210,7 +210,7 @@ namespace HackneyRepairs.Tests.Integration
         public async Task return_an_empty_list_if_no_appointment_found()
         {
             var expected = new DetailedAppointment();
-            var result = await _client.GetAsync("v1/work_orders/99999999/appointments/current");
+            var result = await _client.GetAsync("v1/work_orders/99999999/appointments/latest");
             Assert.IsType<DetailedAppointment>(expected);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);

@@ -223,7 +223,7 @@ namespace HackneyRepairs.Repository
 			return workOrders;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int size)
+        public async Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size)
         {
             try
             {
@@ -245,7 +245,7 @@ namespace HackneyRepairs.Repository
                         AND note.NDate < '{GetCutoffTime()}'
                     ORDER BY NoteID";
 
-                    var notes = connection.Query<DetailedNote>(query);
+                    var notes = connection.Query<Note>(query);
                     return notes;
                 }
             }

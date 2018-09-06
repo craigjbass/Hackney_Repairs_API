@@ -18,7 +18,7 @@ namespace HackneyRepairs.Actions
             _workOrdersService = workOrdersService;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int startId, string noteTarget, int size)
+        public async Task<IEnumerable<Note>> GetNoteFeed(int startId, string noteTarget, int size)
         {
             _logger.LogInformation($"Getting results for: {startId}");
             var results = await _workOrdersService.GetNoteFeed(startId, noteTarget, size);

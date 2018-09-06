@@ -161,7 +161,7 @@ namespace HackneyRepairs.Controllers
 
 		// GET all appointments booked appointments by work order reference 
         /// <summary>
-        /// Returns all apointments for a work order
+        /// Returns all appointments for a work order
         /// </summary>
         /// <param name="workOrderReference">UH work order reference</param>
         /// <returns>A list of UHT appointment entities</returns>
@@ -224,7 +224,7 @@ namespace HackneyRepairs.Controllers
 
 		// GET the latest appointment by work order reference from UH or DRS
         /// <summary>
-        /// Returns the current apointment for a work order
+        /// Returns the latest apointment for a work order
         /// </summary>
         /// <param name="workOrderReference">UH work order reference</param>
         /// <returns>An appointment</returns>
@@ -235,13 +235,13 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<JsonResult> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+        public async Task<JsonResult> GetLatestAppointmentByWorkOrderReference(string workOrderReference)
         {
             var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
             DetailedAppointment result;
             try
             {
-                result = await appointmentsActions.GetCurrentAppointmentByWorkOrderReference(workOrderReference);
+                result = await appointmentsActions.GetLatestAppointmentByWorkOrderReference(workOrderReference);
                 var json = Json(result);
                 json.StatusCode = 200;
                 return json;

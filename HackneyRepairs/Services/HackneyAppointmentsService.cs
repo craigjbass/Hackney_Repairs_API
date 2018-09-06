@@ -97,7 +97,7 @@ namespace HackneyRepairs.Services
 			return uhtResponse;
         }
 
-		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+		public async Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference)
         {
 			_logger.LogInformation($@"HackneyAppointmentsService/GetCurrentAppointmentByWorkOrderReference(): 
                                     Check if there is an appointment in DRS for Work Order ref: {workOrderReference}");
@@ -113,7 +113,7 @@ namespace HackneyRepairs.Services
             // If it is not in the warehouse then it might be in live, so check live without cutoff
             _logger.LogInformation($@"HackneyAppointmentsService/GetCurrentAppointmentByWorkOrderReference(): 
                                     Check if there is an appointment in UHT live for Work Order ref: {workOrderReference}");
-			var uhAppointment = await _uhtRepository.GetCurrentAppointmentByWorkOrderReference(workOrderReference);
+			var uhAppointment = await _uhtRepository.GetLatestAppointmentByWorkOrderReference(workOrderReference);
 
 			return uhAppointment;
         }

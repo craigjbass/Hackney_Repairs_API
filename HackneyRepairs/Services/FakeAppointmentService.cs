@@ -169,7 +169,7 @@ namespace HackneyRepairs.Services
 			return Task.Run(() => (IEnumerable<DetailedAppointment>)appointmentEntitites);
 		}
 
-		public Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+		public Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference)
         {
             if (string.Equals(workOrderReference, "99999999"))
             {

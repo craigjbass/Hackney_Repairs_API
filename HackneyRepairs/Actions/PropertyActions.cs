@@ -41,7 +41,7 @@ namespace HackneyRepairs.Actions
                     results.Add(response);
                     parent = response.MajorReference;
                 }
-                GenericFormatter.TrimStringAttributes(results);
+                GenericFormatter.TrimStringAttributesInEnumerable(results);
                 return results;
             }
             catch (MissingPropertyException e)

@@ -150,14 +150,14 @@ namespace HackneyRepairs.Actions
             }
 
             _logger.LogInformation($"Appointments returned for workOrderReference: {workOrderReference}");
-            GenericFormatter.TrimStringAttributes(result);
+            GenericFormatter.TrimStringAttributesInEnumerable(result);
             return result;
         }
 
-		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+		public async Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference)
         {
 			_logger.LogInformation($"Getting current apointment for workOrderReference: {workOrderReference}");
-            var result = await _appointmentsService.GetCurrentAppointmentByWorkOrderReference(workOrderReference);
+            var result = await _appointmentsService.GetLatestAppointmentByWorkOrderReference(workOrderReference);
             if (result == null)
             {
                 _logger.LogError($"No appointment returned due workOrderReference not being found: {workOrderReference}");
@@ -170,6 +170,7 @@ namespace HackneyRepairs.Actions
             }
 
             _logger.LogInformation($"Appointment returned for workOrderReference: {workOrderReference}");
+            GenericFormatter.TrimStringAttributes(result);
             return result;
         }
 

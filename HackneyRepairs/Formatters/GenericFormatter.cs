@@ -5,21 +5,26 @@ namespace HackneyRepairs.Formatters
 {
     public static class GenericFormatter
     {
-        public static void TrimStringAttributes(IEnumerable<object> result)
+        public static void TrimStringAttributes(object result)
         {
-            foreach (var obj in result)
+            foreach (var property in result.GetType().GetProperties())
             {
-                foreach (var property in obj.GetType().GetProperties())
+                if (property.PropertyType.Name == "String") 
                 {
-                    if (property.PropertyType.Name == "String") 
+                    string value = (string)property.GetValue(result, null);
+                    if (!string.IsNullOrWhiteSpace(value))
                     {
-                        string value = (string)property.GetValue(obj, null);
-                        if (!string.IsNullOrWhiteSpace(value))
-                        {
-                            property.SetValue(obj, value.Trim());
-                        }
+                        property.SetValue(result, value.Trim());
                     }
                 }
+            }
+        }
+
+        public static void TrimStringAttributesInEnumerable(IEnumerable<object> results)
+        {
+            foreach (var obj in results)
+            {
+                TrimStringAttributes(obj);
             }
         }
     }

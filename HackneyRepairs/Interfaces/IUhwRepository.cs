@@ -11,6 +11,6 @@ namespace HackneyRepairs.Interfaces
     {
         Task AddOrderDocumentAsync(string documentType, string workOrderReference, int workOrderId, string processComment);
 		Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference);
-        Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int size, int? remainingCount);
+        Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size, int? remainingCount);
     }
 }

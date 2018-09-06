@@ -28,13 +28,13 @@ namespace HackneyRepairs.Tests.Integration
 
         #region GetNoteFeed endpoint
         [Fact]
-        public async Task return_a_200_result_with_detailedNote_list_json_for_valid_request()
+        public async Task return_a_200_result_with_Note_list_json_for_valid_request()
         {
-            var result = await _client.GetAsync("v1/notes/feed?startId=12345678&noteTarget=UHOrder");
+            var result = await _client.GetAsync("v1/notes/feed?startId=12345678&noteTarget=uhorder");
             var jsonResult = await result.Content.ReadAsStringAsync();
-            var notes = JsonConvert.DeserializeObject<List<DetailedNote>>(jsonResult);
+            var notes = JsonConvert.DeserializeObject<List<Note>>(jsonResult);
 
-            Assert.IsType<List<DetailedNote>>(notes);
+            Assert.IsType<List<Note>>(notes);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
@@ -42,7 +42,7 @@ namespace HackneyRepairs.Tests.Integration
         [Fact]
         public async Task return_a_200_result_with_empty_json_list_when_no_notes_are_found()
         {
-            var result = await _client.GetAsync("v1/notes/feed?startId=99999999&noteTarget=UHOrder");
+            var result = await _client.GetAsync("v1/notes/feed?startId=99999999&noteTarget=uhorder");
             var jsonResult = await result.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
@@ -53,7 +53,7 @@ namespace HackneyRepairs.Tests.Integration
         [Fact]
         public async Task return_a_500_when_internal_server_error()
         {
-            var result = await _client.GetAsync("v1/notes/feed?startId=11550853&noteTarget=UHOrder");
+            var result = await _client.GetAsync("v1/notes/feed?startId=11550853&noteTarget=uhorder");
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
         #endregion

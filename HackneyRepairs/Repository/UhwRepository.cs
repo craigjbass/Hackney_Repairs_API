@@ -114,9 +114,9 @@ namespace HackneyRepairs.Repository
             return notes;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int noteId, string noteTarget, int size, int? remainingCount)
+        public async Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size, int? remainingCount)
         {
-            IEnumerable<DetailedNote> notes;
+            IEnumerable<Note> notes;
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -155,7 +155,7 @@ namespace HackneyRepairs.Repository
                             AND note.NDate > '{GetCutoffTime()}'
                         ORDER BY NoteID";
 
-                    notes = connection.Query<DetailedNote>(query);
+                    notes = connection.Query<Note>(query);
                     return notes;
                 }
             }

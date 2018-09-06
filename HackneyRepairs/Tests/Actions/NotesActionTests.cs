@@ -25,20 +25,20 @@ namespace HackneyRepairs.Tests.Actions
         {
             Random rnd = new Random();
             int randomReference = rnd.Next(100000000, 999999999);
-            List<DetailedNote> fakeResponse = new List<DetailedNote>
+            List<Note> fakeResponse = new List<Note>
             {
-                new DetailedNote()
+                new Note()
                 {
                     WorkOrderReference = "123"
                 }
             };
             Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
             _workOrderService.Setup(service => service.GetNoteFeed(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
-                             .Returns(Task.FromResult<IEnumerable<DetailedNote>>(fakeResponse));
+                             .Returns(Task.FromResult<IEnumerable<Note>>(fakeResponse));
             NotesActions notesActions = new NotesActions(_workOrderService.Object, _mockLogger.Object);
             var response = await notesActions.GetNoteFeed(randomReference, "", randomReference);
 
-            Assert.True(response is List<DetailedNote>);
+            Assert.True(response is List<Note>);
         }
         #endregion
     }

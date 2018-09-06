@@ -59,15 +59,15 @@ namespace HackneyRepairs.Services
 			return result;
         }
 
-        public async Task<IEnumerable<DetailedNote>> GetNoteFeed(int startId, string noteTarget, int size)
+        public async Task<IEnumerable<Note>> GetNoteFeed(int startId, string noteTarget, int size)
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Querying Uh Warehouse for checking if {noteTarget} exists");
             if (!(await EnsureNoteTargetExistsInDB(noteTarget)))
             {
                 _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): noteTarget {noteTarget} not found");
-                return new List<DetailedNote>
+                return new List<Note>
                 {
-                    new DetailedNote()
+                    new Note()
                 };
             }
 
@@ -88,7 +88,7 @@ namespace HackneyRepairs.Services
                 return warehouseResult;
             }
 
-            IEnumerable<DetailedNote> uhResult;
+            IEnumerable<Note> uhResult;
             if (warehouseResultCount == 0)
             {
                 _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Querying UH and expecting up to 50 results for: {startId}");
@@ -106,7 +106,7 @@ namespace HackneyRepairs.Services
                 if (uhResult.Any())
                 {
                     _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Joining warehouse and uh results into a single list for: {startId}");
-                    List<DetailedNote> jointResult = (List<DetailedNote>)uhResult;
+                    List<Note> jointResult = (List<Note>)uhResult;
                     jointResult.InsertRange(0, warehouseResult);
                     _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Joint list contains {jointResult.Count()} notes for: {startId}");
                     return jointResult;
