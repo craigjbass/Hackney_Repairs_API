@@ -168,5 +168,26 @@ namespace HackneyRepairs.Services
             };
 			return Task.Run(() => (IEnumerable<DetailedAppointment>)appointmentEntitites);
 		}
+
+		public Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+        {
+            if (string.Equals(workOrderReference, "99999999"))
+            {
+				return Task.Run(() => new DetailedAppointment()
+				{
+					BeginDate = null
+				});
+            }
+            if (string.Equals(workOrderReference, "888888888"))
+            {
+				return Task.Run(() => (DetailedAppointment) null);
+            }
+            var appointment = new DetailedAppointment()
+            {
+				BeginDate = DateTime.Today,
+                AssignedWorker = "Ben Big"
+            };
+            return Task.Run(() => appointment);
+        }
     }
 }

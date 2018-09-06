@@ -38,7 +38,6 @@ namespace HackneyRepairs
             // Add framework services.
             services.AddDbContext<UhtDbContext>(options =>
                                                 options.UseSqlServer(Configuration.GetSection("UhtDb").Value));
-
             services.AddDbContext<UhwDbContext>(options =>
                                                 options.UseSqlServer(Configuration.GetSection("UhwDb").Value));
             services.AddDbContext<UHWWarehouseDbContext>(options =>

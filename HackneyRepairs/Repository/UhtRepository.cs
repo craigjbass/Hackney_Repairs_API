@@ -338,14 +338,15 @@ namespace HackneyRepairs.Repository
             }
         }
 
-        public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
-		{
+		public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
+        {
             List<DetailedAppointment> appointments;
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-					string query = $@"SELECT 
+                    string query = $@"SELECT 
+                                        visit.visit_sid AS Id,
                                         visit.visit_prop_appointment AS BeginDate,
                                         visit.visit_prop_end AS EndDate,
                                         ROW_NUMBER() OVER (ORDER BY visit.visit_sid) AS CreationOrder,
@@ -367,8 +368,59 @@ namespace HackneyRepairs.Repository
                 _logger.LogError(ex.Message);
                 throw new UhtRepositoryException();
             }
-			return appointments;
-		}
+            return appointments;
+        }
+
+		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+        {
+            DetailedAppointment appointment;
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+					string query = $@"SELECT
+                                            Id,
+                                            Status,
+                                            AssignedWorker,
+                                            Mobilephone,
+                                            Priority,
+                                            SourceSystem,
+                                            Comment,
+                                            BeginDate,
+                                            EndDate,
+                                            CreationDate
+                                        FROM (
+                                            SELECT
+                                                visit.visit_sid AS Id,
+                                                'Unknown' AS Status,
+                                                supplier.sup_name AS AssignedWorker,
+                                                supplier.sup_tel AS Mobilephone,
+                                                rmworder.u_priority AS Priority,
+                                                'UH' AS SourceSystem,
+                                                visit.visit_comment AS Comment,
+                                                visit.visit_prop_appointment AS BeginDate,
+                                                visit.visit_prop_end AS EndDate,
+                                                NULL AS CreationDate,
+                                                rmworder.expected_completion AS ExpectedOn
+                                            FROM
+                                                visit
+                                            RIGHT OUTER JOIN rmworder ON rmworder.rmworder_sid = visit.reference_sid
+                                            INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
+                                            WHERE
+                                                rmworder.wo_ref = '01550297') AS allApps
+                                        WHERE
+                                            allApps.EndDate = allApps.ExpectedOn"; 
+					
+					appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+            return appointment;
+        }
 
 		public static string GetCutoffTime()
         {
@@ -413,9 +465,7 @@ namespace HackneyRepairs.Repository
 		}
     }
 
-	public class UhtRepositoryException : Exception
-	{
-	}
+	public class UhtRepositoryException : Exception {}
 }
 
 
