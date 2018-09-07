@@ -14,12 +14,23 @@ namespace HackneyRepairs.Repository
     public class UhwRepository : IUhwRepository
     {
         private UhwDbContext _context;
+        private string environmentDbWord;
 
         private ILoggerAdapter<UhwRepository> _logger;
         public UhwRepository(UhwDbContext context, ILoggerAdapter<UhwRepository> logger)
         {
             _context = context;
             _logger = logger;
+
+            switch (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
+            {
+                case "Production":
+                    environmentDbWord = "live";
+                    break;
+                default:
+                    environmentDbWord = "dev";
+                    break;
+            }
         }
 
         public async Task AddOrderDocumentAsync(string documentType, string workOrderReference, int workOrderId, string processComment)
@@ -77,32 +88,19 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    string query = "";
-                    string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                    switch (env)
-                    {
-
-                        case "Production":
-                            query = $@"SELECT
-                                    note.NoteText AS Text, note.NDate as LoggedAt,
-                                    note.UserID as LoggedBy
-                                    FROM
-                                    uhwlive.dbo.W2ObjectNote AS note
-                                    INNER JOIN uhtlive.dbo.rmworder AS work_order
-                                    on note.KeyNumb = work_order.rmworder_sid
-                                    where work_order.wo_ref = '{workOrderReference}'";
-                            break;
-                        default:
-                            query = $@"SELECT
-                                    note.NoteText AS Text, note.NDate as LoggedAt,
-                                    note.UserID as LoggedBy
-                                    FROM
-                                    uhwdev.dbo.W2ObjectNote AS note
-                                    INNER JOIN uhtdev.dbo.rmworder AS work_order
-                                    on note.KeyNumb = work_order.rmworder_sid
-                                    where work_order.wo_ref = '{workOrderReference}'";
-                            break;
-                    }
+                    var query = $@"
+                            SELECT
+                               '{workOrderReference}' AS WorkOrderReference,
+                                note.NoteID AS NoteId,
+                                note.NoteText AS Text,
+                                note.NDate AS LoggedAt,
+                                note.UserID AS LoggedBy
+                            FROM
+                                uhw{environmentDbWord}.dbo.W2ObjectNote AS note
+                            INNER JOIN 
+                                uht{environmentDbWord}.dbo.rmworder AS work_order
+                                ON note.KeyNumb = work_order.rmworder_sid
+                            WHERE work_order.wo_ref = '{workOrderReference}'";
                     notes = connection.Query<Note>(query);
                 }
             }
@@ -124,19 +122,6 @@ namespace HackneyRepairs.Repository
                     if (remainingCount == null)
                     {
                         remainingCount = size;
-                    }
-
-                    string environmentDbWord = "";
-                    string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-                    switch (env)
-                    {
-                        case "Production":
-                            environmentDbWord = "live";
-                            break;
-                        default:
-                            environmentDbWord = "dev";
-                            break;
                     }
 
                     var query = $@"set dateformat ymd;
