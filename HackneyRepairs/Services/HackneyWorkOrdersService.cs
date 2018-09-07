@@ -34,10 +34,16 @@ namespace HackneyRepairs.Services
 
 		public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
         {
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
-            var response = await _uhtRepository.GetWorkOrder(workOrderReference);
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Work order details returned for: {workOrderReference})");
-            return response;
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): Sent request to UhWarehouseRepository (WorkOrder reference: {workOrderReference})");
+            var warehouseData = await _uhWarehouseRepository.GetWorkOrderByWorkOrderReference(workOrderReference);
+            if (warehouseData != null)
+            {
+                return warehouseData;
+            }
+
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): No workOrders found in the warehouse. Request sent to UhtRepository (WorkOrder referenc)");
+            var uhtData = await _uhtRepository.GetWorkOrder(workOrderReference);
+            return uhtData;
         }
         
 		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
