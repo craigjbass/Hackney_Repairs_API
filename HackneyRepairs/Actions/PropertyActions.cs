@@ -86,7 +86,7 @@ namespace HackneyRepairs.Actions
             try
             {
                 var response = await _service.GetPropertyByRefAsync(reference);
-                if (response.PropertyReference == null)
+                if (response == null)
                 {
                     throw new MissingPropertyException();
                 }
@@ -113,7 +113,7 @@ namespace HackneyRepairs.Actions
             try
             {
                 var response = await _service.GetPropertyBlockByRef(reference);
-                if (response.PropertyReference == null)
+                if (response == null)
                 {
                     throw new MissingPropertyException();
                 }
@@ -140,7 +140,7 @@ namespace HackneyRepairs.Actions
             try
             {
                 var response = await _service.GetPropertyEstateByRef(reference);
-                if (response.PropertyReference == null)
+                if (response == null)
                 {
                     throw new MissingPropertyException();
                 }
