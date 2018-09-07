@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using HackneyRepairs.DbContext;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
@@ -21,6 +22,33 @@ namespace HackneyRepairs.Repository
         {
             _context = context;
             _logger = logger;
+        }
+
+        public async Task<PropertyLevelModel> GetPropertyLevelInfo(string reference)
+        {
+            var propertyLevelInfo = new PropertyLevelModel();
+            var connectionString = Environment.GetEnvironmentVariable("UhWarehouseDb");
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = @"SELECT property.prop_ref AS 'PropertyReference', property.level_code AS 'LevelCode',
+                    property.major_ref AS 'MajorReference', lulevel.lu_desc AS 'Description', 
+                    property.address1 AS 'Address', property.post_code AS 'PostCode'
+                    FROM StagedDB.dbo.property
+                    INNER JOIN lulevel ON property.level_code = lulevel.lu_ref 
+                    WHERE prop_ref = '" + reference + "'";
+
+                    var queryResult = connection.Query<PropertyLevelModel>(query).FirstOrDefault();
+                    return queryResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
+            }
         }
 
         public async Task<PropertySummary[]> GetPropertyListByPostCode(string postcode)

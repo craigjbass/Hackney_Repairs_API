@@ -4,56 +4,57 @@ using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Services
 {
 	public class FakeWorkOrdersService : IHackneyWorkOrdersService
     {      
-        public Task<WorkOrderEntity> GetWorkOrder(string workOrderReference)
+		public Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
 			if (string.Equals(workOrderReference, "9999999999"))
 			{
-				return Task.Run(() => (WorkOrderEntity)null);
+				return Task.Run(() => (UHWorkOrder)null);
 			}
-			var workOrderEntity = new WorkOrderEntity
+			var workOrder = new UHWorkOrder
 			{
-				wo_ref = workOrderReference
+				WorkOrderReference = workOrderReference
 			};
-			return Task.Run(() => workOrderEntity);
+			return Task.Run(() => workOrder);
 		}
 
-        public Task<IEnumerable<WorkOrderEntity>> GetWorkOrderByPropertyReference(string propertyReference)
+		public Task<IEnumerable<UHWorkOrderBase>> GetWorkOrderByPropertyReference(string propertyReference)
         {
             if (string.Equals(propertyReference, "9999999999"))
             {
-                return Task.Run(() => (IEnumerable<WorkOrderEntity>)new List<WorkOrderEntity>());
+				return Task.Run(() => (IEnumerable<UHWorkOrderBase>)new List<UHWorkOrderBase>());
             }
-            var workOrderEntity = new List<WorkOrderEntity>
+			var workOrder = new List<UHWorkOrderBase>
             {
-                new WorkOrderEntity
+				new UHWorkOrderBase
                 {
-                    prop_ref = propertyReference
+                    PropertyReference = propertyReference
                 }
             };
-            return Task.Run(() => (IEnumerable<WorkOrderEntity>)workOrderEntity);
+			return Task.Run(() => (IEnumerable<UHWorkOrderBase>)workOrder);
         }
 
-		public Task<IEnumerable<NotesEntity>> GetNotesByWorkOrderReference(string workOrderReference)
+		public Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
         {
 			if (string.Equals(workOrderReference, "99999999"))
             {
-				return Task.Run(() => (IEnumerable<NotesEntity>)new List<NotesEntity>());
+				return Task.Run(() => (IEnumerable<Note>)new List<Note>());
             }
-			var noteEntities = new List<NotesEntity>
+            var noteEntities = new List<Note>
             {
-				new NotesEntity{
-					KeyObject = "UHOrder",
-					NoteText = "Some note"
-
+                new Note()
+                {
+                    Text = "Some note",
+                    LoggedBy = "UHOrder"
 				}
           
             };
-			return Task.Run(() => (IEnumerable<NotesEntity>)noteEntities);
+			return Task.Run(() => (IEnumerable<Note>)noteEntities);
         }
 	}
 }

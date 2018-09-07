@@ -36,6 +36,57 @@ namespace HackneyRepairs.Controllers
 
         // GET properties
         /// <summary>
+        /// Returns the hierarchy details of a property  
+        /// </summary>
+        /// <param name="propertyReference">The reference number of the requested property</param>
+        /// <returns>A list of property details and its parent properties</returns>
+        /// <response code="200">Returns a list of property details</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet("{propertyReference}/hierarchy")]
+        public async Task<JsonResult> GetPropertyHierarchy(string propertyReference)
+        {
+            try
+            {
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+                var json = Json(await actions.GetPropertyHierarchy(propertyReference));
+                json.StatusCode = 200;
+                json.ContentType = "application/json";
+                return json;
+            }
+            catch (MissingPropertyException ex)
+            {
+                var errors = new List<ApiErrorMessage>()
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = ex.Message,
+                        userMessage = "Resource identification error"
+                    }
+                };
+                var jsonResponse = Json(errors);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
+            }
+            catch (Exception e)
+            {
+                var errors = new List<ApiErrorMessage>()
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = "Internal Server Error",
+                        userMessage = "Internal Error"
+                    }
+                };
+                var jsonResponse = Json(errors);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+        }
+
+
+        // GET properties
+        /// <summary>
         /// Gets a property or properties for a particular postcode
         /// </summary>
         /// <param name="postcode">The post code of the propterty being requested</param>

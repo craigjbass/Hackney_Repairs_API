@@ -143,5 +143,10 @@ namespace HackneyRepairs.Services
                     return Task.Run(() => new PropertyDetails());
             }
         }
+
+        public Task<PropertyLevelModel> GetPropertyLevelModel(string reference)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

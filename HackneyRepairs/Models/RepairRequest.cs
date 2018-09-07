@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace HackneyRepairs.Models
 {
-    public class RepairRequest
+	public class RepairRequest : RepairRequestBase
     {
-        public string Priority { get; set; }
-        public string PropertyReference { get; set; }
-        public string ProblemDescription { get; set; }
-        public RepairRequestContact Contact { get; set; }
+		public RepairRequestContact Contact { get; set; }
         public List<WorkOrder> WorkOrders { get; set; }
     }
 

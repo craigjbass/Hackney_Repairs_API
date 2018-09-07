@@ -42,7 +42,7 @@ namespace HackneyRepairs.Controllers
         public async Task<JsonResult> GetWorkOrder(string workOrderReference)
 		{
 			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _loggerAdapter);
-			WorkOrderEntity result = new WorkOrderEntity();
+			UHWorkOrder result = new UHWorkOrder();
 			try
 			{
 				result = await workOrdersActions.GetWorkOrder(workOrderReference);
@@ -104,7 +104,7 @@ namespace HackneyRepairs.Controllers
             }
 
             var workOrdersActions = new WorkOrdersActions(_workOrdersService, _loggerAdapter);
-            var result = new List<WorkOrderEntity>();
+			var result = new List<UHWorkOrderBase>();
             try
             {
                 result = (await workOrdersActions.GetWorkOrdersByPropertyReference(propertyReference)).ToList();
@@ -152,7 +152,7 @@ namespace HackneyRepairs.Controllers
         public async Task<JsonResult> GetNotesForWorkOrder(string workOrderReference)
         {
             var workOrdersActions = new WorkOrdersActions(_workOrdersService, _loggerAdapter);
-			IEnumerable<NotesEntity> result = new List<NotesEntity>();
+            IEnumerable<Note> result = new List<Note>();
             try
             {
                 result = await workOrdersActions.GetNotesByWorkOrderReference(workOrderReference);

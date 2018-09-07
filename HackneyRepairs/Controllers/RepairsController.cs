@@ -108,12 +108,8 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-            catch (MissingRepairException ex)
-            {
-                //var json = Json(new object());
-                //json.StatusCode = 404;
-                //return json;
-
+            catch (MissingRepairRequestException ex)
+       	    {
                 var errors = new List<ApiErrorMessage>
                 {
                     new ApiErrorMessage
@@ -125,7 +121,6 @@ namespace HackneyRepairs.Controllers
                 var json = Json(errors);
                 json.StatusCode = 404;
                 return json;
-
             }
             catch (Exception ex)
             {
@@ -133,7 +128,6 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-
                         developerMessage = ex.Message,
                         userMessage = "We had some problems processing your request"
                     }
@@ -142,16 +136,15 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 500;
                 return json;
             }
-
         }
 
-		// GET Repair Requests by property reference
+        // GET Repair Requests by property reference
         /// <summary>
-        /// Returns all Repair Requests for a property
+        /// Returns all Repair Requests for a property, for the work orders and contact details call /v1/repairs/{repairRequestReference}
         /// </summary>
-		/// <param name="propertyReference">Universal Housing property reference</param>
+        /// <param name="propertyReference">Universal Housing property reference</param>
         /// <returns>A list of Repair Requests</returns>
-		/// <response code="200">Returns a list of Repair Requests</response>
+        /// <response code="200">Returns a list of Repair Requests</response>
         /// <response code="404">If no Repair Request was found for the property</response>   
         /// <response code="500">If any errors are encountered</response> 
         [HttpGet]
@@ -171,7 +164,6 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 400;
                 return json;
             }
-
             try
             {
                 RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
@@ -179,7 +171,7 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-            catch (MissingRepairException ex)
+            catch (MissingRepairRequestException ex)
             {
                 var errors = new List<ApiErrorMessage>
                 {
@@ -192,7 +184,6 @@ namespace HackneyRepairs.Controllers
                 var json = Json(errors);
                 json.StatusCode = 404;
                 return json;
-
             }
             catch (Exception ex)
             {
@@ -200,7 +191,6 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-
                         developerMessage = ex.Message,
                         userMessage = "We had some problems processing your request"
                     }

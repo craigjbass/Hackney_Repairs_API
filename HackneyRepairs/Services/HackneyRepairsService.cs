@@ -23,11 +23,11 @@ namespace HackneyRepairs.Services
 			_logger = logger;
 		}
 
-        public Task<IEnumerable<RepairRequestEntity>> GetRepairByPropertyReference(string propertyReference)
+		public Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference)
         {
-            //_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
             var response = _uhtRepository.GetRepairRequests(propertyReference);
-            //_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Work order details returned for: {workOrderReference})");
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Work order details returned for property reference: {propertyReference})");
             return response;
         }
 
