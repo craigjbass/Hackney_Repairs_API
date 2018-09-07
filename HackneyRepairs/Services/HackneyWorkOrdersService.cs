@@ -24,14 +24,6 @@ namespace HackneyRepairs.Services
             _logger = logger;
         }
 
-		public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
-		{
-			_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UhtRepository (WorkOrder reference: {workOrderReference})");
-			var response = await _uhwRepository.GetNotesByWorkOrderReference(workOrderReference);
-			_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Notes returned for: {workOrderReference})");
-            return response;
-		}
-
 		public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): Sent request to UhWarehouseRepository (WorkOrder reference: {workOrderReference})");
@@ -61,8 +53,25 @@ namespace HackneyRepairs.Services
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Merging list from repositories to a single list");
 			List<UHWorkOrder> result = lLiveData;
 			result.InsertRange(0,lWarehouseData);
-			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Total {result.Count} ork orders returned for: {propertyReference})");
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Total {result.Count} work orders returned for: {propertyReference})");
 			return result;
+        }
+
+        public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
+        {
+            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UhtRepository to get data from live (WorkOrder reference: {workOrderReference})");
+            var liveData = (List<Note>)await _uhwRepository.GetNotesByWorkOrderReference(workOrderReference);
+            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): {liveData.Count} notes returned for: {workOrderReference})");
+
+            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UHWarehouseRepository to get data from warehouse (Workorder referece: {workOrderReference})");
+            var warehouseData = (List<Note>)await _uhWarehouseRepository.GetNotesByWorkOrderReference(workOrderReference);
+            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): {warehouseData.Count} notes returned for: {workOrderReference})");
+                        
+            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Merging list from repositories to a single list");
+            var result = liveData;
+            result.InsertRange(0, warehouseData);
+            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Total {result.Count} notes returned for: {workOrderReference})");
+            return result;
         }
 
         public async Task<IEnumerable<Note>> GetNoteFeed(int startId, string noteTarget, int size)

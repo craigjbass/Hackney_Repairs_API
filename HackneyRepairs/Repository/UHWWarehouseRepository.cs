@@ -244,7 +244,6 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
                                        WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}'AND t.task_no = 1;";
-					
                     workOrders = connection.Query<UHWorkOrder>(query);
                 }
             }
@@ -254,6 +253,37 @@ namespace HackneyRepairs.Repository
                 throw new UHWWarehouseRepositoryException();
             }
 			return workOrders;
+        }
+
+        public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    var query = $@"set dateformat ymd;
+                            SELECT
+                               '{workOrderReference}' AS WorkOrderReference,
+                                note.NoteID AS NoteId,
+                                note.NoteText AS Text,
+                                note.NDate AS LoggedAt,
+                                note.UserID AS LoggedBy
+                            FROM
+                                StagedDBW2.dbo.W2ObjectNote AS note
+                            INNER JOIN 
+                                StagedDB.dbo.rmworder AS work_order
+                                ON note.KeyNumb = work_order.rmworder_sid
+                            WHERE 
+                                note.NDate < '{GetCutoffTime()}' AND work_order.wo_ref = '{workOrderReference}'";
+                    var notes = connection.Query<Note>(query);
+                    return notes; 
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
         }
 
         public async Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size)

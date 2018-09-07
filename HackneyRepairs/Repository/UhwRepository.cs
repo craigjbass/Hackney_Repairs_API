@@ -83,12 +83,12 @@ namespace HackneyRepairs.Repository
 
         public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
         {
-            IEnumerable<Note> notes;
+            _logger.LogInformation($"Getting notes for {workOrderReference}");
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    var query = $@"
+                    var query = $@"set dateformat ymd;
                             SELECT
                                '{workOrderReference}' AS WorkOrderReference,
                                 note.NoteID AS NoteId,
@@ -100,8 +100,10 @@ namespace HackneyRepairs.Repository
                             INNER JOIN 
                                 uht{environmentDbWord}.dbo.rmworder AS work_order
                                 ON note.KeyNumb = work_order.rmworder_sid
-                            WHERE work_order.wo_ref = '{workOrderReference}'";
-                    notes = connection.Query<Note>(query);
+                            WHERE 
+                                note.NDate > '{GetCutoffTime()}' AND work_order.wo_ref = '{workOrderReference}'";
+                    var notes = connection.Query<Note>(query);
+                    return notes;
                 }
             }
             catch (Exception ex)
@@ -109,12 +111,11 @@ namespace HackneyRepairs.Repository
                 _logger.LogError(ex.Message);
                 throw new UhtRepositoryException();
             }
-            return notes;
         }
 
         public async Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size, int? remainingCount)
         {
-            IEnumerable<Note> notes;
+            
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -123,6 +124,7 @@ namespace HackneyRepairs.Repository
                     {
                         remainingCount = size;
                     }
+                    _logger.LogInformation($"Getting up to {remainingCount} notes witn an id > {noteId}");
 
                     var query = $@"set dateformat ymd;
                         SELECT TOP {remainingCount}
@@ -140,7 +142,7 @@ namespace HackneyRepairs.Repository
                             AND note.NDate > '{GetCutoffTime()}'
                         ORDER BY NoteID";
 
-                    notes = connection.Query<Note>(query);
+                    var notes = connection.Query<Note>(query);
                     return notes;
                 }
             }
