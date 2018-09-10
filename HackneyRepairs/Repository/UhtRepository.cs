@@ -355,12 +355,15 @@ namespace HackneyRepairs.Repository
                                         visit.visit_prop_end AS EndDate,
                                         ROW_NUMBER() OVER (ORDER BY visit.visit_sid) AS CreationOrder,
                                         'UH' AS SourceSystem,
-                                        'External' AS SittingAt,
+                                        'Unknown' AS Status,
+                                        supplier.sup_name AS AssignedWorker,
+                                        supplier.sup_tel AS Mobilephone,
                                         visit.visit_comment AS Comment
                                     FROM 
                                         visit
                                     RIGHT OUTER JOIN 
                                         rmworder ON rmworder.rmworder_sid = visit.reference_sid
+                                    INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
                                     WHERE 
                                         rmworder.wo_ref = '{workOrderReference}'
                                     ORDER BY visit.visit_sid";
