@@ -66,7 +66,7 @@ namespace HackneyRepairs.Services
                 case "5252":
                     throw new PropertyServiceException();
                 default:
-                    return Task.Run(() => new PropertyDetails());
+                    return Task.Run(() => (PropertyDetails)null);
             }
         }
 
@@ -121,7 +121,7 @@ namespace HackneyRepairs.Services
                 case "5252":
                     throw new PropertyServiceException();
                 default:
-                    return Task.Run(() => new PropertyDetails());
+                    return Task.Run(() => (PropertyDetails)null);
             }
         }
 
@@ -140,7 +140,7 @@ namespace HackneyRepairs.Services
                 case "5252":
                     throw new PropertyServiceException();
                 default:
-                    return Task.Run(() => new PropertyDetails());
+                    return Task.Run(() => (PropertyDetails)null);
             }
         }
 

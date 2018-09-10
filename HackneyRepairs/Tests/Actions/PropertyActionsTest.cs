@@ -117,7 +117,7 @@ namespace HackneyRepairs.Tests.Actions
         public async Task get_property_details_by_reference_raises_an_exception_if_the_property_is_missing()
         {
             var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
-            var response = new PropertyDetails();
+            var response = (PropertyDetails)null;
             var fakeService = new Mock<IHackneyPropertyService>();
             fakeService.Setup(service => service.GetPropertyByRefAsync(It.IsAny<string>()))
                 .ReturnsAsync(response);
@@ -235,7 +235,7 @@ namespace HackneyRepairs.Tests.Actions
         {
             var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
             var request = new ByPropertyRefRequest();
-            var response = new PropertyDetails();
+            var response = (PropertyDetails)null;
             var fakeService = new Mock<IHackneyPropertyService>();
             fakeService.Setup(service => service.GetPropertyEstateByRef("525252525")).ReturnsAsync(response);
             var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();

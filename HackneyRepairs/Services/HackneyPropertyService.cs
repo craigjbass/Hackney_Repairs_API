@@ -46,9 +46,7 @@ namespace HackneyRepairs.Services
         public async Task<bool> GetMaintainable(string reference)
         {
             _logger.LogInformation($"HackneyPropertyService/GetMaintainable(): Sent request to upstream PropertyServiceClient (Reference: {reference})");
-
-            //var response = await _uhtRepository.GetMaintainableFlag(reference);
-            var response = await _uhWarehouseRepository(string reference);
+            var response = await _uhWarehouseRepository.GetMaintainableFlag(reference);
             _logger.LogInformation($"HackneyPropertyService/GetMaintainable(): Received response from upstream PropertyServiceClient (Reference: {reference})");
             return response;
         }
