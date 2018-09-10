@@ -25,36 +25,6 @@ namespace HackneyRepairs.Repository
 			_logger = logger;
 		}
 
-		public async Task<bool> GetMaintainableFlag(string propertyReference)
-		{
-			bool? notMaintainableFlag = null;
-			_logger.LogInformation($"Getting the maintainable flag from UHT for {propertyReference}");
-			string CS = Environment.GetEnvironmentVariable("UhtDb");
-			if (CS == null)
-			{
-				CS = ConfigurationManager.ConnectionStrings["UhtDb"].ConnectionString;
-			}
-			try
-			{
-				using (SqlConnection con = new SqlConnection(CS))
-				{
-					string sql = "SELECT [no_maint] FROM [property] where [prop_ref]='" + propertyReference + "'";
-					SqlCommand cmd = new SqlCommand(sql, con);
-					con.Open();
-					SqlDataReader dr = cmd.ExecuteReader();
-					while (dr.Read())
-					{
-						notMaintainableFlag = dr.GetBoolean(0);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex.Message);
-			}
-			return !notMaintainableFlag.Value;
-		}
-
 		public async Task<DrsOrder> GetWorkOrderDetails(string workOrderReference)
 		{
 			DrsOrder drsOrder = new DrsOrder();

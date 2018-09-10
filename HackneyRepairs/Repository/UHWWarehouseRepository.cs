@@ -25,6 +25,25 @@ namespace HackneyRepairs.Repository
             _logger = logger;
         }
 
+        public async Task<bool> GetMaintainableFlag(string propertyReference)
+        {
+            _logger.LogInformation($"Getting the maintainable flag from UHWarehouse for {propertyReference}");
+            try
+            {
+                using (var connection  = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    var query = "SELECT [no_maint] FROM [property] where [prop_ref]='" + propertyReference + "'";
+                    var result = connection.Query<bool>(query).FirstOrDefault();
+                    return Convert.ToBoolean(result);                
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
+            }
+        }
+
         public async Task<PropertyLevelModel> GetPropertyLevelInfo(string reference)
         {
             _logger.LogInformation($"Getting propertiy hierarchical info for: {reference}");
