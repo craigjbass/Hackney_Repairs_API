@@ -324,7 +324,7 @@ namespace HackneyRepairs.Tests.Actions
 					status = responseStatus.success
 				}
 			);
-			var drsOrder = new DrsOrder();
+            var drsOrder = (DrsOrder)null;
 			mockAppointmentsService.Setup(service => service.OpenSessionAsync(It.IsAny<xmbOpenSession>()))
 				.ReturnsAsync(openSessionResponse);
 			mockAppointmentsService.Setup(service => service.CloseSessionAsync(It.IsAny<xmbCloseSession>()))
