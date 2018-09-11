@@ -24,11 +24,11 @@ namespace HackneyRepairs.Controllers
         private ILoggerAdapter<RepairsActions> _loggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-        public RepairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository)
+        public RepairsController(ILoggerAdapter<RepairsActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uHWWarehouseRepository)
         {
             var factory = new HackneyRepairsServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
-            _repairsService = factory.build(uhtRepository, uhwRepository, loggerAdapter);
+            _repairsService = factory.build(uhtRepository, uhwRepository, uHWWarehouseRepository, loggerAdapter);
             _requestBuilder = new HackneyRepairsServiceRequestBuilder(_configBuilder.getConfiguration());
             _repairRequestValidator = new RepairRequestValidator();
             _loggerAdapter = loggerAdapter;

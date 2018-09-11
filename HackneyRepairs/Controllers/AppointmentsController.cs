@@ -29,13 +29,13 @@ namespace HackneyRepairs.Controllers
 
 		public AppointmentsController(ILoggerAdapter<AppointmentActions> loggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository,
 			ILoggerAdapter<HackneyAppointmentsServiceRequestBuilder> requestBuildLoggerAdapter, ILoggerAdapter<RepairsActions> repairsLoggerAdapter,
-                                      IDRSRepository drsRepository)
+                                      IDRSRepository drsRepository, IUHWWarehouseRepository uHWWarehouseRepository)
 		{
 			var serviceFactory = new HackneyAppointmentServiceFactory();
 			_configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
             _appointmentsService = serviceFactory.build(loggerAdapter, uhtRepository, drsRepository);
 			var factory = new HackneyRepairsServiceFactory();
-			_repairsService = factory.build(uhtRepository, uhwRepository, repairsLoggerAdapter);
+            _repairsService = factory.build(uhtRepository, uhwRepository, uHWWarehouseRepository, repairsLoggerAdapter);
 			_loggerAdapter = loggerAdapter;
 			_serviceRequestBuilder = new HackneyAppointmentsServiceRequestBuilder(_configBuilder.getConfiguration(), requestBuildLoggerAdapter);
 			_scheduleBookingRequestValidator = new ScheduleBookingRequestValidator(_repairsService);
@@ -54,6 +54,7 @@ namespace HackneyRepairs.Controllers
 		[HttpGet]
 		[ProducesResponseType(200)]
 		[ProducesResponseType(400)]
+        [ProducesResponseType(404)]
 		[ProducesResponseType(500)]
 		[Route("v1/work_orders/{workOrderReference}/available_appointments")]
 		public async Task<JsonResult> Get(string workOrderReference)
@@ -92,6 +93,20 @@ namespace HackneyRepairs.Controllers
 				json.ContentType = "application/json";
 				return json;
 			}
+            catch (InvalidWorkOrderInUHException ex)
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+                        developerMessage = ex.Message,
+                        userMessage = "WorkOrderReference not found"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 404;
+                return json;
+            }
 			catch (Exception ex)
 			{
 				var errors = new List<ApiErrorMessage>

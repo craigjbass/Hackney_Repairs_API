@@ -233,6 +233,62 @@ namespace HackneyRepairs.Repository
             }
         }
 
+        public async Task<DrsOrder> GetWorkOrderDetails(string workOrderReference)
+        {
+            _logger.LogInformation($"Getting the work order details from Uh Warehouse for {workOrderReference}");
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    var query = $@"select created createdDate,
+                        date_due dueDate,
+                        rtrim(wo_ref) wo_ref,
+                        rtrim(rq_name) contactName,
+                        rtrim(sup_ref) contract,
+                        rmworder.prop_ref,
+                        case when (convert(varchar(50),rq_phone))>'' then convert(bit,1)
+                        else
+                        convert(bit,0)
+                        end  txtMessage,
+                        rq_phone phone,
+                        rq_priority priority,
+                        rtrim(rmreqst.user_code) userid,
+                        null tasks,
+                        rtrim(short_address) propname,
+                        short_address address1,
+                        post_code postcode,
+                        convert(varchar(50),rq_problem) comments
+                        from rmworder 
+                        inner join property on rmworder.prop_ref=property.prop_ref
+                        inner join rmreqst on rmworder.rq_ref=rmreqst.rq_ref
+                        where wo_ref='{workOrderReference}' AND created < '{GetCutoffTime()}'";
+                    var drsOrderResult = connection.Query<DrsOrder>(query).FirstOrDefault();
+
+                    if (drsOrderResult == null)
+                    {
+                        return drsOrderResult;
+                    }
+
+                    query = $@"select  rmtask.job_code,
+                            convert(varchar(50), task_text) comments,
+                            est_cost itemValue,
+                            est_units itemqty,
+                            u_smv smv,
+                            rmjob.trade
+                        from rmtask inner join rmjob on rmtask.job_code = rmjob.job_code
+                        where wo_ref = '{workOrderReference}' AND created < '{GetCutoffTime()}'";
+                    drsOrderResult.Tasks = connection.Query<DrsTask>(query).ToList();
+
+                    return drsOrderResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
+            }
+        }
+
 		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
             IEnumerable<UHWorkOrder> workOrders;

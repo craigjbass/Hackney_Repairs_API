@@ -14,12 +14,14 @@ namespace HackneyRepairs.Services
 		private RepairServiceClient _client;
 		private IUhtRepository _uhtRepository;
 		private IUhwRepository _uhwRepository;
+        private IUHWWarehouseRepository _uhWarehouseRepository;
 		private ILoggerAdapter<RepairsActions> _logger;
-		public HackneyRepairsService(IUhtRepository uhtRepository, IUhwRepository uhwRepository, ILoggerAdapter<RepairsActions> logger)
+        public HackneyRepairsService(IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uHWWarehouseRepository, ILoggerAdapter<RepairsActions> logger)
 		{
 			_client = new RepairServiceClient();
 			_uhtRepository = uhtRepository;
 			_uhwRepository = uhwRepository;
+            _uhWarehouseRepository = uHWWarehouseRepository;
 			_logger = logger;
 		}
 
@@ -47,12 +49,18 @@ namespace HackneyRepairs.Services
 			return response;
 		}
 
-		public Task<DrsOrder> GetWorkOrderDetails(string workOrderReference)
+        public async Task<DrsOrder> GetWorkOrderDetails(string workOrderReference)
 		{
-			_logger.LogInformation($"HackneyRepairsService/GetWorkOrderDetails(): Sent request to upstream RepairServiceClient (Work order ref ref: {workOrderReference})");
-			var response = _uhtRepository.GetWorkOrderDetails(workOrderReference);
-			_logger.LogInformation($"HackneyRepairsService/GetWorkOrderDetails(): Received response from upstream RepairServiceClient (Work order ref: {workOrderReference})");
-			return response;
+            _logger.LogInformation($"HackneyRepairsService/GetWorkOrderDetails(): Sent request to uhWarehouseRepository (Work order ref ref: {workOrderReference})");
+            var warehouseResponse = await _uhWarehouseRepository.GetWorkOrderDetails(workOrderReference);
+            if (warehouseResponse != null)
+            {
+                return warehouseResponse;
+            }
+
+            _logger.LogInformation($"HackneyRepairsService/GetWorkOrderDetails(): No response from uhWarehouseRepository, sent request to UHT (Work order ref: {workOrderReference})");
+            var uhResponse = await _uhtRepository.GetWorkOrderDetails(workOrderReference);
+            return uhResponse;
 		}
 
 		public Task<bool> UpdateRequestStatus(string repairRequestReference)

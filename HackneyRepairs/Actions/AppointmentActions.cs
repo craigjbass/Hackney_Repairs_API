@@ -37,7 +37,7 @@ namespace HackneyRepairs.Actions
 
             // get the work order details and pass it to the request builder
             var workOrder = await _repairsService.GetWorkOrderDetails(workOrderReference);
-            if (string.IsNullOrEmpty(workOrder.wo_ref))
+            if (workOrder == null)
             {
                 _logger.LogError($"could not find the work order in UH with reference {workOrderReference}");
                 throw new InvalidWorkOrderInUHException();
