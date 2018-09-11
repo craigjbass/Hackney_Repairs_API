@@ -24,7 +24,7 @@ namespace HackneyRepairs.Repository
 
 		public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
 		{
-			string[] phoneNumbers;
+			string[] appointmentReferences;
 			List<DetailedAppointment> appointments;
 			_logger.LogInformation($"Getting appointment details from DRS for {workOrderReference}");
 
@@ -58,18 +58,18 @@ namespace HackneyRepairs.Repository
                             WHERE
                                 p_serviceorder.NAME = '{workOrderReference}')";
 
-					phoneNumbers = connection.Query<string>(query).ToArray();
+					appointmentReferences = connection.Query<string>(query).ToArray();
 
-					if (phoneNumbers.Length == 0)
+					if (appointmentReferences.Length == 0)
 					{
 						return new List<DetailedAppointment>();
 					}
-					string sPhoneNumbers = "";
-					for (int i = 0; i < phoneNumbers.Length - 1; i++)
+                    string sAppointmenReferences = "";
+					for (int i = 0; i < appointmentReferences.Length - 1; i++)
 					{
-						sPhoneNumbers += "'" + phoneNumbers[i] + "',";
+						sAppointmenReferences += "'" + appointmentReferences[i] + "',";
 					}
-					sPhoneNumbers += "'" + phoneNumbers[phoneNumbers.Length-1] + "'";
+					sAppointmenReferences += "'" + appointmentReferences[appointmentReferences.Length-1] + "'";
 
 					query = $@"SELECT
                                     jobs.Id,
@@ -95,7 +95,7 @@ namespace HackneyRepairs.Repository
                                     FROM
                                         s_job
                                     WHERE
-                                        s_job.NAME IN ({sPhoneNumbers}))
+                                        s_job.NAME IN ({sAppointmenReferences}))
                                 UNION (
                                     SELECT
                                         p_job.NAME AS Id,
@@ -109,7 +109,7 @@ namespace HackneyRepairs.Repository
                                     FROM
                                         p_job
                                     WHERE
-                                        p_job.NAME IN ({sPhoneNumbers}))) AS jobs
+                                        p_job.NAME IN ({sAppointmenReferences}))) AS jobs
                                         
                                 INNER JOIN s_worker ON jobs.AssignedWorker = s_worker.name";
 					appointments = connection.Query<DetailedAppointment>(query).ToList();
@@ -123,8 +123,7 @@ namespace HackneyRepairs.Repository
 			}
 		}
 
-
-		public async Task<DetailedAppointment> GetCurrentAppointmentByWorkOrderReference(string workOrderReference)
+		public async Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference)
 		{
 			IEnumerable<DetailedAppointment> lAppointments;
 			try
