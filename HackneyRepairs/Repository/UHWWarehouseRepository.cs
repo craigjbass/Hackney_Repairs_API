@@ -265,7 +265,8 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    var query = $@"select created createdDate,
+                    var query = $@"set dateformat ymd;
+                    select created createdDate,
                         date_due dueDate,
                         rtrim(wo_ref) wo_ref,
                         rtrim(rq_name) contactName,
@@ -286,7 +287,7 @@ namespace HackneyRepairs.Repository
                         from rmworder 
                         inner join property on rmworder.prop_ref=property.prop_ref
                         inner join rmreqst on rmworder.rq_ref=rmreqst.rq_ref
-                        where wo_ref='{workOrderReference}' AND created < '{GetCutoffTime()}'";
+                        where created < '{GetCutoffTime()}' AND wo_ref='{workOrderReference}'";
                     var drsOrderResult = connection.Query<DrsOrder>(query).FirstOrDefault();
 
                     if (drsOrderResult == null)
@@ -294,14 +295,15 @@ namespace HackneyRepairs.Repository
                         return drsOrderResult;
                     }
 
-                    query = $@"select  rmtask.job_code,
+                    query = $@"set dateformat ymd;
+                        select  rmtask.job_code,
                             convert(varchar(50), task_text) comments,
                             est_cost itemValue,
                             est_units itemqty,
                             u_smv smv,
                             rmjob.trade
                         from rmtask inner join rmjob on rmtask.job_code = rmjob.job_code
-                        where wo_ref = '{workOrderReference}' AND created < '{GetCutoffTime()}'";
+                        where created < '{GetCutoffTime()}' AND wo_ref = '{workOrderReference}'";
                     drsOrderResult.Tasks = connection.Query<DrsTask>(query).ToList();
 
                     return drsOrderResult;
@@ -393,21 +395,20 @@ namespace HackneyRepairs.Repository
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
                     string query = $@"set dateformat ymd;
-                    SELECT TOP {size}
-                        LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
-                        note.NDate AS LoggedAt,
-                        note.UserID AS LoggedBy,
-                        note.NoteText As [Text],
-                        note.NoteID AS NoteId
-                    FROM 
-                        StagedDBW2.dbo.W2ObjectNote AS note
-                    INNER JOIN
-                        StagedDB.dbo.rmworder AS work_order ON note.KeyNumb = work_order.rmworder_sid
-                    WHERE 
-                        KeyObject in ('{noteTarget}') AND NoteID > {noteId} 
-                        AND note.NDate < '{GetCutoffTime()}'
-                    ORDER BY NoteID";
-
+                        SELECT TOP {size}
+                            LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
+                            note.NDate AS LoggedAt,
+                            note.UserID AS LoggedBy,
+                            note.NoteText As [Text],
+                            note.NoteID AS NoteId
+                        FROM 
+                            StagedDBW2.dbo.W2ObjectNote AS note
+                        INNER JOIN
+                            StagedDB.dbo.rmworder AS work_order ON note.KeyNumb = work_order.rmworder_sid
+                        WHERE 
+                            note.NDate < '{GetCutoffTime()}' AND NoteID > {noteId}
+                            AND KeyObject in ('{noteTarget}')
+                        ORDER BY NoteID";
                     var notes = connection.Query<Note>(query);
                     return notes;
                 }

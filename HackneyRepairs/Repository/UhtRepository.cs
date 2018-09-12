@@ -54,8 +54,7 @@ namespace HackneyRepairs.Repository
                         from rmworder 
                 	    inner join property on rmworder.prop_ref=property.prop_ref
                 	    inner join rmreqst on rmworder.rq_ref=rmreqst.rq_ref
-                        where wo_ref='{workOrderReference}' AND created > '{GetCutoffTime()}'";
-                    
+                        where created > '{GetCutoffTime()}' AND wo_ref='{workOrderReference}'";
                     var drsOrderResult = connection.Query<DrsOrder>(query).FirstOrDefault();
 
                     if (drsOrderResult == null)
@@ -63,14 +62,15 @@ namespace HackneyRepairs.Repository
                         return drsOrderResult;
                     }
 
-                    query = $@"select  rmtask.job_code,
+                    query = $@"set dateformat ymd;
+                        select  rmtask.job_code,
                             convert(varchar(50), task_text) comments,
                             est_cost itemValue,
                             est_units itemqty,
                             u_smv smv,
                             rmjob.trade
                         from rmtask inner join rmjob on rmtask.job_code = rmjob.job_code
-                        where wo_ref = '{workOrderReference}' AND created > '{GetCutoffTime()}'";
+                        where created > '{GetCutoffTime()}' AND wo_ref = '{workOrderReference}'";
                     drsOrderResult.Tasks = connection.Query<DrsTask>(query).ToList();
 
                     return drsOrderResult;
@@ -286,8 +286,8 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    // Get repairs requests
-					string query = $@"select    r.rq_ref as repairRequestReference,
+                    string query = $@"set dateformat ymd;
+                                      select    r.rq_ref as repairRequestReference,
                                                 r.rq_problem as problemDescription,
                                                 r.rq_priority as priority,
                                                 r.prop_ref as propertyReference

@@ -115,7 +115,6 @@ namespace HackneyRepairs.Repository
 
         public async Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size, int? remainingCount)
         {
-            
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -138,10 +137,9 @@ namespace HackneyRepairs.Repository
                         INNER JOIN
                             uht{environmentDbWord}.dbo.rmworder AS work_order ON note.KeyNumb = work_order.rmworder_sid
                         WHERE
-                            note.KeyObject IN ('{noteTarget}') AND note.NoteID > {noteId}
-                            AND note.NDate > '{GetCutoffTime()}'
+                            note.NDate > '{GetCutoffTime()}' AND note.NoteID > {noteId}
+                            AND note.KeyObject IN ('{noteTarget}') 
                         ORDER BY NoteID";
-
                     var notes = connection.Query<Note>(query);
                     return notes;
                 }
