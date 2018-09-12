@@ -292,7 +292,7 @@ namespace HackneyRepairs.Repository
                                                 r.rq_priority as priority,
                                                 r.prop_ref as propertyReference
                                                 FROM rmreqst r
-                                                where r.prop_ref = '{propertyReference}'";
+                                                where r.rq_date > '{GetCutoffTime()}' AND r.prop_ref = '{propertyReference}'";
                     var repairs = connection.Query<RepairRequestBase>(query).ToList();
                     return repairs;
                 }

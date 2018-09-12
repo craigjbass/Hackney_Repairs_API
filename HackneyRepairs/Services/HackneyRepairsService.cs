@@ -25,12 +25,21 @@ namespace HackneyRepairs.Services
 			_logger = logger;
 		}
 
-		public Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference)
+		public async Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference)
         {
-			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
-            var response = _uhtRepository.GetRepairRequests(propertyReference);
-			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByReference(): Work order details returned for property reference: {propertyReference})");
-            return response;
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhWarehouse (Property reference: {propertyReference})");
+            var warehouseResponse = (List<RepairRequestBase>)await _uhWarehouseRepository.GetRepairRequests(propertyReference);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {warehouseResponse.Count} repair requests returned");
+
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
+            var uhtResponse = (List<RepairRequestBase>)await _uhtRepository.GetRepairRequests(propertyReference);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {uhtResponse.Count} repair requests returned");
+
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Merging list from repositories to a single list");
+            List<RepairRequestBase> jointResult = warehouseResponse;
+            warehouseResponse.InsertRange(0, uhtResponse);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Total {jointResult.Count} work orders returned for: {propertyReference})");
+            return jointResult;
         }
 
 		public Task<RepairCreateResponse> CreateRepairAsync(NewRepairRequest request)

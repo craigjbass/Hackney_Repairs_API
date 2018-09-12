@@ -8,6 +8,7 @@ namespace HackneyRepairs.Interfaces
     public interface IUHWWarehouseRepository
     {
         Task<bool> GetMaintainableFlag(string propertyReference);
+        Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference);
         Task<PropertyLevelModel> GetPropertyLevelInfo(string reference);
         Task<PropertySummary[]> GetPropertyListByPostCode(string post_code);
         Task<PropertyDetails> GetPropertyDetailsByReference(string reference);

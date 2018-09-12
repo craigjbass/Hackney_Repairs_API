@@ -44,6 +44,31 @@ namespace HackneyRepairs.Repository
             }
         }
 
+        public async Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $@"set dateformat ymd;
+                                SELECT   
+                                    r.rq_ref as repairRequestReference,
+                                    r.rq_problem as problemDescription,
+                                    r.rq_priority as priority,
+                                    r.prop_ref as propertyReference
+                                FROM rmreqst r
+                                    WHERE r.rq_date < '{GetCutoffTime()}' AND r.prop_ref = '{propertyReference}'";
+                    var repairs = connection.Query<RepairRequestBase>(query).ToList();
+                    return repairs;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+        }
+
         public async Task<PropertyLevelModel> GetPropertyLevelInfo(string reference)
         {
             _logger.LogInformation($"Getting propertiy hierarchical info for: {reference}");

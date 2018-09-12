@@ -101,20 +101,15 @@ namespace HackneyRepairs.Services
         {
 			_logger.LogInformation($@"HackneyAppointmentsService/GetCurrentAppointmentByWorkOrderReference(): 
                                     Check if there is an appointment in DRS for Work Order ref: {workOrderReference}");
-			var drsAppointment = await _drsRepository.GetCurrentAppointmentByWorkOrderReference(workOrderReference);
+			var drsAppointment = await _drsRepository.GetLatestAppointmentByWorkOrderReference(workOrderReference);
 			if (drsAppointment != null)
 			{
 				return drsAppointment;
 			}
-            _logger.LogInformation($@"HackneyAppointmentsService/GetCurrentAppointmentByWorkOrderReference(): 
-                                    Appointment not in DRS, check if there is an appointment in UH warehouse for Work Order ref: {workOrderReference}");
-			
 
-            // If it is not in the warehouse then it might be in live, so check live without cutoff
             _logger.LogInformation($@"HackneyAppointmentsService/GetCurrentAppointmentByWorkOrderReference(): 
-                                    Check if there is an appointment in UHT live for Work Order ref: {workOrderReference}");
+                                    Check if there is an appointment in UHT for Work Order ref: {workOrderReference}");
 			var uhAppointment = await _uhtRepository.GetLatestAppointmentByWorkOrderReference(workOrderReference);
-
 			return uhAppointment;
         }
     }
