@@ -63,7 +63,6 @@ namespace HackneyRepairs
 			services.AddCustomServices();
 		}
 
-
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
@@ -102,7 +101,7 @@ namespace HackneyRepairs
                     break;
 				case "Development":
 					app.UseSwagger(
-                        c => c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Host = "sandboxapi.hackney.gov.uk/unboxedhackneyrepairs_dev/")
+						c => c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Host = "sandboxapi.hackney.gov.uk/unboxedhackneyrepairs_dev/")
                     );
                     app.UseSwaggerUI(c =>
                     {
