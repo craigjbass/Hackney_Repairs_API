@@ -31,7 +31,7 @@ namespace HackneyRepairs.Controllers
         /// </summary>
         /// <param name="startId">A note id, results will have a grater id than this parameter</param>
         /// <param name="noteTarget">The kind of note defined in Universal housing</param>
-        /// <param name="resultSize">The number of notes returned. Default value is 50</param>
+        /// <param name="resultSize">The maximum number of notes returned. Default value is 50</param>
         /// <returns>A list of notes</returns>
         /// <response code="200">Returns a list of notes</response>
         /// <response code="400">If a parameter is invalid</response>   
@@ -89,7 +89,7 @@ namespace HackneyRepairs.Controllers
                     jsonResponse = Json(error);
                     jsonResponse.StatusCode = 404;
                 }
-                else if (ex is UHWWarehouseRepositoryException || ex.InnerException is UhwRepositoryException)
+                else if (ex is UHWWarehouseRepositoryException || ex is UhwRepositoryException)
                 {
                     error.userMessage = "We had issues with connecting to the data source.";
                     jsonResponse = Json(error);
