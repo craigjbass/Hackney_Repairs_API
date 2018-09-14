@@ -60,7 +60,8 @@ namespace HackneyRepairs.Actions
 
         public async Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrdersFeed(string startID, int resultSize)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation($"Getting work order feed for {startID}");
+            return await _workOrdersService.GetWorkOrderFeed(startID, resultSize);
         }
     }
     

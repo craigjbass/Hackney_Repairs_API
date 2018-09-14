@@ -95,33 +95,33 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Querying Uh Warehouse for: {startId}");
             var warehouseResult = await _uhWarehouseRepository.GetNoteFeed(startId, noteTarget, size);
             var warehouseResultCount = warehouseResult.Count();
-            _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): {warehouseResultCount} results returned for: {startId}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): {warehouseResultCount} notes received for: {startId}");
 
             if (warehouseResultCount == size)
             {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Returning UH warehouse only results to actions for: {startId}");
+                _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Returning UH warehouse only results to for: {startId}");
                 return warehouseResult;
             }
 
-            IEnumerable<Note> uhResult;
+            IEnumerable<Note> uhwResult;
             if (warehouseResultCount == 0)
             {
                 _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Querying UH and expecting up to 50 results for: {startId}");
-                uhResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size, null);
-                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {startId}");
-                return uhResult;
+                uhwResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size, null);
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhwResult.Count()} results received for: {startId}");
+                return uhwResult;
             }
             else
             {
                 var remainingCount = size - warehouseResultCount;
                 _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Querying UH and expecting up to {remainingCount} results for: {startId}");
-                uhResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size, remainingCount);
-                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhResult.Count()} results returned for: {startId}");
+                uhwResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, size, remainingCount);
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRecentNotes(): {uhwResult.Count()} results received for: {startId}");
 
-                if (uhResult.Any())
+                if (uhwResult.Any())
                 {
                     _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Joining warehouse and uh results into a single list for: {startId}");
-                    List<Note> jointResult = (List<Note>)uhResult;
+                    List<Note> jointResult = (List<Note>)uhwResult;
                     jointResult.InsertRange(0, warehouseResult);
                     _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Joint list contains {jointResult.Count()} notes for: {startId}");
                     return jointResult;
@@ -130,10 +130,52 @@ namespace HackneyRepairs.Services
             }
         }
 
-        public Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize)
+        public async Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize)
         {
-            throw new NotImplementedException();
+            var feedMaxBatchSize = Int32.Parse(Environment.GetEnvironmentVariable("NoteFeedMaxBatchSize"));
+            if (resultSize > feedMaxBatchSize || resultSize < 1)
+            {
+                resultSize = feedMaxBatchSize;
+            }
+
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Querying Uh Warehouse for {startId} and for up to {resultSize} workOrders");
+            var warehouseResult = await _uhWarehouseRepository.GetWorkOrderFeed(startId, resultSize);
+            var warehouseResultCount = warehouseResult.Count();
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): {warehouseResultCount} workOrders received for: {startId}");
+
+            if (warehouseResultCount == resultSize)
+            {
+                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Returning UH Warehouse only results for: {startId}");
+                return warehouseResult;
+            }
+
+            IEnumerable<UHWorkOrderFeed> uhtResult;
+            if (warehouseResultCount == 0)
+            {
+                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Querying UHT repository for up to {resultSize} workOrders for: {startId}");
+                uhtResult = await _uhtRepository.GetWorkOrderFeed(startId, resultSize, null);
+                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): {uhtResult.Count()} results received for: {startId}");
+                return uhtResult;
+            }
+            else
+            {
+                var remainingCount = resultSize - warehouseResultCount;
+                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Querying UHT repository for up to {remainingCount} workOrders for: {startId}");
+                uhtResult = await _uhtRepository.GetWorkOrderFeed(startId, resultSize, remainingCount);
+                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): {uhtResult.Count()} results received for: {startId}");
+
+                if (uhtResult.Any())
+                {
+                    _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Joining warehouse and UHT repository results into a single list for: {startId}");
+                    List<UHWorkOrderFeed> jointResult = (List<UHWorkOrderFeed>)uhtResult;
+                    jointResult.InsertRange(0, warehouseResult);
+                    _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Joint list contains {jointResult.Count()} work orders for: {startId}");
+                    return jointResult;
+                }
+                return warehouseResult;
+            }
         }
+
 
         private async Task<bool> EnsureNoteTargetExistsInDB(string noteTarget)
         {

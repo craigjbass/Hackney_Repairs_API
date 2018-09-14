@@ -183,14 +183,64 @@ namespace HackneyRepairs.Controllers
             }
         }
 
+        // GET A feed of work orders
+        // <summary>
+        // Returns a list of work orders with a work order reference greater than the parameter startId
+        // </summary>
+        /// <param name="startId">A work order reference, results will have a grater id than this parameter</param>
+        /// <param name="resultSize">The maximum number of work orders returned. Default value is 50</param>
+        /// <returns>A list of work orders</returns>
+        /// <response code="200">Returns a list of work orders</response>
+        /// <response code="400">If a parameter is invalid</response>   
+        /// <response code="500">If any errors are encountered</response>
         [HttpGet("feed")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<JsonResult> getWorkOrderFeed(string startId, int resultSize = 0)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(startId))
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = "Missing parameter - startId",
+                    userMessage = @"Bad Request"
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 400;
+                return jsonResponse;
+            }
+
+            try
+            {
+                var workOrdersActions = new WorkOrdersActions(_workOrdersService, _loggerAdapter);
+                var result = await workOrdersActions.GetWorkOrdersFeed(startId, resultSize);
+                var jsonResponse = Json(result);
+                jsonResponse.StatusCode = 200;
+                return jsonResponse;
+            }
+            catch (Exception ex)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message
+                };
+
+                JsonResult jsonResponse;
+                if (ex is UhtRepositoryException || ex is UHWWarehouseRepositoryException)
+                {
+                    error.userMessage = "we had issues with connecting to the data source.";
+                    jsonResponse = Json(error);
+                }
+                else
+                {
+                    error.userMessage = "We had issues processing your request.";
+                    jsonResponse = Json(error);
+                }
+
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
         }
 	}
 }
