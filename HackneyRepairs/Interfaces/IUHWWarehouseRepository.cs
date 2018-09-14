@@ -18,7 +18,7 @@ namespace HackneyRepairs.Interfaces
 		Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference);
         Task<DrsOrder> GetWorkOrderDetails(string workOrderReference);        
         Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference);
-        Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(int startID, int size);
+        Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startID, int size);
         Task<IEnumerable<Note>> GetNoteFeed(int startId, string noteTarget, int size);
         Task<IEnumerable<string>> GetDistinctNoteKeyObjects();
     }

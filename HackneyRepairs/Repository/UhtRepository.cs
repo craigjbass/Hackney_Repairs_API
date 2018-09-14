@@ -406,15 +406,16 @@ namespace HackneyRepairs.Repository
                     string query = $@"set dateformat ymd;
                         SELECT TOP {remainingCount}
                             LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
-                            work_order.prop_ref AS PropertyReference,
+                            LTRIM(RTRIM(work_order.prop_ref)) AS PropertyReference,
                             work_order.created AS Created,
-                            request.rq_problem AS ProblemDesctiption
+                            request.rq_problem AS ProblemDescription
                         FROM 
                             rmworder AS work_order
                         INNER JOIN
                             rmreqst AS request ON work_order.rq_ref = request.rq_ref
                         WHERE 
                             work_order.created > '{GetCutoffTime()}' AND work_order.wo_ref > '{startId}'
+                            AND work_order.wo_ref NOT LIKE '[A-Z]%'
                         ORDER BY work_order.wo_ref";
                     var workOrders = connection.Query<UHWorkOrderFeed>(query);
                     return workOrders;
