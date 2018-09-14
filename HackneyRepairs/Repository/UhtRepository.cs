@@ -391,6 +391,42 @@ namespace HackneyRepairs.Repository
             return appointment;
         }
 
+        public async Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize, int? remainingCount)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    if (remainingCount == null)
+                    {
+                        remainingCount = resultSize;
+                    }
+                    _logger.LogInformation($"Getting up to {remainingCount} work orders with an id > {startId}");
+
+                    string query = $@"set dateformat ymd;
+                        SELECT TOP {remainingCount}
+                            LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
+                            work_order.prop_ref AS PropertyReference,
+                            work_order.created AS Created,
+                            request.rq_problem AS ProblemDesctiption
+                        FROM 
+                            rmworder AS work_order
+                        INNER JOIN
+                            rmreqst AS request ON work_order.rq_ref = request.rq_ref
+                        WHERE 
+                            work_order.created > '{GetCutoffTime()}' AND work_order.wo_ref > '{startId}'
+                        ORDER BY work_order.wo_ref";
+                    var workOrders = connection.Query<UHWorkOrderFeed>(query);
+                    return workOrders;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+        }
+
 		public static string GetCutoffTime()
         {
             DateTime now = DateTime.Now;
@@ -398,7 +434,7 @@ namespace HackneyRepairs.Repository
             dtCutoff = dtCutoff.AddDays(-1);
             return dtCutoff.ToString("yyyy-MM-dd HH:mm:ss");
         }
-	}
+    }
 
 	public static class DateReaderExtensions
 	{

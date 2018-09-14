@@ -126,7 +126,7 @@ namespace HackneyRepairs.Repository
                     {
                         remainingCount = size;
                     }
-                    _logger.LogInformation($"Getting up to {remainingCount} notes witn an id > {noteId}");
+                    _logger.LogInformation($"Getting up to {remainingCount} notes with an id > {noteId}");
 
                     var query = $@"set dateformat ymd;
                         SELECT TOP {remainingCount}

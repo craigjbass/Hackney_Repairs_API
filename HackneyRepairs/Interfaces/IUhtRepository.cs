@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using HackneyRepairs.Entities;
 using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Interfaces
@@ -17,5 +15,6 @@ namespace HackneyRepairs.Interfaces
 		Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference);
 		Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference);
 		Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference);
+        Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize, int? remainingCount);
     }
 }

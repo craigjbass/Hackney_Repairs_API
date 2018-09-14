@@ -384,7 +384,37 @@ namespace HackneyRepairs.Repository
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                throw new UhtRepositoryException();
+                throw new UHWWarehouseRepositoryException();
+            }
+        }
+
+        public async Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(int startID, int size)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $@"set dateformat ymd;
+                        SELECT TOP {size}
+                            LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
+                            work_order.prop_ref AS PropertyReference,
+                            work_order.created AS Created,
+                            request.rq_problem AS ProblemDesctiption
+                        FROM 
+                            StagedDB.dbo.rmworder AS work_order
+                        INNER JOIN
+                            StagedDB.dbo.rmreqst AS request ON work_order.rq_ref = request.rq_ref
+                        WHERE 
+                            work_order.created < '{GetCutoffTime()}' AND work_order.wo_ref > '{startID}'
+                        ORDER BY work_order.wo_ref";
+                    var workOrders = connection.Query<UHWorkOrderFeed>(query);
+                    return workOrders;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
             }
         }
 
