@@ -14,13 +14,13 @@ namespace HackneyRepairs.Controllers
     public class NotesController : Controller
     {
         private IHackneyWorkOrdersService _workOrdersService;
-        private ILoggerAdapter<NotesActions> _loggerAdapter;
+        private ILoggerAdapter<NotesActions> _notesLoggerAdapter;
         private ILoggerAdapter<WorkOrdersActions> _workOrdersLoggerAdapter;
 
         public NotesController(ILoggerAdapter<NotesActions> logger, ILoggerAdapter<WorkOrdersActions> workOrdersLogger, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository)
         {
             _workOrdersLoggerAdapter = workOrdersLogger;
-            _loggerAdapter = logger;
+            _notesLoggerAdapter = logger;
             var factory = new HackneyWorkOrdersServiceFactory();
             _workOrdersService = factory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _workOrdersLoggerAdapter);
         }
@@ -67,7 +67,7 @@ namespace HackneyRepairs.Controllers
                 return jsonResponse;
             }
             
-            var notesActions = new NotesActions(_workOrdersService, _loggerAdapter);
+            var notesActions = new NotesActions(_workOrdersService, _notesLoggerAdapter);
             try
             {
                 var result = await notesActions.GetNoteFeed(startId, noteTarget, resultSize);

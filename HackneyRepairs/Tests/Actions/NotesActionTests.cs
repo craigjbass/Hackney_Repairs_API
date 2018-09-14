@@ -21,7 +21,7 @@ namespace HackneyRepairs.Tests.Actions
 
         #region get notes feed
         [Fact]
-        public async Task get_noted_feed_by_noteID_returns_a_list_of_notes()
+        public async Task get_note_feed_by_noteID_returns_a_list_of_notes()
         {
             Random rnd = new Random();
             int randomReference = rnd.Next(100000000, 999999999);
@@ -39,6 +39,22 @@ namespace HackneyRepairs.Tests.Actions
             var response = await notesActions.GetNoteFeed(randomReference, "", randomReference);
 
             Assert.True(response is List<Note>);
+        }
+
+        [Fact]
+        public async Task get_note_feed_throws_and_exception_when_response_has_one_null_object()
+        {
+            Random rnd = new Random();
+            int randomReference = rnd.Next(100000000, 999999999);
+            List<Note> fakeResponse = new List<Note>
+            {
+                new Note()
+            };
+            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
+            _workOrderService.Setup(service => service.GetNoteFeed(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
+                             .Returns(Task.FromResult<IEnumerable<Note>>(fakeResponse));
+            NotesActions notesActions = new NotesActions(_workOrderService.Object, _mockLogger.Object);
+            await Assert.ThrowsAsync<MissingNoteTargetException>(async () => await notesActions.GetNoteFeed(randomReference, "notfoundtarget", randomReference));
         }
         #endregion
     }

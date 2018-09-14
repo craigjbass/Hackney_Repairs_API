@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using HackneyRepairs.Entities;
 using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Interfaces
@@ -12,5 +11,6 @@ namespace HackneyRepairs.Interfaces
 		Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference);
 		Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference);
         Task<IEnumerable<Note>> GetNoteFeed(int startId, string noteTarget, int size);
+        Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize);
     }
 }

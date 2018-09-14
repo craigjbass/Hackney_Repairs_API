@@ -130,6 +130,11 @@ namespace HackneyRepairs.Services
             }
         }
 
+        public Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize)
+        {
+            throw new NotImplementedException();
+        }
+
         private async Task<bool> EnsureNoteTargetExistsInDB(string noteTarget)
         {
             var result = await _uhWarehouseRepository.GetDistinctNoteKeyObjects();

@@ -182,5 +182,15 @@ namespace HackneyRepairs.Controllers
                 return jsonResponse;
             }
         }
+
+        [HttpGet("feed")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<JsonResult> getWorkOrderFeed(string startId, int resultSize = 0)
+        {
+            throw new NotImplementedException();
+        }
 	}
 }

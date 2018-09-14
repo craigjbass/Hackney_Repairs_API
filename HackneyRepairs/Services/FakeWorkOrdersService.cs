@@ -47,7 +47,7 @@ namespace HackneyRepairs.Services
             }
             var noteEntities = new List<Note>
             {
-                new Note()
+                new Note
                 {
                     Text = "Some note",
                     LoggedBy = "UHOrder"
@@ -69,12 +69,32 @@ namespace HackneyRepairs.Services
             }
             var fakeNoteResponse = new List<Note>
             {
-                new Note()
+                new Note
                 {
                     WorkOrderReference = "123"
                 }
             };
             return Task.Run(() => (IEnumerable<Note>)fakeNoteResponse);
+        }
+
+        public Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize)
+        {
+            if (string.Equals(startId, "99999999"))
+            {
+                return Task.Run(() => (IEnumerable<UHWorkOrderFeed>)new List<UHWorkOrderFeed>());
+            }
+            if (string.Equals(startId, "11550853"))
+            {
+                throw new FakeWorkOrdersServiceException();
+            }
+            var fakeResponse = new List<UHWorkOrderFeed>
+            {
+                new UHWorkOrderFeed
+                {
+                    WorkOrderReference = "123456"
+                }
+            };
+            return Task.Run(() => (IEnumerable<UHWorkOrderFeed>)fakeResponse);
         }
     }
 

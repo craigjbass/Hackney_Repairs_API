@@ -155,5 +155,22 @@ namespace HackneyRepairs.Tests.Actions
             await Assert.ThrowsAsync<MissingNotesException>(async () => await workOrdersActions.GetNotesByWorkOrderReference(randomReference));
         }
         #endregion
+
+        #region Get workOrder feed
+        [Fact]
+        public async Task get_workorder_feed_returns_a_list_of_uhworkorderfeed()
+        {
+            Random rnd = new Random();
+            string randomReference = rnd.Next(100000000, 999999999).ToString();
+            int randomSize = rnd.Next(1, 50);
+            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
+            _workOrderService.Setup(service => service.GetWorkOrderFeed(It.IsAny<string>(), It.IsAny<int>()))
+                             .Returns(Task.FromResult<IEnumerable<UHWorkOrderFeed>>(new List<UHWorkOrderFeed>()));
+            WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
+            var response = await workOrdersActions.GetWorkOrdersFeed(randomReference, randomSize);
+
+            Assert.True(response is List<UHWorkOrderFeed>);
+        }
+        #endregion
     }
 }
