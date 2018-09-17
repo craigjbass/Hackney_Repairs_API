@@ -102,6 +102,39 @@ namespace HackneyRepairs.Repository
             }
         }
 
+		public async Task<List<PropertyLevelModel>> GetPropertyLevelInfosForParent(string reference)
+        {
+            _logger.LogInformation($"Getting propertiy hierarchical info for: {reference}");
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    var query = $@"
+                        SELECT 
+                            property.prop_ref AS 'PropertyReference',
+                            property.level_code AS 'LevelCode',
+                            property.major_ref AS 'MajorReference',
+                            lulevel.lu_desc AS 'Description', 
+                            property.address1 AS 'Address',
+                            property.post_code AS 'PostCode'
+                        FROM 
+                            StagedDB.dbo.property
+                        INNER 
+                            JOIN lulevel ON property.level_code = lulevel.lu_ref 
+                        WHERE 
+                            major_ref = '{reference}'";
+
+					var result = connection.Query<PropertyLevelModel>(query).AsList();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
+            }
+        }
+
         public async Task<PropertySummary[]> GetPropertyListByPostCode(string postcode)
         {
             _logger.LogInformation($"Getting properties for postcode {postcode}");
@@ -316,8 +349,16 @@ namespace HackneyRepairs.Repository
             }
         }
 
-		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReferences(IEnumerable<string> propertyReference)
         {
+			string[] array = propertyReference.ToArray();
+			string sReferences = "'";
+			for (int i = 0; i < array.Length-1; i++)
+			{
+				sReferences += array[i] + "','";
+			}
+			sReferences += array[array.Length - 1] + "'";
+
             IEnumerable<UHWorkOrder> workOrders;
             try
             {
@@ -345,7 +386,7 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}'AND t.task_no = 1;";
+                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref IN ({sReferences}) AND t.task_no = 1;";
                     workOrders = connection.Query<UHWorkOrder>(query);
                 }
             }

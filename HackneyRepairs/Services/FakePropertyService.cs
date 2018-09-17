@@ -4,6 +4,7 @@ using HackneyRepairs.Interfaces;
 using HackneyRepairs.PropertyService;
 using HackneyRepairs.Models;
 using HackneyRepairs.Actions;
+using System.Collections.Generic;
 
 namespace HackneyRepairs.Services
 {
@@ -144,7 +145,37 @@ namespace HackneyRepairs.Services
             }
         }
 
-        public Task<PropertyLevelModel> GetPropertyLevelModel(string reference)
+		public Task<List<PropertyLevelModel>> GetPropertyLevelInfosForParent(string parentReference)
+		{
+            
+			if (string.Equals(parentReference, "99999999"))
+            {
+				List<PropertyLevelModel> emptyList = new List<PropertyLevelModel>();
+				return Task.Run(() => (List<PropertyLevelModel>) emptyList);
+            }
+
+			List<PropertyLevelModel> levelInfos = new List<PropertyLevelModel>()
+			{
+				new PropertyLevelModel()
+				{
+					PropertyReference = "12345678",
+					Description = "Dwelling"
+				},
+				new PropertyLevelModel()
+                {
+					PropertyReference = "12345677",
+					Description = "Dwelling"
+                },
+				new PropertyLevelModel()
+                {
+					PropertyReference = "12345676",
+					Description = "Garage"
+                }
+			};
+			return Task.Run(() => (levelInfos));
+		}
+
+        public Task<PropertyLevelModel> GetPropertyLevelInfo(string reference)
         {
             throw new NotImplementedException();
         }
