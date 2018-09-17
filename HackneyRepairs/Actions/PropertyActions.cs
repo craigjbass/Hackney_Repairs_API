@@ -33,7 +33,7 @@ namespace HackneyRepairs.Actions
 
                 while (!String.IsNullOrWhiteSpace(parent))
                 {
-                    var response = await _service.GetPropertyLevelModel(parent);
+                    var response = await _service.GetPropertyLevelInfo(parent);
                     if (response == null)
                     {
                         throw new MissingPropertyException();

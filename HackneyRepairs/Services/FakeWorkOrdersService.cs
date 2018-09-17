@@ -22,8 +22,8 @@ namespace HackneyRepairs.Services
 			};
 			return Task.Run(() => workOrder);
 		}
-
-		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+        
+		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReferences(IEnumerable<string> propertyReference)
         {
             if (string.Equals(propertyReference, "9999999999"))
             {
@@ -33,7 +33,7 @@ namespace HackneyRepairs.Services
             {
 				new UHWorkOrder
                 {
-                    PropertyReference = propertyReference
+					PropertyReference = propertyReference.First()
                 }
             };
 			return Task.Run(() => (IEnumerable<UHWorkOrder>)workOrder);

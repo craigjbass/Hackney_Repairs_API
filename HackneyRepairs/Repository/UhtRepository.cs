@@ -239,9 +239,17 @@ namespace HackneyRepairs.Repository
 			return workOrder;
 		}
 
-		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReferences(IEnumerable<string> propertyReference)
         {
-			List<UHWorkOrder> workOrders;
+			string[] array = propertyReference.ToArray();
+            string sReferences = "'";
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                sReferences += array[i] + "','";
+            }
+            sReferences += array[array.Length - 1] + "'";
+
+			IEnumerable<UHWorkOrder> workOrders;
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -268,7 +276,7 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created > '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}' AND t.task_no = 1;";
+                                       WHERE wo.created > '{GetCutoffTime()}' AND wo.prop_ref IN ({sReferences}) AND t.task_no = 1;";
 					workOrders = connection.Query<UHWorkOrder>(query).ToList();
                 }
             }

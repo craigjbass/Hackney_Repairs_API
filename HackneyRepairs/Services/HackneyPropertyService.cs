@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Interfaces;
@@ -21,9 +22,11 @@ namespace HackneyRepairs.Services
             _logger = logger;
         }
 
-        public Task<PropertyLevelModel> GetPropertyLevelModel(string reference)
+        public Task<PropertyLevelModel> GetPropertyLevelInfo(string reference)
         {
+			_logger.LogInformation($"HackneyPropertyService/GetPropertyLevelInfo(): Sent request to warehouse repository (property reference: {reference})");
             var response = _uhWarehouseRepository.GetPropertyLevelInfo(reference);
+			_logger.LogInformation($"HackneyPropertyService/GetPropertyLevelInfo(): Received level info from warehouse repository (property reference: {reference})");
             return response;
         }
 
@@ -76,5 +79,13 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyPropertyService/GetPropertyEstateByRef(): Received response from upstream data warehouse (Property reference: {reference})");
             return property;
         }
-    }
+
+		public Task<List<PropertyLevelModel>> GetPropertyLevelInfosForParent(string parentReference)
+		{
+			_logger.LogInformation($"HackneyPropertyService/GetPropertyLevelInfosForParent(): Sent request to warehouse repository (property reference: {parentReference})");
+			var response = _uhWarehouseRepository.GetPropertyLevelInfosForParent(parentReference);
+			_logger.LogInformation($"HackneyPropertyService/GetPropertyLevelInfosForParent(): Received level infos from warehouse repository (property reference: {parentReference})");
+            return response;
+		}
+	}
 }
