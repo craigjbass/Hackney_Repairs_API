@@ -19,19 +19,24 @@ namespace HackneyRepairs.Controllers
     public class PropertiesController : Controller
     {
         private IHackneyPropertyService _propertyService;
+		private IHackneyWorkOrdersService _workordersService;
         private IHackneyPropertyServiceRequestBuilder _propertyServiceRequestBuilder;
         private IPostcodeValidator _postcodeValidator;
-        private ILoggerAdapter<PropertyActions> _loggerAdapter;
+		private ILoggerAdapter<PropertyActions> _propertyLoggerAdapter;
+		private ILoggerAdapter<WorkOrdersActions> _workorderLoggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-        public PropertiesController(ILoggerAdapter<PropertyActions> loggerAdapter, IUhtRepository uhtRepository, IUHWWarehouseRepository uHWWarehouseRepository)
+		public PropertiesController(ILoggerAdapter<PropertyActions> propertyLoggerAdapter, ILoggerAdapter<WorkOrdersActions> workorderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uHWWarehouseRepository)
         {
-            HackneyPropertyServiceFactory factory = new HackneyPropertyServiceFactory();
+            HackneyPropertyServiceFactory propertyFactory = new HackneyPropertyServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
-            _propertyService = factory.build(uhtRepository, uHWWarehouseRepository, loggerAdapter);
+			_propertyService = propertyFactory.build(uhtRepository, uHWWarehouseRepository, propertyLoggerAdapter);
             _propertyServiceRequestBuilder = new HackneyPropertyServiceRequestBuilder(_configBuilder.getConfiguration(), new PostcodeFormatter());
             _postcodeValidator = new PostcodeValidator();
-            _loggerAdapter = loggerAdapter;
+			_propertyLoggerAdapter = propertyLoggerAdapter;
+			HackneyWorkOrdersServiceFactory workOrdersServiceFactory = new HackneyWorkOrdersServiceFactory();
+			_workordersService = workOrdersServiceFactory.build(uhtRepository, uhwRepository, uHWWarehouseRepository, workorderLoggerAdapter);
+			_workorderLoggerAdapter = workorderLoggerAdapter;
         }
 
         // GET properties
@@ -48,7 +53,7 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                 var json = Json(await actions.GetPropertyHierarchy(propertyReference));
                 json.StatusCode = 200;
                 json.ContentType = "application/json";
@@ -101,7 +106,7 @@ namespace HackneyRepairs.Controllers
             {
                 if (_postcodeValidator.Validate(postcode))
                 {
-                    PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+					PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                     var json = Json(await actions.FindProperty(_propertyServiceRequestBuilder.BuildListByPostCodeRequest(postcode)));
                     json.StatusCode = 200;
                     json.ContentType = "application/json";
@@ -153,7 +158,7 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                 var json = Json(await actions.FindPropertyDetailsByRef(reference));
                 json.StatusCode = 200;
                 json.ContentType = "application/json";
@@ -203,7 +208,7 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                 var result = await actions.FindPropertyBlockDetailsByRef(reference);
                 var json = Json(result);
                 json.StatusCode = 200;
@@ -232,6 +237,65 @@ namespace HackneyRepairs.Controllers
             }
         }
 
+		// GET details of a property block by property by reference
+        /// <summary>
+        /// Gets the details of a block of a property by a given property reference number
+        /// </summary>
+		/// <param name="includeChildren">TBC</param>
+        /// <returns>Details of the block the requested property belongs to</returns>
+        /// <response code="200">Returns the block of the property</response>
+        /// <response code="404">If the property is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet("{propertyReference}/block/work_orders")]
+		public async Task<JsonResult> GetBlockByReference(string propertyReference, string trade)
+        {
+            try
+            {
+				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
+				var result = await actions.GetWorkOrdersForBlock(propertyReference, trade);
+                var json = Json(result);
+                json.StatusCode = 200;
+                json.ContentType = "application/json";
+                return json;
+            }
+            catch (MissingPropertyException ex)
+            {
+				var error = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message,
+                    userMessage = @"Cannot find property."
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 404;
+                return jsonResponse;
+            }
+			catch (InvalidParameterException ex)
+			{
+				var error = new ApiErrorMessage
+                {
+					developerMessage = ex.Message,
+					userMessage = "403 Forbidden - Invalid parameter provided."
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 403;
+                return jsonResponse;
+			}
+            catch (Exception ex)
+            {
+                var errors = new List<ApiErrorMessage>()
+                {
+                    new ApiErrorMessage
+                    {
+						developerMessage = ex.Message,
+                        userMessage = "API Internal Error"
+                    }
+                };
+                var jsonResponse = Json(errors);
+                jsonResponse.StatusCode = 500;
+                return jsonResponse;
+            }
+        }
+
         // GET details of a property's estate by property by reference
         /// <summary>
         /// Gets the details of an estate of a property by a given property reference number
@@ -246,7 +310,7 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _loggerAdapter);
+				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                 var result = await actions.FindPropertyEstateDetailsByRef(reference);
                 if (result == null)
                 {

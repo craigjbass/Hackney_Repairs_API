@@ -349,16 +349,8 @@ namespace HackneyRepairs.Repository
             }
         }
 
-		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReferences(IEnumerable<string> propertyReference)
+		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
-			string[] array = propertyReference.ToArray();
-			string sReferences = "'";
-			for (int i = 0; i < array.Length-1; i++)
-			{
-				sReferences += array[i] + "','";
-			}
-			sReferences += array[array.Length - 1] + "'";
-
             IEnumerable<UHWorkOrder> workOrders;
             try
             {
@@ -386,8 +378,8 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref IN ({sReferences}) AND t.task_no = 1;";
-                    workOrders = connection.Query<UHWorkOrder>(query);
+                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}' AND t.task_no = 1;";
+					workOrders = await connection.QueryAsync<UHWorkOrder>(query);
                 }
             }
             catch (Exception ex)
@@ -396,6 +388,48 @@ namespace HackneyRepairs.Repository
                 throw new UHWWarehouseRepositoryException();
             }
 			return workOrders;
+        }
+
+		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade)
+        {
+            IEnumerable<UHWorkOrder> workOrders;
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $@"set dateformat ymd;
+                                    SELECT
+                                       LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
+                                       LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
+                                       r.rq_problem AS ProblemDescription,
+                                       wo.created AS Created,
+                                       wo.est_cost AS EstimatedCost,
+                                       wo.act_cost AS ActualCost,
+                                       wo.completed AS CompletedOn,
+                                       wo.date_due AS DateDue,
+                                       LTRIM(RTRIM(wo.wo_status)) AS WorkOrderStatus,
+                                       LTRIM(RTRIM(wo.u_dlo_status)) AS DLOStatus,
+                                       LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
+                                       LTRIM(RTRIM(wo.prop_ref)) AS PropertyReference,
+                                       LTRIM(RTRIM(t.job_code)) AS SORCode,
+                                       LTRIM(RTRIM(tr.trade_desc)) AS Trade
+
+                                    FROM
+                                       rmworder wo
+                                       INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
+                                       INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
+                                       INNER JOIN rmtrade tr ON t.trade = tr.trade
+                                       INNER JOIN property p ON p.prop_ref = wo.prop_ref
+                                       WHERE wo.created < '{GetCutoffTime()}' AND p.u_block = '{blockReference}' AND tr.trade_desc = '{trade}' AND t.task_no = 1;";
+					workOrders = await connection.QueryAsync<UHWorkOrder>(query);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
+            }
+            return workOrders;
         }
 
         public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)

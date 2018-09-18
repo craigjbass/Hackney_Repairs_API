@@ -58,11 +58,17 @@ namespace HackneyRepairs.Tests.Integration
         }
 
         [Fact]
-        public async Task return_a_404_result_when_no_notes_found_for_workorder()
+        public async Task return_an_empty_list_when_no_notes_found_for_workorder()
         {
             var result = await _client.GetAsync("v1/work_orders/9999999999");
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
+
+		[Fact]
+        public async Task returns_404_when_property_not_found()
+		{
+			
+		}
 
         #endregion
 
@@ -83,7 +89,10 @@ namespace HackneyRepairs.Tests.Integration
         public async Task return_a_404_result_for_no_results()
         {
             var result = await _client.GetAsync("v1/work_orders?propertyreference=9999999999");
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+			var jsonResult = await result.Content.ReadAsStringAsync();
+			Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("[]", jsonResult);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
         #endregion
 

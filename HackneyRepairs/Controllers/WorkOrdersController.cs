@@ -16,19 +16,15 @@ namespace HackneyRepairs.Controllers
 	public class WorkOrdersController : Controller
 	{
 		private IHackneyWorkOrdersService _workOrdersService;
-		private IHackneyPropertyService _propertyService;
 		private ILoggerAdapter<WorkOrdersActions> _workOrderLoggerAdapter;
 		private ILoggerAdapter<PropertyActions> _propertyLoggerAdapter;
 
 
-		public WorkOrdersController(ILoggerAdapter<WorkOrdersActions> workOrderLoggerAdapter, ILoggerAdapter<PropertyActions> propertyLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository)
+		public WorkOrdersController(ILoggerAdapter<WorkOrdersActions> workOrderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository)
 		{
 			_workOrderLoggerAdapter = workOrderLoggerAdapter;
-			_propertyLoggerAdapter = propertyLoggerAdapter;
 			var workOrderServiceFactory = new HackneyWorkOrdersServiceFactory();
-			var propertyServiceFactory = new HackneyPropertyServiceFactory();
 			_workOrdersService = workOrderServiceFactory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _workOrderLoggerAdapter);
-			_propertyService = propertyServiceFactory.build(uhtRepository, uhWarehouseRepository, _propertyLoggerAdapter);
 		}
 
 		// GET Work Order 
@@ -46,7 +42,7 @@ namespace HackneyRepairs.Controllers
 		[ProducesResponseType(500)]
         public async Task<JsonResult> GetWorkOrder(string workOrderReference)
 		{
-			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _propertyService, _workOrderLoggerAdapter);
+			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
 			UHWorkOrder result = new UHWorkOrder();
 			try
 			{
@@ -83,8 +79,7 @@ namespace HackneyRepairs.Controllers
         /// <summary>
         /// Returns all work orders for a property
         /// </summary>
-        /// <param name="propertyReference">property reference</param>
-		/// /// <param name="childrenIncluded">Include work orders related to children? (Optional default = false)</param>
+        /// <param name="propertyReference">UH Property reference</param>
         /// <returns>A list of work order entities</returns>
         /// <response code="200">Returns a list of work orders for the property reference</response>
         /// <response code="400">If no parameter or a parameter different than propertyReference is passed</response>   
@@ -95,7 +90,7 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-		public async Task<JsonResult> GetWorkOrderByPropertyReference(string propertyReference, bool childrenIncluded = false)
+		public async Task<JsonResult> GetWorkOrderByPropertyReference(string propertyReference)
         {
 			if (propertyReference == null)
             {
@@ -109,11 +104,11 @@ namespace HackneyRepairs.Controllers
                 return jsonResponse; 
             }
 
-			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _propertyService, _workOrderLoggerAdapter);
+			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
 			var result = new List<UHWorkOrder>();
             try
             {
-				result = (await workOrdersActions.GetWorkOrderByPropertyReferences(propertyReference, childrenIncluded)).ToList();
+				result = (await workOrdersActions.GetWorkOrderByPropertyReference(propertyReference)).ToList();
                 var json = Json(result);
                 json.StatusCode = 200;
                 return json;
@@ -157,7 +152,7 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(500)]
         public async Task<JsonResult> GetNotesForWorkOrder(string workOrderReference)
         {
-			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _propertyService, _workOrderLoggerAdapter);
+			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
             IEnumerable<Note> result = new List<Note>();
             try
             {
@@ -220,7 +215,7 @@ namespace HackneyRepairs.Controllers
 
             try
             {
-				var workOrdersActions = new WorkOrdersActions(_workOrdersService, _propertyService, _workOrderLoggerAdapter);
+				var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
                 var result = await workOrdersActions.GetWorkOrdersFeed(startId, resultSize);
                 var jsonResponse = Json(result);
                 jsonResponse.StatusCode = 200;
