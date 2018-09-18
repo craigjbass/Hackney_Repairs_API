@@ -60,8 +60,11 @@ namespace HackneyRepairs.Tests.Integration
         [Fact]
         public async Task return_an_empty_list_when_no_notes_found_for_workorder()
         {
-            var result = await _client.GetAsync("v1/work_orders/9999999999");
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            var result = await _client.GetAsync("v1/work_orders/9999999999/notes");
+			var jsonResult = await result.Content.ReadAsStringAsync();
+			Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("[]", jsonResult);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
 
 		[Fact]

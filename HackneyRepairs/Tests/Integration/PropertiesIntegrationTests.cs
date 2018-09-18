@@ -6,6 +6,9 @@ using System.Net;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Hosting;
 using System.Text;
+using Newtonsoft.Json;
+using HackneyRepairs.Models;
+using System.Collections.Generic;
 
 namespace HackneyRepairs.Tests
 {
@@ -304,5 +307,73 @@ namespace HackneyRepairs.Tests
             Assert.Equal(json.ToString(), resultString);
         }
         #endregion
-    }
+    
+	
+		#region Property's block related work orders tests
+        [Fact]
+        public async Task return_a_200_result_for_valid_request_by_property_reference()
+        {
+			var result = await _client.GetAsync("v1/properties/00074866/block/work_orders?trade=Plumbing");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+        
+        [Fact]
+        public async Task return_a_404_result_for_request_when_property_reference_is_not_found()
+        {
+			var result = await _client.GetAsync("v1/properties/99999999/block/work_orders?trade=Plumbing");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+		[Fact]
+        public async Task return_a_403_result_for_request_when_trade_is_not_provided()
+        {
+			var result = await _client.GetAsync("v1/properties/00078556/block/work_orders?trade=Plumbing");
+			Assert.Equal(HttpStatusCode.Forbidden, result.StatusCode);
+        }
+        
+		[Fact]
+        public async Task return_a_403_result_for_request_when_estate_reference_provided()
+        {
+            var result = await _client.GetAsync("v1/properties/00074866/block/work_orders");
+            Assert.Equal(HttpStatusCode.Forbidden, result.StatusCode);
+        }
+        
+        [Fact]
+        public async Task return_a_500_result_for_request_if_something_goes_wrong()
+        {
+			var result = await _client.GetAsync("v1/properties/66666666/block/work_orders?trade=Plumbing");
+            Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_json_object_if_something_goes_wrong_with_a_property_work_orders_request()
+        {
+			var result = await _client.GetAsync("v1/properties/66666666/block/work_orders?trade=Plumbing");
+            string resultString = await result.Content.ReadAsStringAsync();
+            StringBuilder json = new StringBuilder();
+            json.Append("[");
+            json.Append("{");
+            json.Append("\"developerMessage\":\"API Internal Error\",");
+            json.Append("\"userMessage\":\"API Internal Error\"");
+            json.Append("}");
+            json.Append("]");
+            Assert.Equal(json.ToString(), resultString);
+        }
+        
+        [Fact]
+        public async Task return_a_json_object_for_valid_request_by_property_reference()
+        {
+			var result = await _client.GetAsync("v1/properties/00079999/block/work_orders?trade=Plumbing");
+			var jsonResult = await result.Content.ReadAsStringAsync();
+            var workOrder = JsonConvert.DeserializeObject<List<UHWorkOrder>>(jsonResult);
+            
+			Assert.IsType<List<UHWorkOrder>>(workOrder);
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        #endregion
+	
+	}
 }

@@ -286,7 +286,7 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-						developerMessage = ex.Message,
+						developerMessage = "API Internal Error",
                         userMessage = "API Internal Error"
                     }
                 };

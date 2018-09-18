@@ -177,7 +177,60 @@ namespace HackneyRepairs.Services
 
         public Task<PropertyLevelModel> GetPropertyLevelInfo(string reference)
         {
-            throw new NotImplementedException();
+			switch (reference)
+			{
+				case "00079999":
+					return Task.Run(() => (new PropertyLevelModel()
+					{
+						MajorReference = "00074866",
+						PropertyReference = "00079999",
+						Address = "St Thomass Square 1 Pitcarin House",
+						LevelCode = "7"
+
+					}));
+
+				case "00074866":
+                    return Task.Run(() => (new PropertyLevelModel()
+                    {
+						MajorReference = "00078556",
+                        PropertyReference = "00074866",
+                        Address = "St Thomass Square 1-93 Pitcarin House",
+                        LevelCode = "3"
+
+                    }));
+
+				case "00078556":
+                    return Task.Run(() => (new PropertyLevelModel()
+                    {
+						MajorReference = "00087086",
+                        PropertyReference = "00078556",
+                        Address = "Frampton Park Road Frampton Park Estate",
+                        LevelCode = "2"
+
+                    }));
+
+				case "00087086":
+                    return Task.Run(() => (new PropertyLevelModel()
+                    {
+						MajorReference = "",
+                        PropertyReference = "00087086",
+                        Address = "Wilton Way Hackney Homes Limited",
+                        LevelCode = "0"
+                    }));
+
+				case "99999999":
+					return Task.Run(() => ((PropertyLevelModel) null));
+
+				case "66666666":
+					throw new PropertyServiceException();
+
+				default:
+					return Task.Run(() => (new PropertyLevelModel()
+					{
+						PropertyReference = "12345678",
+						Description = "Dwelling"
+					}));
+            }
         }
     }
 }

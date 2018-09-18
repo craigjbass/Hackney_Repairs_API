@@ -12,7 +12,7 @@ namespace HackneyRepairs.Services
     {      
 		public Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
-			if (string.Equals(workOrderReference, "9999999999"))
+			if (string.Equals(workOrderReference, "999999999"))
 			{
 				return Task.Run(() => (UHWorkOrder)null);
 			}
