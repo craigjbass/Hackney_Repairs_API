@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using HackneyRepairs.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -26,7 +25,7 @@ namespace HackneyRepairs.Tests.Integration
             _client = _server.CreateClient();
         }
 
-        #region GetNoteFeed endpoint
+        #region GET notes feed
         [Fact]
         public async Task return_a_200_result_with_Note_list_json_for_valid_request()
         {

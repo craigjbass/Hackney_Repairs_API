@@ -214,6 +214,7 @@ namespace HackneyRepairs.Repository
                             wo.act_cost AS ActualCost,
                             wo.completed AS CompletedOn,
                             wo.date_due AS DateDue,
+                            wo.auth_date AS AuthDate,
                             LTRIM(RTRIM(wo.wo_status)) AS WorkOrderStatus,
                             LTRIM(RTRIM(wo.u_dlo_status)) AS DLOStatus,
                             LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
@@ -256,6 +257,7 @@ namespace HackneyRepairs.Repository
                                        wo.act_cost AS ActualCost,
                                        wo.completed AS CompletedOn,
                                        wo.date_due AS DateDue,
+                                       wo.auth_date AS AuthDate,
                                        LTRIM(RTRIM(wo.wo_status)) AS WorkOrderStatus,
                                        LTRIM(RTRIM(wo.u_dlo_status)) AS DLOStatus,
                                        LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
@@ -297,6 +299,7 @@ namespace HackneyRepairs.Repository
                                        wo.act_cost AS ActualCost,
                                        wo.completed AS CompletedOn,
                                        wo.date_due AS DateDue,
+                                       wo.auth_date AS AuthDate,
                                        LTRIM(RTRIM(wo.wo_status)) AS WorkOrderStatus,
                                        LTRIM(RTRIM(wo.u_dlo_status)) AS DLOStatus,
                                        LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
@@ -387,8 +390,8 @@ namespace HackneyRepairs.Repository
             DetailedAppointment appointment;
             try
             {
-                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
-                {
+				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+				{
 					string query = $@"SELECT
                                             Id,
                                             Status,
@@ -420,9 +423,46 @@ namespace HackneyRepairs.Repository
                                             WHERE
                                                 rmworder.wo_ref = '{workOrderReference}') AS allApps
                                         WHERE
-                                            allApps.EndDate = allApps.ExpectedOn OR allApps.ExpectedOn = 'Jan  1 1900 12:00:00:000AM'"; 
-					
+                                            allApps.EndDate = allApps.ExpectedOn OR allApps.ExpectedOn = 'Jan  1 1900 12:00:00:000AM'";
+
 					appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
+
+					if (appointment == null)
+					{
+						query = $@"SELECT
+                                    Id,
+                                    Status,
+                                    AssignedWorker,
+                                    Mobilephone,
+                                    Priority,
+                                    SourceSystem,
+                                    Comment,
+                                    BeginDate,
+                                    EndDate,
+                                    CreationDate
+                                FROM (
+                                    SELECT
+                                        visit.visit_sid AS Id,
+                                        'Unknown' AS Status,
+                                        supplier.sup_name AS AssignedWorker,
+                                        supplier.sup_tel AS Mobilephone,
+                                        rmworder.u_priority AS Priority,
+                                        'UH' AS SourceSystem,
+                                        visit.visit_comment AS Comment,
+                                        visit.visit_prop_appointment AS BeginDate,
+                                        visit.visit_prop_end AS EndDate,
+                                        NULL AS CreationDate,
+                                        rmworder.expected_completion AS ExpectedOn
+                                    FROM
+                                        visit
+                                    RIGHT OUTER JOIN rmworder ON rmworder.rmworder_sid = visit.reference_sid
+                                    INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
+                                    WHERE
+                                        rmworder.wo_ref = '{workOrderReference}') AS allApps
+                                ORDER BY Id desc";
+
+						appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
+					}
                 }
             }
             catch (Exception ex)

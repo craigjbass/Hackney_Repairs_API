@@ -7,6 +7,7 @@ namespace HackneyRepairs.Models
         public string RepairRequestReference { get; set; }
         public string ProblemDescription { get; set; }
         public DateTime Created { get; set; }
+		public DateTime AuthDate { get; set; }
         public float EstimatedCost { get; set; }
         public float ActualCost { get; set; }
         public DateTime CompletedOn { get; set; }

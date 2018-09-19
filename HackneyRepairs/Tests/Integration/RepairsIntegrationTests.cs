@@ -10,7 +10,6 @@ using System.Text;
 using HackneyRepairs.Models;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
-using RepairsService;
 
 namespace HackneyRepairs.Tests.Integration
 {
@@ -30,7 +29,31 @@ namespace HackneyRepairs.Tests.Integration
             _client = _server.CreateClient();
         }
 
-        #region Create Repair Tests
+		#region GET Repairs by repair reference tests
+        [Fact]
+        public async Task return_a_200_result_for_valid_request_by_reference()
+        {
+            var result = await _client.GetAsync("v1/repairs/123456");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task return_a_404_result_for_no_request_matching_reference()
+        {
+            var result = await _client.GetAsync("v1/repairs/123456899");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_500_result_when_there_is_an_internal_server_error()
+        {
+            var result = await _client.GetAsync("v1/repairs/ABCXYZ");
+            Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
+        }
+        #endregion
+
+        #region POST Create Repair request tests
         [Fact]
         public async Task return_200_response_for_successful_request()
         {
@@ -42,8 +65,6 @@ namespace HackneyRepairs.Tests.Integration
             json.Append("\"contact\": { ");
             json.Append("\"name\": \"Al Smith\", ");
             json.Append("\"telephoneNumber\": \"07876543210\" ");
-            //json.Append(",\"emailAddress\": \"al.smith@hotmail.com\", ");
-            //json.Append("\"callbackTime\": \"8am - 12pm\" ");
             json.Append("}");
             json.Append("}");
 
@@ -190,31 +211,7 @@ namespace HackneyRepairs.Tests.Integration
         }
         #endregion
 
-        #region Get Repair Tests
-        [Fact]
-        public async Task return_a_200_result_for_valid_request_by_reference()
-        {
-            var result = await _client.GetAsync("v1/repairs/123456");
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
-        }
-
-        [Fact]
-        public async Task return_a_404_result_for_no_request_matching_reference()
-        {
-            var result = await _client.GetAsync("v1/repairs/123456899");
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
-        }
-
-        [Fact]
-        public async Task return_a_500_result_when_there_is_an_internal_server_error()
-        {
-            var result = await _client.GetAsync("v1/repairs/ABCXYZ");
-            Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
-        }
-        #endregion
-
-		#region Get Repair Tests
+		#region GET all repairs for a property tests
         [Fact]
         public async Task return_a_200_result_for_valid_request_by_property_reference()
         {
@@ -229,7 +226,6 @@ namespace HackneyRepairs.Tests.Integration
 			var result = await _client.GetAsync("v1/repairs/?propertyReference=999999999");
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
-
         #endregion
     }
 }

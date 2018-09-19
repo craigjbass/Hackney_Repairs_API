@@ -12,7 +12,7 @@ namespace HackneyRepairs.Services
     {      
 		public Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
-			if (string.Equals(workOrderReference, "999999999"))
+			if (string.Equals(workOrderReference, "0"))
 			{
 				return Task.Run(() => (UHWorkOrder)null);
 			}
@@ -28,6 +28,10 @@ namespace HackneyRepairs.Services
             if (string.Equals(propertyReference, "9999999999"))
             {
 				return Task.Run(() => (IEnumerable<UHWorkOrder>)new List<UHWorkOrder>());
+            }
+			if (string.Equals(propertyReference, "0"))
+            {
+                return Task.Run(() => (IEnumerable<UHWorkOrder>)null);
             }
 			var workOrder = new List<UHWorkOrder>
             {
@@ -58,9 +62,13 @@ namespace HackneyRepairs.Services
 
 		public Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
         {
-			if (string.Equals(workOrderReference, "99999999"))
+			if (string.Equals(workOrderReference, "9999999999"))
             {
 				return Task.Run(() => (IEnumerable<Note>)new List<Note>());
+            }
+			if (string.Equals(workOrderReference, "00"))
+            {
+				return Task.Run(() => (IEnumerable<Note>)null);
             }
             var noteEntities = new List<Note>
             {

@@ -113,12 +113,12 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-            catch (MissingWorkOrderException ex)
+			catch (MissingPropertyException ex)
             {
                 var error = new ApiErrorMessage
                 {
                     developerMessage = ex.Message,
-                    userMessage = @"Cannot find work orders for this property reference"
+                    userMessage = @"Cannot find property"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 404;
@@ -161,12 +161,12 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-            catch (MissingNotesException ex)
+			catch (MissingWorkOrderException ex)
             {
                 var error = new ApiErrorMessage
                 {
                     developerMessage = ex.Message,
-                    userMessage = @"Cannot find notes."
+                    userMessage = @"Work order not found."
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 404;

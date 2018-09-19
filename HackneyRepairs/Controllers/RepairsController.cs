@@ -110,10 +110,6 @@ namespace HackneyRepairs.Controllers
             }
 			catch (MissingRepairRequestException ex)
             {
-                //var json = Json(new object());
-                //json.StatusCode = 404;
-                //return json;
-
                 var errors = new List<ApiErrorMessage>
                 {
                     new ApiErrorMessage

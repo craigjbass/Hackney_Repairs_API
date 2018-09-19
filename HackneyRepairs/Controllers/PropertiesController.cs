@@ -11,6 +11,7 @@ using HackneyRepairs.Actions;
 using HackneyRepairs.Formatters;
 using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
+using System.ComponentModel.DataAnnotations;
 
 namespace HackneyRepairs.Controllers
 {
@@ -43,7 +44,8 @@ namespace HackneyRepairs.Controllers
         /// <summary>
         /// Returns the hierarchy details of a property  
         /// </summary>
-        /// <param name="propertyReference">The reference number of the requested property</param>
+        /// <param name="propertyReference">The reference number of the requested property
+		/// </param>
         /// <returns>A list of property details and its parent properties</returns>
         /// <response code="200">Returns a list of property details</response>
         /// <response code="404">If the property is not found</response>   
@@ -237,17 +239,18 @@ namespace HackneyRepairs.Controllers
             }
         }
 
-		// GET details of a property block by property by reference
+		// GET work orders raised against a block and all properties in it
         /// <summary>
-        /// Gets the details of a block of a property by a given property reference number
+		/// Gets work orders raised against a block and against any property int he block
         /// </summary>
-		/// <param name="includeChildren">TBC</param>
+		/// <param name="propertyReference">Property reference, the level of the property cannot be higher than block.</param>
+		/// <param name="trade">Trade of the work order to filter the results (Required).</param>
         /// <returns>Details of the block the requested property belongs to</returns>
         /// <response code="200">Returns the block of the property</response>
         /// <response code="404">If the property is not found</response>   
         /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{propertyReference}/block/work_orders")]
-		public async Task<JsonResult> GetBlockByReference(string propertyReference, string trade)
+		public async Task<JsonResult> GetWorkOrdersForBlockByPropertyReference(string propertyReference, string trade)
         {
             try
             {

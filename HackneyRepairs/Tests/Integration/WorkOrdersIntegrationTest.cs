@@ -24,7 +24,7 @@ namespace HackneyRepairs.Tests.Integration
             _client = _server.CreateClient();
         }
 
-        #region GetWorkOrder endpoint
+        #region GET Work order by work order reference tests
         [Fact]
         public async Task return_a_200_result_with_workOrder_json_for_valid_request_by_reference()
         {
@@ -40,19 +40,52 @@ namespace HackneyRepairs.Tests.Integration
         [Fact]
         public async Task return_a_404_result_for_no_workorder_matching_reference()
         {
-            var result = await _client.GetAsync("v1/work_orders/9999999999");
+			var result = await _client.GetAsync("v1/work_orders/0");
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
         #endregion
 
-        #region GetWorkOrder Notes endpoint
+		#region GET All work orders by property reference tests
+        [Fact]
+        public async Task return_a_200_result_with_list_workOrders_json_for_valid_request()
+        {
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678");
+            var jsonresult = await result.Content.ReadAsStringAsync();
+            var workOrder = JsonConvert.DeserializeObject<List<UHWorkOrderBase>>(jsonresult).ToList();
+
+            Assert.IsType<List<UHWorkOrderBase>>(workOrder);
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task return_empty_list_with_200_when_no_workorders_found()
+        {
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=9999999999");
+            var jsonResult = await result.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("[]", jsonResult);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+		[Fact]
+        public async Task return_a_404_result_when_property_not_found()
+        {
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=0");
+            var jsonResult = await result.Content.ReadAsStringAsync();
+			Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+        #endregion
+
+        #region GET Work order notes test
+        [Fact]
         public async Task return_a_200_result_with_notes_json_for_valid_request_by_reference()
         {
             var result = await _client.GetAsync("v1/work_orders/12345678/notes");
             var jsonResult = await result.Content.ReadAsStringAsync();
-            var notes = JsonConvert.DeserializeObject<NotesEntity>(jsonResult);
+            var notes = JsonConvert.DeserializeObject<List<NotesEntity>>(jsonResult);
 
-            Assert.IsType<IEnumerable<NotesEntity>>(notes);
+            Assert.IsType<List<NotesEntity>>(notes);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
@@ -68,38 +101,15 @@ namespace HackneyRepairs.Tests.Integration
         }
 
 		[Fact]
-        public async Task returns_404_when_property_not_found()
-		{
-			
-		}
-
-        #endregion
-
-        #region GetWorkOrderByPropertyReference endpoint
-        [Fact]
-        public async Task return_a_200_result_with_list_workOrders_json_for_valid_request()
+        public async Task return_404_when_workorder_not_found()
         {
-            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678");
-            var jsonresult = await result.Content.ReadAsStringAsync();
-            var workOrder = JsonConvert.DeserializeObject<List<UHWorkOrderBase>>(jsonresult).ToList();
-
-            Assert.IsType<List<UHWorkOrderBase>>(workOrder);
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
-        }
-
-        [Fact]
-        public async Task return_a_404_result_for_no_results()
-        {
-            var result = await _client.GetAsync("v1/work_orders?propertyreference=9999999999");
-			var jsonResult = await result.Content.ReadAsStringAsync();
-			Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.Equal("[]", jsonResult);
-            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+            var result = await _client.GetAsync("v1/work_orders/00/notes");
+            var jsonResult = await result.Content.ReadAsStringAsync();
+			Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
         #endregion
 
-        #region GetWorkOrderFeed endpoint
+        #region GET work order feed tests
         [Fact]
         public async Task return_a_200_result_with_list_workOrders_json_for_valid_request_in_feed()
         {
@@ -124,7 +134,7 @@ namespace HackneyRepairs.Tests.Integration
         }
 
         [Fact]
-        public async Task return_a_500_result_when_exception_is_thrown_in_fake_service()
+        public async Task return_a_500_result_when_exception_is_thrown_in_service()
         {
             var result = await _client.GetAsync("v1/work_orders/feed?startID=11550853");
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
