@@ -338,19 +338,18 @@ namespace HackneyRepairs.Tests.Actions
 		}
 
 		[Fact]
-        public async Task get_repair_request_by_property_reference_throws_an_exception_when_no_repair_request_found()
+        public async Task get_repair_request_by_property_reference_throws_an_exception_when_property_not_found()
         {
-			IEnumerable<RepairRequestBase> expected = new List<RepairRequestBase>();
             var fakeRepairService = new Mock<IHackneyRepairsService>();
-            fakeRepairService.Setup(service => service.GetRepairByPropertyReference("12345678"))
-                .ReturnsAsync(expected);
+			fakeRepairService.Setup(service => service.GetRepairByPropertyReference(It.IsAny<string>()))
+			                 .ReturnsAsync((List<RepairRequestBase>)null);
 
             var fakeRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
             var mockLogger = new Mock<ILoggerAdapter<RepairsActions>>();
 
             var repairsActions = new RepairsActions(fakeRepairService.Object, fakeRequestBuilder.Object, mockLogger.Object);
 
-			await Assert.ThrowsAsync<HackneyRepairs.Actions.MissingRepairRequestException>(async () => await repairsActions.GetRepairByPropertyReference("12345678"));
+			await Assert.ThrowsAsync<HackneyRepairs.Actions.MissingPropertyException>(async () => await repairsActions.GetRepairByPropertyReference("12345678"));
         }
     }
 }

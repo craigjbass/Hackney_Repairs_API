@@ -221,10 +221,20 @@ namespace HackneyRepairs.Tests.Integration
         }
 
         [Fact]
-        public async Task return_a_404_result_for_no_request_found_for_property_reference()
+        public async Task return_a_404_result_when_property_not_found()
+        {
+			var result = await _client.GetAsync("v1/repairs/?propertyReference=0");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+		[Fact]
+        public async Task return_an_empty_list_when_no_repairs_found()
         {
 			var result = await _client.GetAsync("v1/repairs/?propertyReference=999999999");
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            var jsonResult = await result.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("[]", jsonResult);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
         #endregion
     }

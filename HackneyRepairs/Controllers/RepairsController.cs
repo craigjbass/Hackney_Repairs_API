@@ -175,14 +175,14 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 200;
                 return json;
             }
-			catch (MissingRepairRequestException ex)
+			catch (MissingPropertyException ex)
             {
                 var errors = new List<ApiErrorMessage>
                 {
                     new ApiErrorMessage
                     {
                         developerMessage = ex.Message,
-                        userMessage = @"Cannot find repair."
+                        userMessage = @"Cannot find property."
                     }
                 };
                 var json = Json(errors);

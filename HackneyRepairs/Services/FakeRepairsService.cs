@@ -221,6 +221,8 @@ namespace HackneyRepairs.Services
             {
                 case "999999999":
 					return Task.Run(() => new List<RepairRequestBase>().AsEnumerable());
+				case "0":
+					return Task.Run(() => (IEnumerable<RepairRequestBase>) null);
                 default:
 					return Task.Run(() => requests);
             }

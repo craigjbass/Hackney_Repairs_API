@@ -26,10 +26,15 @@ namespace HackneyRepairs.Actions
         {
             _logger.LogInformation($"Finding repair requests for Id: {propertyReference}");
             var repairRequests = await _repairsService.GetRepairByPropertyReference(propertyReference);
+			if (repairRequests == null)
+			{
+				_logger.LogError($"Property not found for Id: {propertyReference}");
+				throw new MissingPropertyException();
+			}
             if (((List<RepairRequestBase>)repairRequests).Count == 0)
             {
                 _logger.LogError($"Repairs not found for Id: {propertyReference}");
-                throw new MissingRepairRequestException();
+				return repairRequests;
             }
             _logger.LogInformation($"Repair request details returned for: {propertyReference}");
             return repairRequests;
