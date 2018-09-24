@@ -35,6 +35,16 @@ namespace HackneyRepairs.Services
             var uhtResponse = (List<RepairRequestBase>)await _uhtRepository.GetRepairRequests(propertyReference);
             _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {uhtResponse.Count} repair requests returned");
 
+			if (uhtResponse.Count == 0 && warehouseResponse.Count == 0)
+            {
+				_logger.LogInformation($"HackneyWorkOrdersService/GetRepairByPropertyReference(): Repositories returned empty lists, checking if the property exists.");
+                var property = await _uhWarehouseRepository.GetPropertyDetailsByReference(propertyReference);
+                if (property == null)
+                {
+                    return null;
+                }
+            }
+
             _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Merging list from repositories to a single list");
             List<RepairRequestBase> jointResult = warehouseResponse;
             warehouseResponse.InsertRange(0, uhtResponse);

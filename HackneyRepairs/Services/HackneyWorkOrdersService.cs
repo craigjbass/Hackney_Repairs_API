@@ -42,13 +42,24 @@ namespace HackneyRepairs.Services
         {
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to _UhtRepository to get data from live for {propertyReference}");
             var liveData = await _uhtRepository.GetWorkOrderByPropertyReference(propertyReference);
-			var lLiveData = (List<UHWorkOrder>)liveData;
+			var lLiveData = liveData.ToList();
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {lLiveData.Count} work orders returned for {propertyReference}");
 
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to _UHWarehouseRepository to get data from warehouse for {propertyReference}");
             var warehouseData =  await _uhWarehouseRepository.GetWorkOrderByPropertyReference(propertyReference);
-			var lWarehouseData = (List<UHWorkOrder>)warehouseData;
+			var lWarehouseData = warehouseData.ToList();
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {lWarehouseData.Count} work orders returned for {propertyReference}");
+
+            
+			if (lLiveData.Count() == 0 && lWarehouseData.Count() == 0)
+			{
+				_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Repositories returned empty lists, checking if the property exists.");
+				var property = await _uhWarehouseRepository.GetPropertyDetailsByReference(propertyReference);
+				if (property == null)
+				{
+					return null;
+				}
+			}
 
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Merging list from repositories to a single list");
 			List<UHWorkOrder> result = lLiveData;
