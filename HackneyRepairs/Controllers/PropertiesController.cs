@@ -68,7 +68,7 @@ namespace HackneyRepairs.Controllers
                     new ApiErrorMessage
                     {
                         developerMessage = ex.Message,
-                        userMessage = "Resource identification error"
+                        userMessage = "Property not foundr"
                     }
                 };
                 var jsonResponse = Json(errors);
@@ -246,8 +246,8 @@ namespace HackneyRepairs.Controllers
 		/// <param name="propertyReference">Property reference, the level of the property cannot be higher than block.</param>
 		/// <param name="trade">Trade of the work order to filter the results (Required).</param>
         /// <returns>Details of the block the requested property belongs to</returns>
-        /// <response code="200">Returns the block of the property</response>
-        /// <response code="404">If the property is not found</response>   
+		/// <response code="200">Returns work orders raised against a block and all properties in it</response>
+        /// <response code="404">If the property was not found</response>   
         /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{propertyReference}/block/work_orders")]
 		public async Task<JsonResult> GetWorkOrdersForBlockByPropertyReference(string propertyReference, string trade)

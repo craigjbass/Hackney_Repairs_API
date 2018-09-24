@@ -423,7 +423,7 @@ namespace HackneyRepairs.Repository
                                             WHERE
                                                 rmworder.wo_ref = '{workOrderReference}') AS allApps
                                         WHERE
-                                            allApps.EndDate = allApps.ExpectedOn OR allApps.ExpectedOn = 'Jan  1 1900 12:00:00:000AM'";
+                                            allApps.EndDate = allApps.ExpectedOn OR allApps.ExpectedOn = 'Jan 1 1900 12:00:00:000AM'";
 
 					appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
 
