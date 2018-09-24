@@ -59,6 +59,10 @@ namespace HackneyRepairs.Actions
 			var response = await _repairsService.GetRepairRequestByReferenceAsync(request);
 			if (!response.Success)
 			{
+				if (response.ErrorCode == 9707)
+				{
+					throw new MissingRepairRequestException();
+				}
 				throw new RepairsServiceException();
 			}
 			RepairRequestDto repairResponse = response.RepairRequest;
