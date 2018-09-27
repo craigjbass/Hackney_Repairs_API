@@ -116,20 +116,17 @@ namespace HackneyRepairs.Repository
             }
         }
 
-        public async Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size, int? remainingCount)
+        public async Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size)
         {
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    if (remainingCount == null)
-                    {
-                        remainingCount = size;
-                    }
-                    _logger.LogInformation($"Getting up to {remainingCount} notes with an id > {noteId}");
+                   
+                    _logger.LogInformation($"Getting up to {size} notes with an id > {noteId}");
 
                     var query = $@"set dateformat ymd;
-                        SELECT TOP {remainingCount}
+                        SELECT TOP {size}
                             LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
                             note.NDate AS LoggedAt,
                             note.UserID AS LoggedBy,

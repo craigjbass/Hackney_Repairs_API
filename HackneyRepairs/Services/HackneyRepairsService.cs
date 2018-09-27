@@ -16,6 +16,8 @@ namespace HackneyRepairs.Services
 		private IUhwRepository _uhwRepository;
         private IUHWWarehouseRepository _uhWarehouseRepository;
 		private ILoggerAdapter<RepairsActions> _logger;
+		private string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
         public HackneyRepairsService(IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uHWWarehouseRepository, ILoggerAdapter<RepairsActions> logger)
 		{
 			_client = new RepairServiceClient();
@@ -27,17 +29,23 @@ namespace HackneyRepairs.Services
 
 		public async Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference)
         {
-            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhWarehouse (Property reference: {propertyReference})");
-            var warehouseResponse = (List<RepairRequestBase>)await _uhWarehouseRepository.GetRepairRequests(propertyReference);
-            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {warehouseResponse.Count} repair requests returned");
+			_logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
+			var result = (List<RepairRequestBase>)await _uhtRepository.GetRepairRequests(propertyReference);
+			_logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {result.Count} repair requests returned");
 
-            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
-            var uhtResponse = (List<RepairRequestBase>)await _uhtRepository.GetRepairRequests(propertyReference);
-            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {uhtResponse.Count} repair requests returned");
-
-			if (uhtResponse.Count == 0 && warehouseResponse.Count == 0)
+            if (environment.ToLower() != "development" && environment.ToLower() != "local")
             {
-				_logger.LogInformation($"HackneyWorkOrdersService/GetRepairByPropertyReference(): Repositories returned empty lists, checking if the property exists.");
+                _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhWarehouse (Property reference: {propertyReference})");
+                var uhwarehouseResults = (List<RepairRequestBase>)await _uhWarehouseRepository.GetRepairRequests(propertyReference);
+				_logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {uhwarehouseResults.Count} repair requests returned");
+
+				_logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Merging list from repositories to a single list");
+				result.InsertRange(0, uhwarehouseResults);
+            }
+
+			if (result.Count == 0)
+            {
+                _logger.LogInformation($"HackneyWorkOrdersService/GetRepairByPropertyReference(): Repositories returned empty lists, checking if the property exists.");
                 var property = await _uhWarehouseRepository.GetPropertyDetailsByReference(propertyReference);
                 if (property == null)
                 {
@@ -45,11 +53,8 @@ namespace HackneyRepairs.Services
                 }
             }
 
-            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Merging list from repositories to a single list");
-            List<RepairRequestBase> jointResult = warehouseResponse;
-            warehouseResponse.InsertRange(0, uhtResponse);
-            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Total {jointResult.Count} work orders returned for: {propertyReference})");
-            return jointResult;
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Total {result.Count} work orders returned for: {propertyReference})");
+            return result;
         }
 
 		public Task<RepairCreateResponse> CreateRepairAsync(NewRepairRequest request)
@@ -70,13 +75,15 @@ namespace HackneyRepairs.Services
 
         public async Task<DrsOrder> GetWorkOrderDetails(string workOrderReference)
 		{
-            _logger.LogInformation($"HackneyRepairsService/GetWorkOrderDetails(): Sent request to uhWarehouseRepository (Work order ref ref: {workOrderReference})");
-            var warehouseResponse = await _uhWarehouseRepository.GetWorkOrderDetails(workOrderReference);
-            if (warehouseResponse != null)
-            {
-                return warehouseResponse;
-            }
-
+			if (environment.ToLower() != "development" && environment.ToLower() != "local")
+			{
+				_logger.LogInformation($"HackneyRepairsService/GetWorkOrderDetails(): Sent request to uhWarehouseRepository (Work order ref ref: {workOrderReference})");
+				var warehouseResponse = await _uhWarehouseRepository.GetWorkOrderDetails(workOrderReference);
+				if (warehouseResponse != null)
+				{
+					return warehouseResponse;
+				}
+			}
             _logger.LogInformation($"HackneyRepairsService/GetWorkOrderDetails(): No response from uhWarehouseRepository, sent request to UHT (Work order ref: {workOrderReference})");
             var uhResponse = await _uhtRepository.GetWorkOrderDetails(workOrderReference);
             return uhResponse;

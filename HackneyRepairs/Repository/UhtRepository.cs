@@ -473,20 +473,16 @@ namespace HackneyRepairs.Repository
             return appointment;
         }
 
-        public async Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize, int? remainingCount)
+        public async Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize)
         {
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    if (remainingCount == null)
-                    {
-                        remainingCount = resultSize;
-                    }
-                    _logger.LogInformation($"Getting up to {remainingCount} work orders with an id > {startId}");
+					_logger.LogInformation($"Getting up to {resultSize} work orders with an id > {startId}");
 
                     string query = $@"set dateformat ymd;
-                        SELECT TOP {remainingCount}
+                        SELECT TOP {resultSize}
                             LTRIM(RTRIM(work_order.wo_ref)) AS WorkOrderReference,
                             LTRIM(RTRIM(work_order.prop_ref)) AS PropertyReference,
                             work_order.created AS Created,

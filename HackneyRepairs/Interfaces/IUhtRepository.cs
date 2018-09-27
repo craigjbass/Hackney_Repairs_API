@@ -16,6 +16,6 @@ namespace HackneyRepairs.Interfaces
 		Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference);
 		Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference);
 		Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference);
-        Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize, int? remainingCount);
+        Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startId, int resultSize);
     }
 }
