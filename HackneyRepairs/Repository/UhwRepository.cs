@@ -155,10 +155,20 @@ namespace HackneyRepairs.Repository
         {
             DateTime now = DateTime.Now;
             DateTime dtCutoff = new DateTime(now.Year, now.Month, now.Day, 23, 0, 0);
-            dtCutoff = dtCutoff.AddDays(-1);
+
+            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (environment.ToLower() != "development" && environment.ToLower() != "local")
+            {
+                dtCutoff = dtCutoff.AddDays(-1);
+            }
+            else
+            {
+                dtCutoff = dtCutoff.AddYears(-10);
+            }
             return dtCutoff.ToString("yyyy-MM-dd HH:mm:ss");
         }
     }
+
     public class UhwRepositoryException : Exception {}
 }
 

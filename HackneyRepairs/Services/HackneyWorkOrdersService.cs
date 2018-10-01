@@ -56,15 +56,15 @@ namespace HackneyRepairs.Services
                 var lWarehouseData = warehouseData.ToList();
                 result.InsertRange(0, lWarehouseData);
                 _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {lWarehouseData.Count} work orders returned for {propertyReference}");
-            }
 
-            if (result.Count() == 0)
-            {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Repositories returned empty lists, checking if the property exists.");
-                var property = await _uhWarehouseRepository.GetPropertyDetailsByReference(propertyReference);
-                if (property == null)
+                if (result.Count() == 0)
                 {
-                    return null;
+                    _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Repositories returned empty lists, checking if the property exists.");
+                    var property = await _uhWarehouseRepository.GetPropertyDetailsByReference(propertyReference);
+                    if (property == null)
+                    {
+                        return null;
+                    }
                 }
             }
 
