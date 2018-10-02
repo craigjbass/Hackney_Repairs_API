@@ -7,7 +7,8 @@ namespace HackneyRepairs.Interfaces
 {
     public interface IHackneyWorkOrdersService
     {
-		Task<UHWorkOrder> GetWorkOrder(string workOrderReference);
+        Task<UHWorkOrder> GetWorkOrder(string workOrderReference);
+        Task<IEnumerable<string>> GetMobileReports(string servitorReference);
 		Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference);
 		Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade);
 		Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference);
