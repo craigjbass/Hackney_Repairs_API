@@ -36,6 +36,7 @@ namespace HackneyRepairs.Controllers
 		/// <response code="500">If any errors are encountered</response>
 		[HttpGet("{workOrderReference}")]
 		[ProducesResponseType(200)]
+        [ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(500)]
         public async Task<JsonResult> GetWorkOrder(string workOrderReference, string include = null)
@@ -69,28 +70,34 @@ namespace HackneyRepairs.Controllers
 				json.StatusCode = 200;
 				return json;
 			}
-			catch (MissingWorkOrderException ex)
-			{
-				var error = new ApiErrorMessage
-				{
-					developerMessage = ex.Message,
-					userMessage = @"Cannot find work order."
-				};
-				var jsonResponse = Json(error);
-				jsonResponse.StatusCode = 404;
-				return jsonResponse;
-			}
-			catch (UhtRepositoryException ex)
-			{
-				var error = new ApiErrorMessage
-				{
-					developerMessage = ex.Message,
-					userMessage = @"We had issues with connecting to the data source."
-				};
-				var jsonResponse = Json(error);
-				jsonResponse.StatusCode = 500;
-				return jsonResponse;
-			}
+            catch (Exception ex)
+            {
+                var exceptionError = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message
+                };
+
+                JsonResult errorJsonResponse;
+                if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException || ex is MobileReportsConnectionException)
+                {
+                    exceptionError.userMessage = "We had issues with connecting to the data source.";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 500;
+                }
+                else if (ex is MissingWorkOrderException)
+                {
+                    exceptionError.userMessage = "Cannot find work order";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 404;
+                }
+                else
+                {
+                    exceptionError.userMessage = "We had issues processing your request.";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 500;
+                }
+                return errorJsonResponse;
+            }
 		}
 
         // GET Work Order by property reference 

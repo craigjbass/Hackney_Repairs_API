@@ -57,7 +57,7 @@ namespace HackneyRepairs.Tests.Integration
         [Fact]
         public async Task return_a_400_result_for_an_invalid_parameter()
         {
-            var badParameterValue = "";
+            var badParameterValue = "badparam";
             var result = await _client.GetAsync($"v1/work_orders/12345678?include={badParameterValue}");
 
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
