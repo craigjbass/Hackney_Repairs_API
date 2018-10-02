@@ -6,6 +6,7 @@ using HackneyRepairs.Actions;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
+using HackneyRepairs.Repository;
 
 namespace HackneyRepairs.Services
 {
@@ -40,6 +41,11 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): No workOrders found in the warehouse. Request sent to UhtRepository (WorkOrder referenc)");
             var uhtData = await _uhtRepository.GetWorkOrder(workOrderReference);
             return uhtData;
+        }
+
+        public async Task<IEnumerable<string>> GetMobileReports(string servitorReference)
+        {
+            return MobileReportsRepository.GetReports(servitorReference);
         }
 
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)

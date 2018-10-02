@@ -23,14 +23,31 @@ namespace HackneyRepairs.Tests.Actions
         [Fact]
         public async Task get_work_orders_returns_a_work_order()
         {
+            Random rnd = new Random();
+            string randomReference = rnd.Next(10000000, 99999999).ToString();
+            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
+            _workOrderService.Setup(service => service.GetWorkOrder(It.IsAny<string>()))
+                             .ReturnsAsync(new UHWorkOrderWithMobileReports());
+			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
+
+            var response = await workOrdersActions.GetWorkOrder(randomReference);
+
+            Assert.True(response is UHWorkOrder);
+        }
+
+        [Fact]
+        public async Task get_work_orders_returns_a_work_order_with_mobile_reports_when_second_arg_true()
+        {
+            Random rnd = new Random();
+            string randomReference = rnd.Next(10000000, 99999999).ToString();
             Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
             _workOrderService.Setup(service => service.GetWorkOrder(It.IsAny<string>()))
                              .ReturnsAsync(new UHWorkOrder());
-			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
+            WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
 
-            var response = await workOrdersActions.GetWorkOrder("12345678");
+            var response = await workOrdersActions.GetWorkOrder(randomReference, true);
 
-            Assert.True(response is UHWorkOrder);
+            Assert.True(response is UHWorkOrderWithMobileReports);
         }
 
         [Fact]

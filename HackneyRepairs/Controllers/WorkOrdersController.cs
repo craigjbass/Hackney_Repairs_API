@@ -17,8 +17,6 @@ namespace HackneyRepairs.Controllers
 	{
 		private IHackneyWorkOrdersService _workOrdersService;
 		private ILoggerAdapter<WorkOrdersActions> _workOrderLoggerAdapter;
-		private ILoggerAdapter<PropertyActions> _propertyLoggerAdapter;
-
 
 		public WorkOrdersController(ILoggerAdapter<WorkOrdersActions> workOrderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository)
 		{
@@ -40,14 +38,34 @@ namespace HackneyRepairs.Controllers
 		[ProducesResponseType(200)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(500)]
-        public async Task<JsonResult> GetWorkOrder(string workOrderReference)
+        public async Task<JsonResult> GetWorkOrder(string workOrderReference, string include = null)
 		{
-			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
-			UHWorkOrder result = new UHWorkOrder();
+            var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
 			try
 			{
-				result = await workOrdersActions.GetWorkOrder(workOrderReference);
-				var json = Json(result);
+                JsonResult json;
+                if (string.IsNullOrWhiteSpace(include))
+                {
+                    var workOrderResult = await workOrdersActions.GetWorkOrder(workOrderReference);
+                    json = Json(workOrderResult); 
+                }
+                else if (string.Equals(include.ToLower(), "mobilereports"))
+                {
+                    var workOrderWithMobileReports = await workOrdersActions.GetWorkOrder(workOrderReference, true);
+                    json = Json(workOrderWithMobileReports);
+                }
+                else
+                {
+                    var error = new ApiErrorMessage
+                    {
+                        developerMessage = $"Unknown parameter value: {include}",
+                        userMessage = $"Unknown parameter value: {include}"
+                    };
+                    var jsonResponse = Json(error);
+                    jsonResponse.StatusCode = 400;
+                    return jsonResponse;
+                }
+
 				json.StatusCode = 200;
 				return json;
 			}
