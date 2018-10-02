@@ -14,10 +14,10 @@ namespace HackneyRepairs.Repository
         {
             EnsureResourceAccess();
 
-            var processedReports = Directory.GetFiles(MountedPath + "Processed/", $"Works Order_{"11380283"}*").ToList();
+            var processedReports = Directory.GetFiles(MountedPath + "Processed/", $"Works Order_{servitorReference}*").ToList();
             if (processedReports.Any())
             {
-                var unprocessedReports = Directory.GetFiles(MountedPath + "Unprocessed/", $"Works Order_{"11380283"}*").ToList();
+                var unprocessedReports = Directory.GetFiles(MountedPath + "Unprocessed/", $"Works Order_{servitorReference}*").ToList();
                 processedReports.InsertRange(0, unprocessedReports);
                 processedReports = FormatReportStrings(processedReports).ToList();
             }
