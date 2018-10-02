@@ -349,7 +349,7 @@ namespace HackneyRepairs.Repository
             }
         }
 
-		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
             IEnumerable<UHWorkOrder> workOrders;
             try
@@ -379,7 +379,7 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
                                        WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}' AND t.task_no = 1;";
-					workOrders = await connection.QueryAsync<UHWorkOrder>(query);
+                    workOrders = await connection.QueryAsync<UHWorkOrder>(query);
                 }
             }
             catch (Exception ex)

@@ -10,7 +10,6 @@ using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
-using System.Configuration;
 using Dapper;
 
 namespace HackneyRepairs.Repository
@@ -197,9 +196,9 @@ namespace HackneyRepairs.Repository
 		}
 
 
-		public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
+        public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
-			UHWorkOrder workOrder;
+            UHWorkOrder workOrder;
 			try
 			{
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -229,7 +228,7 @@ namespace HackneyRepairs.Repository
                         WHERE 
                             wo.created > '{GetCutoffTime()}' AND wo.wo_ref = '{workOrderReference}' AND t.task_no = 1";
 					
-					workOrder = connection.Query<UHWorkOrder>(query).FirstOrDefault();
+                    workOrder = connection.Query<UHWorkOrder>(query).FirstOrDefault();
 				}
 			}
 			catch (Exception ex)
