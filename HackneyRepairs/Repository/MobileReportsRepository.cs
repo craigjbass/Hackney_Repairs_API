@@ -14,14 +14,23 @@ namespace HackneyRepairs.Repository
         {
             EnsureResourceAccess();
 
-            var processedReports = Directory.GetFiles(MountedPath + "Processed/", $"Works Order_{servitorReference}*").ToList();
-            if (processedReports.Any())
+            // If there are mobile reports, the first one will be in the Processed directory. 
+            // Subsequent reports will be stored in the Unprocessed directory
+            var processedReport = new FileInfo(MountedPath + "Processed/" + $"Works Order_{servitorReference}.pdf");
+            if (!processedReport.Exists)
             {
-                var unprocessedReports = Directory.GetFiles(MountedPath + "Unprocessed/", $"Works Order_{servitorReference}*").ToList();
-                processedReports.InsertRange(0, unprocessedReports);
-                processedReports = FormatReportStrings(processedReports).ToList();
+                return new List<string>();
             }
-            return processedReports;
+
+            var unprocessedReports = Directory.GetFiles(MountedPath + "Unprocessed/", $"*{servitorReference}*").ToList();
+            if (unprocessedReports.Any())
+            {
+                unprocessedReports.Add(processedReport.FullName);
+                return FormatReportStrings(unprocessedReports);
+            }
+
+            var singleProcessedReportInList = new List<string> { processedReport.FullName };
+            return FormatReportStrings(singleProcessedReportInList);
         }
 
         static IEnumerable<string> FormatReportStrings(IEnumerable<string> mobileReports)
