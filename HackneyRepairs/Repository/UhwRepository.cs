@@ -15,8 +15,8 @@ namespace HackneyRepairs.Repository
     {
         private UhwDbContext _context;
         private string environmentDbWord;
-
         private ILoggerAdapter<UhwRepository> _logger;
+
         public UhwRepository(UhwDbContext context, ILoggerAdapter<UhwRepository> logger)
         {
             _context = context;
