@@ -515,7 +515,7 @@ namespace HackneyRepairs.Repository
                         INNER JOIN
                             StagedDB.dbo.rmreqst AS request ON work_order.rq_ref = request.rq_ref
                         WHERE 
-                            work_order.created < '{GetCutoffTime()}' AND work_order.wo_ref > {startID}
+                            work_order.created < '{GetCutoffTime()}' AND work_order.wo_ref > '{startID}'
                             AND work_order.wo_ref NOT LIKE '[A-Z]%'
                         ORDER BY work_order.wo_ref";
                     var workOrders = connection.Query<UHWorkOrderFeed>(query);
