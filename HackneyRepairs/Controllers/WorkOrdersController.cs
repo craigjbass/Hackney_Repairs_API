@@ -30,6 +30,7 @@ namespace HackneyRepairs.Controllers
 		/// Retrieves a work order
 		/// </summary>
 		/// <param name="workOrderReference">Work order reference</param>
+        /// <param name="include">Allows extending the content of the Work Order response. Currently only accepts the value "mobilereports"</param>
 		/// <returns>A work order entity</returns>
 		/// <response code="200">Returns the work order for the work order reference</response>
 		/// <response code="404">If there is no work order for the given reference</response>   
@@ -62,9 +63,9 @@ namespace HackneyRepairs.Controllers
                         developerMessage = $"Unknown parameter value: {include}",
                         userMessage = $"Unknown parameter value: {include}"
                     };
-                    var jsonResponse = Json(error);
-                    jsonResponse.StatusCode = 400;
-                    return jsonResponse;
+                    json = Json(error);
+                    json.StatusCode = 400;
+                    return json;
                 }
 
 				json.StatusCode = 200;
@@ -211,9 +212,9 @@ namespace HackneyRepairs.Controllers
         }
 
         // GET A feed of work orders
-        // <summary>
-        // Returns a list of work orders with a work order reference greater than the parameter startId
-        // </summary>
+        /// <summary>
+        /// Returns a list of work orders with a work order reference greater than the parameter startId
+        /// </summary>
         /// <param name="startId">A work order reference, results will have a grater id than this parameter</param>
         /// <param name="resultSize">The maximum number of work orders returned. Default value is 50</param>
         /// <returns>A list of work orders</returns>
