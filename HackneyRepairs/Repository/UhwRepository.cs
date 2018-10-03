@@ -104,7 +104,7 @@ namespace HackneyRepairs.Repository
                                 uht{environmentDbWord}.dbo.rmworder AS work_order
                                 ON note.KeyNumb = work_order.rmworder_sid
                             WHERE 
-                                note.NDate > '{GetCutoffTime()}' AND work_order.wo_ref = '{workOrderReference}'";
+                                work_order.wo_ref = '{workOrderReference}'";
                     var notes = connection.Query<Note>(query);
                     return notes;
                 }

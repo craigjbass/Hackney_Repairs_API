@@ -96,15 +96,17 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UhtRepository to get data from live (WorkOrder reference: {workOrderReference})");
             var result = (List<Note>)await _uhwRepository.GetNotesByWorkOrderReference(workOrderReference);
             _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): {result.Count} notes returned for: {workOrderReference})");
-             
-            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UHWarehouseRepository to get data from warehouse (Workorder referece: {workOrderReference})");
-            var warehouseData = (List<Note>)await _uhWarehouseRepository.GetNotesByWorkOrderReference(workOrderReference);
-            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): {warehouseData.Count} notes returned for: {workOrderReference})");
-            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Merging list from repositories to a single list");
-            result.InsertRange(0, warehouseData);
-
-            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Total {result.Count} notes returned for: {workOrderReference})");
             return result;
+            // Portion of code commented temporarily until UHWarehouse's note table gets and index
+            // Repository method's query has been edited for removing the cutoff date condition
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UHWarehouseRepository to get data from warehouse (Workorder referece: {workOrderReference})");
+            //var warehouseData = (List<Note>)await _uhWarehouseRepository.GetNotesByWorkOrderReference(workOrderReference);
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): {warehouseData.Count} notes returned for: {workOrderReference})");
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Merging list from repositories to a single list");
+            //result.InsertRange(0, warehouseData);
+
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Total {result.Count} notes returned for: {workOrderReference})");
+            //return result;
         }
 
 		public async Task<IEnumerable<Note>> GetNoteFeed(int startId, string noteTarget, int batchSize)
