@@ -90,9 +90,9 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-		public async Task<JsonResult> GetWorkOrderByPropertyReference(string propertyReference)
+		public async Task<JsonResult> GetWorkOrderByPropertyReference(string[] propertyReference)
         {
-			if (propertyReference == null)
+            if (propertyReferences == null)
             {
                 var error = new ApiErrorMessage
                 {
@@ -108,21 +108,10 @@ namespace HackneyRepairs.Controllers
 			var result = new List<UHWorkOrder>();
             try
             {
-				result = (await workOrdersActions.GetWorkOrderByPropertyReference(propertyReference)).ToList();
+                result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReferences)).ToList();
                 var json = Json(result);
                 json.StatusCode = 200;
                 return json;
-            }
-			catch (MissingPropertyException ex)
-            {
-                var error = new ApiErrorMessage
-                {
-                    developerMessage = ex.Message,
-                    userMessage = @"Cannot find property"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
             }
             catch (UhtRepositoryException ex)
             {

@@ -65,7 +65,7 @@ namespace HackneyRepairs.Tests.Actions
         }
         #endregion
 
-        #region GetWorkOrdersByPropertyReferences
+        #region GetWorkOrderByPropertyReference
         [Fact]
         public async Task get_by_property_reference_returns_list_work_orders()
         {
@@ -232,6 +232,26 @@ namespace HackneyRepairs.Tests.Actions
 			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
 
 			await Assert.ThrowsAsync<MissingPropertyException>(async () => await workOrdersActions.GetWorkOrderByPropertyReference(propReference));
+        }
+        #endregion
+
+        #region GetWorkOrdersByPropertyReferences
+        [Fact]
+        public async Task GetWorkOrdersByPropertyReferences_calls_the_work_orders_service_and_returns_its_result()
+        {
+            var expectedWorkOrders = new UHWorkOrder[0];
+            var propReferences = new string[] { new Random().Next(100000000, 999999990).ToString() };
+
+            var workOrderService = new Mock<IHackneyWorkOrdersService>();
+
+            workOrderService
+                .Setup(service => service.GetWorkOrdersByPropertyReferences(propReferences))
+                .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(expectedWorkOrders));
+
+            var workOrderActions = new WorkOrdersActions(workOrderService.Object, _mockLogger.Object);
+            var workOrders = await workOrderActions.GetWorkOrdersByPropertyReferences(propReferences);
+
+            Assert.Equal(expectedWorkOrders, workOrders);
         }
         #endregion
 
