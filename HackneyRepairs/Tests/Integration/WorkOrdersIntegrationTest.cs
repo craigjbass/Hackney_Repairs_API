@@ -23,8 +23,7 @@ namespace HackneyRepairs.Tests.Integration
             Environment.SetEnvironmentVariable("UhtDb", "connectionString=Test");
             Environment.SetEnvironmentVariable("UhwDb", "connectionString=Test");
             Environment.SetEnvironmentVariable("UhWarehouseDb", "connectionString=Test");   
-            _server = new TestServer(new WebHostBuilder()
-                .UseStartup<TestStartup>());
+            _server = new TestServer(new WebHostBuilder().UseStartup<TestStartup>());
             _client = _server.CreateClient();
         }
 
@@ -74,7 +73,15 @@ namespace HackneyRepairs.Tests.Integration
 
 		#region GET All work orders by property reference tests
         [Fact]
-        public async Task return_a_200_result_with_list_workOrders_json_for_valid_request()
+        public async Task when_making_a_request_without_a_property_reference_returns_a_400()
+        {
+            var result = await _client.GetAsync("v1/work_orders");
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task when_making_a_valid_request_returns_a_200_result_with_a_list_of_work_orders()
         {
             var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678");
             var jsonresult = await result.Content.ReadAsStringAsync();
@@ -86,21 +93,43 @@ namespace HackneyRepairs.Tests.Integration
         }
 
         [Fact]
-        public async Task return_empty_list_with_200_when_no_workorders_found()
+        public async Task when_making_a_valid_query_with_multiple_property_references_returns_a_200_result_with_a_list_of_work_orders()
+        {
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678&propertyreference=56781234");
+            var jsonresult = await result.Content.ReadAsStringAsync();
+            var workOrder = JsonConvert.DeserializeObject<List<UHWorkOrderBase>>(jsonresult).ToList();
+
+            Assert.IsType<List<UHWorkOrderBase>>(workOrder);
+        }
+
+        [Fact]
+        public async Task when_one_property_is_missing_still_returns_a_200_result_with_a_list_of_work_orders()
+        {
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678&propertyreference=0");
+            var jsonresult = await result.Content.ReadAsStringAsync();
+            var workOrder = JsonConvert.DeserializeObject<List<UHWorkOrderBase>>(jsonresult).ToList();
+
+            Assert.IsType<List<UHWorkOrderBase>>(workOrder);
+        }
+
+        [Fact]
+        public async Task returns_an_empty_list_with_status_200_when_no_workorders_are_found()
         {
             var result = await _client.GetAsync("v1/work_orders?propertyreference=9999999999");
             var jsonResult = await result.Content.ReadAsStringAsync();
+
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("[]", jsonResult);
-            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
 
 		[Fact]
-        public async Task return_a_404_result_when_property_not_found()
+        public async Task returns_an_empty_list_with_status_200_when_no_properties_are_found()
         {
             var result = await _client.GetAsync("v1/work_orders?propertyreference=0");
             var jsonResult = await result.Content.ReadAsStringAsync();
-			Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("[]", jsonResult);
         }
         #endregion
 
