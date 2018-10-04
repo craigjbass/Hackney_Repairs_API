@@ -30,7 +30,7 @@ namespace HackneyRepairs.Controllers
         /// Returns a list of notes matching the noteTarget and with a note id greater than startId
         /// </summary>
         /// <param name="startId">A note id, results will have a grater id than this parameter</param>
-        /// <param name="noteTarget">The kind of note defined in Universal housing</param>
+        /// <param name="noteTarget">The kind of note defined in Universal Housing (required)</param>
         /// <param name="resultSize">The maximum number of notes returned. Default value is 50</param>
         /// <returns>A list of notes</returns>
         /// <response code="200">Returns a list of notes</response>

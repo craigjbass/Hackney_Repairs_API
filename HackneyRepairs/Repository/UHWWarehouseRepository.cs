@@ -46,6 +46,11 @@ namespace HackneyRepairs.Repository
 
         public async Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference)
         {
+            if (IsDevelopmentEnvironment())
+            {
+                return new List<RepairRequest>();
+            }
+
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -222,6 +227,7 @@ namespace HackneyRepairs.Repository
 
         public async Task<PropertyDetails> GetPropertyEstateByReference(string reference)
         {
+            
             _logger.LogInformation($"Getting details for property {reference}");
             try
             {
@@ -252,6 +258,10 @@ namespace HackneyRepairs.Repository
 
         public async Task<UHWorkOrder> GetWorkOrderByWorkOrderReference(string reference)
         {
+            if (IsDevelopmentEnvironment())
+            {
+                return null;
+            }
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -293,6 +303,11 @@ namespace HackneyRepairs.Repository
 
         public async Task<DrsOrder> GetWorkOrderDetails(string workOrderReference)
         {
+            if (IsDevelopmentEnvironment())
+            {
+                return null;
+            }
+
             _logger.LogInformation($"Getting the work order details from Uh Warehouse for {workOrderReference}");
             try
             {
@@ -349,8 +364,13 @@ namespace HackneyRepairs.Repository
             }
         }
 
-		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
+            if (IsDevelopmentEnvironment())
+            {
+                return new List<UHWorkOrder>();
+            }
+
             IEnumerable<UHWorkOrder> workOrders;
             try
             {
@@ -379,7 +399,7 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
                                        WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}' AND t.task_no = 1;";
-					workOrders = await connection.QueryAsync<UHWorkOrder>(query);
+                    workOrders = await connection.QueryAsync<UHWorkOrder>(query);
                 }
             }
             catch (Exception ex)
@@ -434,6 +454,11 @@ namespace HackneyRepairs.Repository
 
 		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade)
         {
+            if (IsDevelopmentEnvironment())
+            {
+                return new List<UHWorkOrder>();
+            }
+
             IEnumerable<UHWorkOrder> workOrders;
             try
             {
@@ -476,6 +501,11 @@ namespace HackneyRepairs.Repository
 
         public async Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference)
         {
+            if (IsDevelopmentEnvironment())
+            {
+                return new List<Note>();
+            }
+
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -507,6 +537,11 @@ namespace HackneyRepairs.Repository
 
         public async Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startID, int size)
         {
+            if (IsDevelopmentEnvironment())
+            {
+                return new List<UHWorkOrderFeed>();
+            }
+
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -538,6 +573,11 @@ namespace HackneyRepairs.Repository
 
         public async Task<IEnumerable<Note>> GetNoteFeed(int noteId, string noteTarget, int size)
         {
+            if (IsDevelopmentEnvironment())
+            {
+                return new List<Note>();
+            }
+
             try
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -593,7 +633,18 @@ namespace HackneyRepairs.Repository
             DateTime now = DateTime.Now;
             DateTime dtCutoff = new DateTime(now.Year, now.Month, now.Day, 23, 0, 0);
             dtCutoff = dtCutoff.AddDays(-1);
+
             return dtCutoff.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        bool IsDevelopmentEnvironment()
+        {
+            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (environment.ToLower() != "development" && environment.ToLower() != "local")
+            {
+                return false;
+            }
+            return true;
         }
     }
 

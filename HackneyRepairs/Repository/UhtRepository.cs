@@ -10,7 +10,6 @@ using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
-using System.Configuration;
 using Dapper;
 
 namespace HackneyRepairs.Repository
@@ -197,9 +196,9 @@ namespace HackneyRepairs.Repository
 		}
 
 
-		public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
+        public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
-			UHWorkOrder workOrder;
+            UHWorkOrder workOrder;
 			try
 			{
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -229,7 +228,7 @@ namespace HackneyRepairs.Repository
                         WHERE 
                             wo.created > '{GetCutoffTime()}' AND wo.wo_ref = '{workOrderReference}' AND t.task_no = 1";
 					
-					workOrder = connection.Query<UHWorkOrder>(query).FirstOrDefault();
+                    workOrder = connection.Query<UHWorkOrder>(query).FirstOrDefault();
 				}
 			}
 			catch (Exception ex)
@@ -555,7 +554,16 @@ namespace HackneyRepairs.Repository
         {
             DateTime now = DateTime.Now;
             DateTime dtCutoff = new DateTime(now.Year, now.Month, now.Day, 23, 0, 0);
-            dtCutoff = dtCutoff.AddDays(-1);
+
+            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (environment.ToLower() != "development" && environment.ToLower() != "local")
+            {
+                dtCutoff = dtCutoff.AddDays(-1);
+            }
+            else
+            {
+                dtCutoff = dtCutoff.AddYears(-10);
+            }
             return dtCutoff.ToString("yyyy-MM-dd HH:mm:ss");
         }
     }

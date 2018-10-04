@@ -6,6 +6,7 @@ using HackneyRepairs.Actions;
 using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
+using HackneyRepairs.Repository;
 
 namespace HackneyRepairs.Services
 {
@@ -15,8 +16,6 @@ namespace HackneyRepairs.Services
         private IUhwRepository _uhwRepository;
         private IUHWWarehouseRepository _uhWarehouseRepository;
         private ILoggerAdapter<WorkOrdersActions> _logger;
-        private string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
 
         public HackneyWorkOrdersService(IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository, ILoggerAdapter<WorkOrdersActions> logger)
         {
@@ -28,18 +27,22 @@ namespace HackneyRepairs.Services
 
         public async Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
         {
-            if (environment.ToLower() != "development" && environment.ToLower() != "local")
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): Sent request to UhWarehouseRepository (WorkOrder reference: {workOrderReference})");
+            var warehouseData = await _uhWarehouseRepository.GetWorkOrderByWorkOrderReference(workOrderReference);
+            if (warehouseData != null)
             {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): Sent request to UhWarehouseRepository (WorkOrder reference: {workOrderReference})");
-                var warehouseData = await _uhWarehouseRepository.GetWorkOrderByWorkOrderReference(workOrderReference);
-                if (warehouseData != null)
-                {
-                    return warehouseData;
-                }
+                return warehouseData;
             }
+
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): No workOrders found in the warehouse. Request sent to UhtRepository (WorkOrder referenc)");
             var uhtData = await _uhtRepository.GetWorkOrder(workOrderReference);
             return uhtData;
+        }
+
+        public async Task<IEnumerable<string>> GetMobileReports(string servitorReference)
+        {
+            _logger.LogInformation($"HackneyWorkOrdersService/GetMobileReports(): Sent request to MobileReportsRepository (Servitor reference: {servitorReference})");
+            return MobileReportsRepository.GetReports(servitorReference);
         }
 
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
@@ -49,14 +52,12 @@ namespace HackneyRepairs.Services
             var result = liveData.ToList();
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {result.Count} work orders returned for {propertyReference}");
 
-            if (environment.ToLower() != "development" && environment.ToLower() != "local")
-            {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to _UHWarehouseRepository to get data from warehouse for {propertyReference}");
-                var warehouseData = await _uhWarehouseRepository.GetWorkOrderByPropertyReference(propertyReference);
-                var lWarehouseData = warehouseData.ToList();
-                result.InsertRange(0, lWarehouseData);
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {lWarehouseData.Count} work orders returned for {propertyReference}");
-            }
+
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to _UHWarehouseRepository to get data from warehouse for {propertyReference}");
+            var warehouseData = await _uhWarehouseRepository.GetWorkOrderByPropertyReference(propertyReference);
+            var lWarehouseData = warehouseData.ToList();
+            result.InsertRange(0, lWarehouseData);
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {lWarehouseData.Count} work orders returned for {propertyReference}");
 
             if (result.Count() == 0)
             {
@@ -99,15 +100,13 @@ namespace HackneyRepairs.Services
             var result = (List<UHWorkOrder>)liveData;
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): {result.Count} work orders returned for block reference: {blockReference}");
 
-            if (environment.ToLower() != "development" && environment.ToLower() != "local")
-            {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for block reference: {blockReference}");
-                var warehouseData = await _uhWarehouseRepository.GetWorkOrderByBlockReference(blockReference, trade);
-                var lWarehouseData = (List<UHWorkOrder>)warehouseData;
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): {lWarehouseData.Count} work orders returned for block reference: {blockReference}");
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Merging list from repositories to a single list");
-                result.InsertRange(0, lWarehouseData);
-            }
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for block reference: {blockReference}");
+            var warehouseData = await _uhWarehouseRepository.GetWorkOrderByBlockReference(blockReference, trade);
+            var lWarehouseData = (List<UHWorkOrder>)warehouseData;
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): {lWarehouseData.Count} work orders returned for block reference: {blockReference}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Merging list from repositories to a single list");
+            result.InsertRange(0, lWarehouseData);
+
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Total {result.Count} work orders returned for block reference: {blockReference}");
             return result;
         }
@@ -117,17 +116,17 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UhtRepository to get data from live (WorkOrder reference: {workOrderReference})");
             var result = (List<Note>)await _uhwRepository.GetNotesByWorkOrderReference(workOrderReference);
             _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): {result.Count} notes returned for: {workOrderReference})");
-
-            if (environment.ToLower() != "development" && environment.ToLower() != "local")
-            {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UHWarehouseRepository to get data from warehouse (Workorder referece: {workOrderReference})");
-                var warehouseData = (List<Note>)await _uhWarehouseRepository.GetNotesByWorkOrderReference(workOrderReference);
-                _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): {warehouseData.Count} notes returned for: {workOrderReference})");
-                _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Merging list from repositories to a single list");
-                result.InsertRange(0, warehouseData);
-            }
-            _logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Total {result.Count} notes returned for: {workOrderReference})");
             return result;
+            // Portion of code commented temporarily until UHWarehouse's note table gets and index
+            // Repository method's query has been edited for removing the cutoff date condition
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Sent request to UHWarehouseRepository to get data from warehouse (Workorder referece: {workOrderReference})");
+            //var warehouseData = (List<Note>)await _uhWarehouseRepository.GetNotesByWorkOrderReference(workOrderReference);
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): {warehouseData.Count} notes returned for: {workOrderReference})");
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Merging list from repositories to a single list");
+            //result.InsertRange(0, warehouseData);
+
+            //_logger.LogInformation($"HackneyWorkOrdersService/GetNotesByWorkOrderReference(): Total {result.Count} notes returned for: {workOrderReference})");
+            //return result;
         }
 
 		public async Task<IEnumerable<Note>> GetNoteFeed(int startId, string noteTarget, int batchSize)
@@ -138,22 +137,22 @@ namespace HackneyRepairs.Services
                 batchSize = feedMaxBatchSize;
             }
 			var result = new List<Note>();
-			if (environment.ToLower() != "development" && environment.ToLower() != "local")
+			
+			_logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Querying Uh Warehouse for: {startId}");
+			result = (List<Note>) await _uhWarehouseRepository.GetNoteFeed(startId, noteTarget, batchSize);
+			_logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): {result.Count()} notes received for: {startId}");
+			if (result.Count() == batchSize)
 			{
-				_logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Querying Uh Warehouse for: {startId}");
-				result = (List<Note>) await _uhWarehouseRepository.GetNoteFeed(startId, noteTarget, batchSize);
-				_logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): {result.Count()} notes received for: {startId}");
-				if (result.Count() == batchSize)
-				{
-					_logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Returning UH warehouse only results to for: {startId}");
-					return result;
-				}
+				_logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Returning UH warehouse only results to for: {startId}");
+				return result;
 			}
+			
 			_logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Querying UH and expecting up to {batchSize - result.Count() } results for: {startId}");
 			var uhwResult = await _uhwRepository.GetNoteFeed(startId, noteTarget, batchSize - result.Count());
             _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): {uhwResult.Count()} results received for: {startId}");
             _logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Joining warehouse and uh results into a single list for: {startId}");
 			result.InsertRange(result.Count(), uhwResult);
+
 			_logger.LogInformation($"HackneyWorkOrdersService/GetNoteFeed(): Joint list contains {result.Count()} notes for: {startId}");
 			return result;
         }
@@ -168,18 +167,16 @@ namespace HackneyRepairs.Services
             }
 
 			List<UHWorkOrderFeed> result = new List<UHWorkOrderFeed>();
-			if (environment.ToLower() != "development" && environment.ToLower() != "local")
-			{
-				_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Querying Uh Warehouse for {startId} and for up to {batchSize} workOrders");
-				result = (List<UHWorkOrderFeed>) await _uhWarehouseRepository.GetWorkOrderFeed(startId, batchSize);
-				_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): {result.Count()} workOrders received for: {startId}");
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Querying Uh Warehouse for {startId} and for up to {batchSize} workOrders");
+			result = (List<UHWorkOrderFeed>) await _uhWarehouseRepository.GetWorkOrderFeed(startId, batchSize);
+			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): {result.Count()} workOrders received for: {startId}");
 
-				if (result.Count() == batchSize)
-				{
-					_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Returning UH Warehouse only results for: {startId}");
-					return result;
-				}
+			if (result.Count() == batchSize)
+			{
+				_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Returning UH Warehouse only results for: {startId}");
+				return result;
 			}
+
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Querying UHT repository for up to {batchSize} workOrders for: {startId}");
 			var uhtResult = await _uhtRepository.GetWorkOrderFeed(startId, batchSize - result.Count());
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Joining warehouse and UHT repository results into a single list for: {startId}");

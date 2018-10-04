@@ -15,8 +15,6 @@ namespace HackneyRepairs.Services
         private IUhtRepository _uhtRepository;
         private ILoggerAdapter<AppointmentActions> _logger;
         private IDRSRepository _drsRepository;
-		private string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
 
         public HackneyAppointmentsService(ILoggerAdapter<AppointmentActions> logger, IUhtRepository uhtRepository, IDRSRepository dRSRepository)
         {

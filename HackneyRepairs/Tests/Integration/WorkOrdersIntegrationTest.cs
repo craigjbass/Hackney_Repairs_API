@@ -9,6 +9,7 @@ using HackneyRepairs.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using HackneyRepairs.Models;
+using System;
 
 namespace HackneyRepairs.Tests.Integration
 {
@@ -19,6 +20,9 @@ namespace HackneyRepairs.Tests.Integration
 
         public WorkOrdersIntegrationTest()
         {
+            Environment.SetEnvironmentVariable("UhtDb", "connectionString=Test");
+            Environment.SetEnvironmentVariable("UhwDb", "connectionString=Test");
+            Environment.SetEnvironmentVariable("UhWarehouseDb", "connectionString=Test");   
             _server = new TestServer(new WebHostBuilder().UseStartup<TestStartup>());
             _client = _server.CreateClient();
         }
@@ -37,11 +41,34 @@ namespace HackneyRepairs.Tests.Integration
         }
 
         [Fact]
+        public async Task return_a_200_result_with_workOrderWithMobileReports_json_for_valid_request_by_reference()
+        {
+            var result = await _client.GetAsync("v1/work_orders/12345678?include=mobilereports");
+            var jsonResult = await result.Content.ReadAsStringAsync();
+            var workOrder = JsonConvert.DeserializeObject<UHWorkOrderWithMobileReports>(jsonResult);
+
+            Assert.IsType<UHWorkOrderWithMobileReports>(workOrder);
+            Assert.True(workOrder.MobileReports.Any());
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task return_a_400_result_for_an_invalid_parameter()
+        {
+            var badParameterValue = "badparam";
+            var result = await _client.GetAsync($"v1/work_orders/12345678?include={badParameterValue}");
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Fact]
         public async Task return_a_404_result_for_no_workorder_matching_reference()
         {
 			var result = await _client.GetAsync("v1/work_orders/0");
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
+
         #endregion
 
 		#region GET All work orders by property reference tests

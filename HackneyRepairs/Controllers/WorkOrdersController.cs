@@ -17,8 +17,6 @@ namespace HackneyRepairs.Controllers
 	{
 		private IHackneyWorkOrdersService _workOrdersService;
 		private ILoggerAdapter<WorkOrdersActions> _workOrderLoggerAdapter;
-		private ILoggerAdapter<PropertyActions> _propertyLoggerAdapter;
-
 
 		public WorkOrdersController(ILoggerAdapter<WorkOrdersActions> workOrderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository)
 		{
@@ -32,47 +30,75 @@ namespace HackneyRepairs.Controllers
 		/// Retrieves a work order
 		/// </summary>
 		/// <param name="workOrderReference">Work order reference</param>
+        /// <param name="include">Allows extending the content of the Work Order response. Currently only accepts the value "mobilereports"</param>
 		/// <returns>A work order entity</returns>
 		/// <response code="200">Returns the work order for the work order reference</response>
 		/// <response code="404">If there is no work order for the given reference</response>   
 		/// <response code="500">If any errors are encountered</response>
 		[HttpGet("{workOrderReference}")]
 		[ProducesResponseType(200)]
+        [ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(500)]
-        public async Task<JsonResult> GetWorkOrder(string workOrderReference)
+        public async Task<JsonResult> GetWorkOrder(string workOrderReference, string include = null)
 		{
-			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
-			UHWorkOrder result = new UHWorkOrder();
+            var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
 			try
 			{
-				result = await workOrdersActions.GetWorkOrder(workOrderReference);
-				var json = Json(result);
+                JsonResult json;
+                if (string.IsNullOrWhiteSpace(include))
+                {
+                    var workOrderResult = await workOrdersActions.GetWorkOrder(workOrderReference);
+                    json = Json(workOrderResult); 
+                }
+                else if (string.Equals(include.ToLower(), "mobilereports"))
+                {
+                    var workOrderWithMobileReports = await workOrdersActions.GetWorkOrder(workOrderReference, true);
+                    json = Json(workOrderWithMobileReports);
+                }
+                else
+                {
+                    var error = new ApiErrorMessage
+                    {
+                        developerMessage = $"Unknown parameter value: {include}",
+                        userMessage = $"Unknown parameter value: {include}"
+                    };
+                    json = Json(error);
+                    json.StatusCode = 400;
+                    return json;
+                }
+
 				json.StatusCode = 200;
 				return json;
 			}
-			catch (MissingWorkOrderException ex)
-			{
-				var error = new ApiErrorMessage
-				{
-					developerMessage = ex.Message,
-					userMessage = @"Cannot find work order."
-				};
-				var jsonResponse = Json(error);
-				jsonResponse.StatusCode = 404;
-				return jsonResponse;
-			}
-			catch (UhtRepositoryException ex)
-			{
-				var error = new ApiErrorMessage
-				{
-					developerMessage = ex.Message,
-					userMessage = @"We had issues with connecting to the data source."
-				};
-				var jsonResponse = Json(error);
-				jsonResponse.StatusCode = 500;
-				return jsonResponse;
-			}
+            catch (Exception ex)
+            {
+                var exceptionError = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message
+                };
+
+                JsonResult errorJsonResponse;
+                if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException || ex is MobileReportsConnectionException)
+                {
+                    exceptionError.userMessage = "We had issues with connecting to the data source.";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 500;
+                }
+                else if (ex is MissingWorkOrderException)
+                {
+                    exceptionError.userMessage = "Cannot find work order";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 404;
+                }
+                else
+                {
+                    exceptionError.userMessage = "We had issues processing your request.";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 500;
+                }
+                return errorJsonResponse;
+            }
 		}
 
         // GET Work Order by property reference 
@@ -175,9 +201,9 @@ namespace HackneyRepairs.Controllers
         }
 
         // GET A feed of work orders
-        // <summary>
-        // Returns a list of work orders with a work order reference greater than the parameter startId
-        // </summary>
+        /// <summary>
+        /// Returns a list of work orders with a work order reference greater than the parameter startId
+        /// </summary>
         /// <param name="startId">A work order reference, results will have a grater id than this parameter</param>
         /// <param name="resultSize">The maximum number of work orders returned. Default value is 50</param>
         /// <returns>A list of work orders</returns>

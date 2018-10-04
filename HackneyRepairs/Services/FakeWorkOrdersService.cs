@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 
@@ -10,18 +8,28 @@ namespace HackneyRepairs.Services
 {
 	public class FakeWorkOrdersService : IHackneyWorkOrdersService
     {      
-		public Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
+        public Task<UHWorkOrder> GetWorkOrder(string workOrderReference)
 		{
 			if (string.Equals(workOrderReference, "0"))
 			{
-				return Task.Run(() => (UHWorkOrder)null);
+                return Task.Run(() => (UHWorkOrder)null);
 			}
-			var workOrder = new UHWorkOrder
+            var workOrder = new UHWorkOrder
 			{
-				WorkOrderReference = workOrderReference
+                WorkOrderReference = workOrderReference,
+                ServitorReference = "44444444"
 			};
 			return Task.Run(() => workOrder);
 		}
+
+        public Task<IEnumerable<string>> GetMobileReports(string servitorReference)
+        {
+            var fakeResponse = new List<string>
+            {
+                "Mobile report path"
+            };
+            return Task.Run(() => (IEnumerable<string>)fakeResponse);
+        }
         
 		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
