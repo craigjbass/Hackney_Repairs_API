@@ -115,7 +115,7 @@ namespace HackneyRepairs.Tests.Integration
         [Fact]
         public async Task returns_an_empty_list_with_status_200_when_no_workorders_are_found()
         {
-            var result = await _client.GetAsync("v1/work_orders?propertyreference=9999999999");
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=0");
             var jsonResult = await result.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
@@ -125,7 +125,7 @@ namespace HackneyRepairs.Tests.Integration
 		[Fact]
         public async Task returns_an_empty_list_with_status_200_when_no_properties_are_found()
         {
-            var result = await _client.GetAsync("v1/work_orders?propertyreference=0");
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345");
             var jsonResult = await result.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);

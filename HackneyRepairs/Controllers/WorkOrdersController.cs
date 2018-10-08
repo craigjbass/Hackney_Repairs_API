@@ -118,7 +118,7 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(500)]
 		public async Task<JsonResult> GetWorkOrderByPropertyReference(string[] propertyReference)
         {
-            if (propertyReferences == null)
+            if (propertyReference == null || propertyReference.Length == 0)
             {
                 var error = new ApiErrorMessage
                 {
@@ -134,7 +134,7 @@ namespace HackneyRepairs.Controllers
 			var result = new List<UHWorkOrder>();
             try
             {
-                result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReferences)).ToList();
+                result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReference)).ToList();
                 var json = Json(result);
                 json.StatusCode = 200;
                 return json;
