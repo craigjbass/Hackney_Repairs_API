@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
@@ -51,13 +52,13 @@ namespace HackneyRepairs.Services
 			return Task.Run(() => (IEnumerable<UHWorkOrder>)workOrder);
         }
 
-        public Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences)
+        public Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime? since, DateTime? until)
         {
-            if (propertyReferences.Contains("9999999999"))
+            if (propertyReferences.ToList().Contains("9999999999"))
             {
                 return Task.Run(() => (IEnumerable<UHWorkOrder>) new List<UHWorkOrder>() { new UHWorkOrder() });
             }
-            if (propertyReferences.Contains("0"))
+            if (propertyReferences.ToList().Contains("0"))
             {
                 return Task.Run(() => (IEnumerable<UHWorkOrder>) new List<UHWorkOrder>());
             }
