@@ -80,14 +80,11 @@ namespace HackneyRepairs.Services
             var result = liveData.ToList();
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {result.Count} work orders returned for {propertyReferences}");
 
-            if (environment.ToLower() != "development" && environment.ToLower() != "local")
-            {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for {propertyReferences}");
-                var warehouseData = await _uhWarehouseRepository.GetWorkOrdersByPropertyReferences(propertyReferences);
-                var lWarehouseData = warehouseData.ToList();
-                result.InsertRange(0, lWarehouseData);
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {lWarehouseData.Count} work orders returned for {propertyReferences}");
-            }
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for {propertyReferences}");
+            var warehouseData = await _uhWarehouseRepository.GetWorkOrdersByPropertyReferences(propertyReferences);
+            var lWarehouseData = warehouseData.ToList();
+            result.InsertRange(0, lWarehouseData);
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {lWarehouseData.Count} work orders returned for {propertyReferences}");
 
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Total {result.Count} work orders returned for {propertyReferences}");
             return result;
