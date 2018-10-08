@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
@@ -15,6 +16,67 @@ namespace HackneyRepairs.Tests.Services
         public HackneyWorkOrdersServiceTest()
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "test");
+        }
+
+        [Theory]
+        [InlineData("300")]
+        [InlineData("500")]
+        [InlineData("700")]
+        [InlineData("900")]
+        public async void GetWorkOrder_retrieves_terminal_work_orders_from_uhw(string workOrderStatus)
+        {
+            var expectedWarehouseWorkOrder = new UHWorkOrder { WorkOrderStatus = workOrderStatus };
+
+            var service = new HackneyWorkOrdersServiceTestBuilder()
+                .WithUhwWorkOrderForWorkOrderRef("00000001", expectedWarehouseWorkOrder)
+                .Service;
+
+            var workOrder = await service.GetWorkOrder("00000001");
+
+            Assert.Same(expectedWarehouseWorkOrder, workOrder);
+        }
+
+        [Theory]
+        [InlineData("01")]
+        [InlineData("1000")]
+        [InlineData("OTHER")]
+        public async void GetWorkOrder_retrieves_still_active_work_orders_from_uht(string workOrderStatus)
+        {
+            var warehouseWorkOrder = new UHWorkOrder { WorkOrderStatus = workOrderStatus };
+            var expectedUhtWorkOrder = new UHWorkOrder { WorkOrderStatus = workOrderStatus };
+
+            var service = new HackneyWorkOrdersServiceTestBuilder()
+                .WithUhwWorkOrderForWorkOrderRef("00000001", warehouseWorkOrder)
+                .WithUhtWorkOrderForWorkOrderRef("00000001", expectedUhtWorkOrder)
+                .Service;
+
+            var workOrder = await service.GetWorkOrder("00000001");
+
+            Assert.NotSame(warehouseWorkOrder, workOrder);
+            Assert.Same(expectedUhtWorkOrder, workOrder);
+        }
+
+        [Theory]
+        [InlineData("300", "ACTIVE")]
+        [InlineData("500", "OTHER")]
+        [InlineData("700", "ACTIVE")]
+        [InlineData("900", "OTHER")]
+        public async void GetWorkOrders_only_retrieves_terminal_work_orders_from_uhw(string terminalStatus, string activeStatus)
+        {
+            var activeWarehouse123 = new UHWorkOrder { WorkOrderReference = "123", WorkOrderStatus = activeStatus };
+            var activeUht123 = new UHWorkOrder { WorkOrderReference = "123", WorkOrderStatus = activeStatus };
+            var terminalWarehouse456 = new UHWorkOrder { WorkOrderReference = "456", WorkOrderStatus = terminalStatus };
+
+            var service = new HackneyWorkOrdersServiceTestBuilder()
+                .WithUhwWorkOrders(new UHWorkOrder[] { activeWarehouse123, terminalWarehouse456 })
+                .WithUhtWorkOrders(new UHWorkOrder[] { activeUht123 })
+                .Service;
+
+            var workOrders = await service.GetWorkOrders(new string[] { "123", "456" });
+
+            Assert.Equal(2, workOrders.ToArray().Length);
+            Assert.Contains(activeUht123, workOrders);
+            Assert.Contains(terminalWarehouse456, workOrders);
         }
 
         [Fact]
@@ -122,6 +184,18 @@ namespace HackneyRepairs.Tests.Services
                 _loggerMock = new Mock<ILoggerAdapter<WorkOrdersActions>>();
             }
 
+            public HackneyWorkOrdersServiceTestBuilder WithUhwWorkOrderForWorkOrderRef(string workOrderRef, UHWorkOrder workOrder)
+            {
+                _uhWarehouseRepositoryMock.Setup(repo => repo.GetWorkOrderByWorkOrderReference(workOrderRef)).Returns(Task.FromResult<UHWorkOrder>(workOrder));
+                return this;
+            }
+
+            public HackneyWorkOrdersServiceTestBuilder WithUhtWorkOrderForWorkOrderRef(string workOrderRef, UHWorkOrder workOrder)
+            {
+                _uhtRepositoryMock.Setup(repo => repo.GetWorkOrder(workOrderRef)).Returns(Task.FromResult<UHWorkOrder>(workOrder));
+                return this;
+            }
+
             public HackneyWorkOrdersServiceTestBuilder WithUhtWorkOrdersForPropertyRef(string propertyRef, UHWorkOrder[] workOrders)
             {
                 _uhtRepositoryMock.Setup(repo => repo.GetWorkOrderByPropertyReference(propertyRef)).Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(workOrders));
@@ -149,6 +223,24 @@ namespace HackneyRepairs.Tests.Services
             public HackneyWorkOrdersServiceTestBuilder WithUHWarehousePropertyDetails(string propertyRef, PropertyDetails property)
             {
                 _uhWarehouseRepositoryMock.Setup(repo => repo.GetPropertyDetailsByReference(propertyRef)).Returns(Task.FromResult<PropertyDetails>(property));
+                return this;
+            }
+
+            public HackneyWorkOrdersServiceTestBuilder WithUhwWorkOrders(UHWorkOrder[] workOrders)
+            {
+                _uhWarehouseRepositoryMock
+                    .Setup(repo => repo.GetWorkOrdersByWorkOrderReferences(It.IsAny<string[]>()))
+                    .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(workOrders));
+                
+                return this;
+            }
+
+            public HackneyWorkOrdersServiceTestBuilder WithUhtWorkOrders(UHWorkOrder[] workOrders)
+            {
+                _uhtRepositoryMock
+                    .Setup(repo => repo.GetWorkOrders(It.IsAny<string[]>()))
+                    .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(workOrders));
+
                 return this;
             }
 
