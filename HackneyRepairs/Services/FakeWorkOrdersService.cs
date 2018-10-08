@@ -54,22 +54,18 @@ namespace HackneyRepairs.Services
 
         public Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime? since, DateTime? until)
         {
-            if (propertyReferences.ToList().Contains("9999999999"))
+            if (Array.Exists(propertyReferences, v => v == "9999999999"))
             {
                 return Task.Run(() => (IEnumerable<UHWorkOrder>) new List<UHWorkOrder>() { new UHWorkOrder() });
             }
-            if (propertyReferences.ToList().Contains("0"))
+            if (Array.Exists(propertyReferences, v => v == "0"))
             {
                 return Task.Run(() => (IEnumerable<UHWorkOrder>) new List<UHWorkOrder>());
             }
-            var workOrder = new List<UHWorkOrder>
-            {
-                new UHWorkOrder
-                {
-                    PropertyReference = propertyReferences[0]
-                }
-            };
-            return Task.Run(() => (IEnumerable<UHWorkOrder>) workOrder);
+
+            IEnumerable<UHWorkOrder> workOrders = new List<UHWorkOrder>();
+
+            return Task.Run(() => workOrders);
         }
 
 		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade)

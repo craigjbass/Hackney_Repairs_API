@@ -105,7 +105,7 @@ namespace HackneyRepairs.Controllers
         /// <summary>
         /// Returns all work orders for a property
         /// </summary>
-        /// <param name="propertyReferences">UH Property reference</param>
+        /// <param name="propertyReference">UH Property reference</param>
         /// <returns>A list of work order entities</returns>
         /// <response code="200">Returns a list of work orders for the property reference</response>
         /// <response code="400">If no parameter or a parameter different than propertyReference is passed</response>   
@@ -116,9 +116,9 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<JsonResult> GetWorkOrderByPropertyReference(string[] propertyReferences, DateTime? since = null, DateTime? until = null)
+        public async Task<JsonResult> GetWorkOrderByPropertyReference(string[] propertyReference, DateTime? since = null, DateTime? until = null)
         {
-            if (propertyReferences == null)
+            if (propertyReference == null || propertyReference.Length == 0)
             {
                 var error = new ApiErrorMessage
                 {
@@ -134,7 +134,7 @@ namespace HackneyRepairs.Controllers
 			var result = new List<UHWorkOrder>();
             try
             {
-                result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReferences, since, until)).ToList();
+                result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReference, since, until)).ToList();
                 var json = Json(result);
                 json.StatusCode = 200;
                 return json;
