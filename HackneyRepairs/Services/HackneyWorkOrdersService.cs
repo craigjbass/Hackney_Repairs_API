@@ -34,8 +34,23 @@ namespace HackneyRepairs.Services
                 return warehouseData;
             }
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): No workOrders found in the warehouse. Request sent to UhtRepository (WorkOrder referenc)");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): No workOrders found in the warehouse. Request sent to UhtRepository (WorkOrder references: {workOrderReference})");
             var uhtData = await _uhtRepository.GetWorkOrder(workOrderReference);
+            return uhtData;
+        }
+
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrders(string[] workOrderReferences)
+        {
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): Sent request to UhWarehouseRepository (WorkOrder references: {workOrderReferences})");
+            var warehouseWorkOrders = await _uhWarehouseRepository.GetWorkOrdersByWorkOrderReferences(workOrderReferences);
+
+            if (warehouseWorkOrders != null && warehouseWorkOrders.ToArray().Length == workOrderReferences.Length)
+            {
+                return warehouseWorkOrders;
+            }
+
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): One or more workOrders missing in the warehouse. Request sent to UhtRepository (WorkOrder references: {workOrderReferences})");
+            var uhtData = await _uhtRepository.GetWorkOrders(workOrderReferences);
             return uhtData;
         }
 

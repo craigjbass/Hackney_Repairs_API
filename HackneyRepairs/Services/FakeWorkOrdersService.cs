@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 
@@ -21,6 +22,21 @@ namespace HackneyRepairs.Services
 			};
 			return Task.Run(() => workOrder);
 		}
+
+        public Task<IEnumerable<UHWorkOrder>> GetWorkOrders(string[] workOrderReferences)
+        {
+            IEnumerable<UHWorkOrder> workOrders = workOrderReferences
+                .Where(reference => reference != "MISSING")
+                .Select(reference => {
+                    return new UHWorkOrder
+                    {
+                        WorkOrderReference = reference,
+                        ServitorReference = "44444444"
+                    };
+                });
+
+            return Task.Run(() => workOrders);   
+        }
 
         public Task<IEnumerable<string>> GetMobileReports(string servitorReference)
         {
