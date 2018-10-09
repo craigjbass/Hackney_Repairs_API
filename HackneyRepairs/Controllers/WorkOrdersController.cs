@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
@@ -118,7 +119,7 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<JsonResult> GetWorkOrderByPropertyReference(string[] propertyReference, DateTime? since = null, DateTime? until = null)
+        public async Task<JsonResult> GetWorkOrderByPropertyReference(string[] propertyReference, string since, string until)
         {
             if (propertyReference == null || propertyReference.Length == 0)
             {
@@ -136,7 +137,39 @@ namespace HackneyRepairs.Controllers
 			var result = new List<UHWorkOrder>();
             try
             {
-                result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReference, since, until)).ToList();
+                DateTime validSince = DateTime.Now.AddYears(-2);
+                if (since != null)
+                {
+                    if (!DateTime.TryParseExact(since, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out validSince))
+                    {
+                        var error = new ApiErrorMessage
+                        {
+                            developerMessage = "parameter is not a valid DateTime",
+                            userMessage = "Invalid parameter value - since"
+                        };
+                        var jsonResponse = Json(error);
+                        jsonResponse.StatusCode = 400;
+                        return jsonResponse;
+                    }
+                }
+
+                DateTime validUntil = DateTime.Now;
+                if (until != null)
+                {
+                    if (!DateTime.TryParseExact(until, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out validUntil))
+                    {
+                        var error = new ApiErrorMessage
+                        {
+                            developerMessage = "parameter is not a valid DateTime",
+                            userMessage = "Invalid parameter value - until"
+                        };
+                        var jsonResponse = Json(error);
+                        jsonResponse.StatusCode = 400;
+                        return jsonResponse;
+                    }
+                }
+
+                result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReference, validSince, validUntil)).ToList();
                 var json = Json(result);
                 json.StatusCode = 200;
                 return json;

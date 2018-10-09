@@ -104,7 +104,8 @@ namespace HackneyRepairs.Tests.Services
                 .WithUHWarehousePropertyDetails("00000020", property)
                 .Service;
 
-            var workOrders = await service.GetWorkOrdersByPropertyReferences(new string[] { "00000020", "00000021" }, null, null);
+            DateTime date = DateTime.Now;
+            var workOrders = await service.GetWorkOrdersByPropertyReferences(new string[] { "00000020", "00000021" }, date, date);
 
             Assert.Empty(workOrders);
         }

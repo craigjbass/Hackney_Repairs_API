@@ -133,17 +133,31 @@ namespace HackneyRepairs.Tests.Integration
         }
 
         [Fact]
-        public async Task returns_a_200_response_when_valid_datetime_parameters_are_passed()
+        public async Task returns_a_200_response_when_valid_since_parameter_is_passed()
         {
-            var result = await _client.GetAsync("v1/work_orders?propertyreference=0?since=2018-01-01?until=2018-09-01");
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678&since=01-01-2018");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
         }
 
         [Fact]
-        public async Task returns_a_200_response_when_invalid_datetime_parameters_are_passed()
+        public async Task returns_a_200_response_when_valid_until_parameter_is_passed()
         {
-            var result = await _client.GetAsync("v1/work_orders?propertyreference=0?since=2018a-01-01?until=12345");
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678&until=01-01-2018");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task returns_a_200_response_when_invalid_since_parameter_is_passed()
+        {
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678&since=2018a-01-01");
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task returns_a_200_response_when_invalid_until_parameter_is_passed()
+        {
+            var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678&until=2018a-01-01");
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
 
