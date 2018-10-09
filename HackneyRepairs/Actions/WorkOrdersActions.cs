@@ -30,7 +30,7 @@ namespace HackneyRepairs.Actions
 			}
             if (mobileReports)
             {
-                var resultWithMobileReports = MapToWorkOrderWithMobleReports(result);
+                var resultWithMobileReports = MapToWorkOrderWithMobileReports(result);
                 if (string.IsNullOrWhiteSpace(result.ServitorReference))
                 {
                     _logger.LogError($"Work order {workOrderReference} does not have a servitor reference, mobile reports cannot be found");
@@ -60,7 +60,7 @@ namespace HackneyRepairs.Actions
             IEnumerable<UHWorkOrderWithMobileReports> results = await Task.WhenAll(
                 workOrders.Select(async workOrder =>
                 {
-                    var resultWithMobileReports = MapToWorkOrderWithMobleReports(workOrder);
+                    var resultWithMobileReports = MapToWorkOrderWithMobileReports(workOrder);
 
                     if (withMobileReports)
                     {
@@ -140,7 +140,7 @@ namespace HackneyRepairs.Actions
             return await _workOrdersService.GetWorkOrderFeed(startID, resultSize);
         }
 
-        private UHWorkOrderWithMobileReports MapToWorkOrderWithMobleReports(UHWorkOrder workOrder)
+        private UHWorkOrderWithMobileReports MapToWorkOrderWithMobileReports(UHWorkOrder workOrder)
         {
             if (workOrder == null)
             {
