@@ -7,6 +7,7 @@ using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.Repository;
+using HackneyRepairs.Formatters;
 
 namespace HackneyRepairs.Services
 {
@@ -42,7 +43,7 @@ namespace HackneyRepairs.Services
 
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrders(string[] workOrderReferences)
         {
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): Sent request to UhWarehouseRepository (WorkOrder references: {workOrderReferences})");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): Sent request to UhWarehouseRepository (WorkOrder references: {GenericFormatter.CommaSeparate(workOrderReferences)})");
 
             IEnumerable<UHWorkOrder> validWarehouseWorkOrders = new UHWorkOrder[0];
 
@@ -56,7 +57,7 @@ namespace HackneyRepairs.Services
             var foundWorkOrderRefs = validWarehouseWorkOrders.Select(wo => wo.WorkOrderReference).ToArray();
             var remainingWorkOrderRefs = warehouseWorkOrders.Where(wo => !foundWorkOrderRefs.Contains(wo.WorkOrderReference)).Select(wo => wo.WorkOrderReference).ToArray();
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): One or more workOrders missing or still active in the warehouse. Request sent to UhtRepository (WorkOrder references: {remainingWorkOrderRefs})");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): One or more workOrders missing or still active in the warehouse. Request sent to UhtRepository (WorkOrder references: {GenericFormatter.CommaSeparate(remainingWorkOrderRefs)})");
 
             var uhtWorkOrders = await _uhtRepository.GetWorkOrders(remainingWorkOrderRefs);
             var combinedWorkOrders = validWarehouseWorkOrders.Concat(uhtWorkOrders);
@@ -100,18 +101,18 @@ namespace HackneyRepairs.Services
 
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences)
         {
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UhtRepository to get data from live for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UhtRepository to get data from live for {GenericFormatter.CommaSeparate(propertyReferences)}");
             var liveData = await _uhtRepository.GetWorkOrdersByPropertyReferences(propertyReferences);
             var result = liveData.ToList();
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {result.Count} work orders returned for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {result.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for {GenericFormatter.CommaSeparate(propertyReferences)}");
             var warehouseData = await _uhWarehouseRepository.GetWorkOrdersByPropertyReferences(propertyReferences);
             var lWarehouseData = warehouseData.ToList();
             result.InsertRange(0, lWarehouseData);
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {lWarehouseData.Count} work orders returned for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {lWarehouseData.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Total {result.Count} work orders returned for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Total {result.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
             return result;
         }
 
