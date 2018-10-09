@@ -68,7 +68,7 @@ namespace HackneyRepairs.Services
             return Task.Run(() => workOrders);
         }
 
-		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade)
+        public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade, DateTime since, DateTime until)
         {
 			if (string.Equals(blockReference, "9999999999"))
             {

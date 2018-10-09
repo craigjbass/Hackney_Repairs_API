@@ -106,6 +106,8 @@ namespace HackneyRepairs.Controllers
         /// Returns all work orders for a property
         /// </summary>
         /// <param name="propertyReference">UH Property reference</param>
+        /// <param name="since">A string with the format dd-MM-yyyy (Optional).</param>
+        /// <param name="until">A string with the format dd-MM-yyyy (Optional).</param>
         /// <returns>A list of work order entities</returns>
         /// <response code="200">Returns a list of work orders for the property reference</response>
         /// <response code="400">If no parameter or a parameter different than propertyReference is passed</response>   
