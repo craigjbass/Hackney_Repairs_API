@@ -27,5 +27,10 @@ namespace HackneyRepairs.Formatters
                 TrimStringAttributes(obj);
             }
         }
+
+        public static string CommaSeparate(string[] references)
+        {
+            return String.Join(", ", references);
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using Newtonsoft.Json;
+using HackneyRepairs.Formatters;
 
 namespace HackneyRepairs.Actions
 {
@@ -48,12 +49,12 @@ namespace HackneyRepairs.Actions
 
         public async Task<IEnumerable<UHWorkOrderWithMobileReports>> GetWorkOrders(string[] workOrderReferences, bool withMobileReports = false)
         {
-            _logger.LogInformation($"Finding work order details for references: {workOrderReferences}");
+            _logger.LogInformation($"Finding work order details for references: {GenericFormatter.CommaSeparate(workOrderReferences)}");
             var workOrders = await _workOrdersService.GetWorkOrders(workOrderReferences);
 
             if (workOrderReferences.Length > workOrders.ToArray().Length)
             {
-                _logger.LogError($"Work order not found for one of: {workOrderReferences}");
+                _logger.LogError($"Work order not found for one of: {GenericFormatter.CommaSeparate(workOrderReferences)}");
                 throw new MissingWorkOrderException();
             }
 
@@ -105,12 +106,12 @@ namespace HackneyRepairs.Actions
 
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences)
         {
-            _logger.LogInformation($"Finding work order details for property references: {propertyReferences}");
+            _logger.LogInformation($"Finding work order details for property references: {GenericFormatter.CommaSeparate(propertyReferences)}");
             var result = await _workOrdersService.GetWorkOrdersByPropertyReferences(propertyReferences);
 
             if ((result.ToList()).Count == 0)
             {
-                _logger.LogError($"Work orders not found for property references: {propertyReferences}");
+                _logger.LogError($"Work orders not found for property references: {GenericFormatter.CommaSeparate(propertyReferences)}");
             }
 
             return result;
