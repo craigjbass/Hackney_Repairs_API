@@ -82,6 +82,78 @@ namespace HackneyRepairs.Tests.Actions
         }
         #endregion
 
+        #region
+        [Fact]
+        public async Task when_retrieving_multiple_work_orders_returns_all_work_orders()
+        {
+            var references = new string[] { "12345", "67890" };
+            var expectedWorkOrders = new UHWorkOrderWithMobileReports[] {
+                new UHWorkOrderWithMobileReports { WorkOrderReference = "12345" },
+                new UHWorkOrderWithMobileReports { WorkOrderReference = "67890" }
+            };
+                
+            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
+            _workOrderService
+                .Setup(service => service.GetWorkOrders(references))
+                .ReturnsAsync(expectedWorkOrders);
+
+            WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
+
+            var response = await workOrdersActions.GetWorkOrders(references);
+
+            Assert.Contains(response, wo => wo.WorkOrderReference == "12345");
+            Assert.Contains(response, wo => wo.WorkOrderReference == "67890");
+        }
+
+        [Fact]
+        public async Task when_retrieving_multiple_work_orders_with_mobile_reports_returns_all_with_mobile_reports()
+        {
+            var references = new string[] { "12345", "67890" };
+            var expectedMobileReports = new string[] { "MOBILE_REPORT_NAME" };
+            var expectedWorkOrders = new UHWorkOrderWithMobileReports[] {
+                new UHWorkOrderWithMobileReports { WorkOrderReference = "12345", ServitorReference = "VALID_SERVITOR_REF" },
+                new UHWorkOrderWithMobileReports { WorkOrderReference = "67890", ServitorReference = null }
+            };
+
+            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
+
+            _workOrderService
+                .Setup(service => service.GetWorkOrders(references))
+                .ReturnsAsync(expectedWorkOrders);
+
+            _workOrderService
+                .Setup(service => service.GetMobileReports("VALID_SERVITOR_REF"))
+                .ReturnsAsync(expectedMobileReports);
+
+            WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
+
+            var response = await workOrdersActions.GetWorkOrders(references, withMobileReports: true);
+            var workOrders = response.ToArray();
+
+            Assert.Equal(expectedMobileReports, workOrders[0].MobileReports);
+            Assert.Empty(workOrders[1].MobileReports);
+        }
+
+        [Fact]
+        public async Task when_retrieving_multiple_work_orders_and_one_is_missing_throws_an_error()
+        {
+            var references = new string[] { "12345", "67890" };
+            var stubbedWorkOrders = new UHWorkOrder[] {
+                new UHWorkOrder { WorkOrderReference = "12345" }
+            };
+
+            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
+
+            _workOrderService
+                .Setup(service => service.GetWorkOrders(references))
+                .ReturnsAsync(stubbedWorkOrders);
+            
+            WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
+
+            await Assert.ThrowsAsync<MissingWorkOrderException>(async () => await workOrdersActions.GetWorkOrders(references));
+        }
+        #endregion
+
         #region GetWorkOrderByPropertyReference
         [Fact]
         public async Task get_by_property_reference_returns_list_work_orders()

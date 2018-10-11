@@ -26,6 +26,78 @@ namespace HackneyRepairs.Controllers
 			_workOrdersService = workOrderServiceFactory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _workOrderLoggerAdapter);
 		}
 
+        // GET Work Orders by work order references
+        /// <summary>
+        /// Returns all work orders for given work order references
+        /// </summary>
+        /// <param name="reference">Work order reference</param>
+        /// <param name="include">Allows extending the content of the Work Order response. Currently only accepts the value "mobilereports"</param>
+        /// <returns>A list of work order entities</returns>
+        /// <response code="200">Returns a list of work orders for the work order references</response>
+        /// <response code="400">If no work order references are given</response>   
+        /// <response code="404">If one or more work orders are missing based on the references given</response>
+        /// <response code="500">If any errors are encountered</response>
+        [HttpGet("by_references")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<JsonResult> GetWorkOrdersByWorkOrderReferences(string[] reference, string include = "")
+        {
+            if (reference.Length == 0)
+            {
+                var error = new ApiErrorMessage
+                {
+                    developerMessage = "Bad Request - Missing reference parameter",
+                    userMessage = @"Bad Request"
+                };
+                var jsonResponse = Json(error);
+                jsonResponse.StatusCode = 400;
+                return jsonResponse;
+            }
+
+            var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
+            var filters = include.Split(',');
+            var includeMobileReports = filters.Contains("mobilereports");
+
+            try
+            {
+                var workOrders = (await workOrdersActions.GetWorkOrders(reference, includeMobileReports)).ToList();
+                return Json(workOrders);
+            }
+            catch (Exception ex)
+            {
+                JsonResult errorJsonResponse;
+                var exceptionError = new ApiErrorMessage
+                {
+                    developerMessage = ex.Message
+                };
+
+                if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException || ex is MobileReportsConnectionException)
+                {
+                    exceptionError.userMessage = "We had issues with connecting to the data source.";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 500;
+                }
+                else if (ex is MissingWorkOrderException)
+                {
+                    exceptionError.userMessage = "Could not find one or more of the given work orders";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 404;
+                }
+                else
+                {
+                    exceptionError.userMessage = "We had an unknown issue processing your request.";
+                    errorJsonResponse = Json(exceptionError);
+                    errorJsonResponse.StatusCode = 500;
+
+                    throw;
+                }
+
+                return errorJsonResponse;
+            }
+        }
+
 		// GET Work Order 
 		/// <summary>
 		/// Retrieves a work order
@@ -101,6 +173,7 @@ namespace HackneyRepairs.Controllers
                 return errorJsonResponse;
             }
 		}
+
 
         // GET Work Order by property reference 
         /// <summary>

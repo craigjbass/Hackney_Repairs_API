@@ -239,6 +239,47 @@ namespace HackneyRepairs.Repository
 			return workOrder;
 		}
 
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrders(string[] workOrderReferences)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $@"set dateformat ymd;
+                        SELECT    
+                            LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
+                            LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
+                            r.rq_problem AS ProblemDescription,
+                            wo.created AS Created,
+                            wo.est_cost AS EstimatedCost,
+                            wo.act_cost AS ActualCost,
+                            wo.completed AS CompletedOn,
+                            wo.date_due AS DateDue,
+                            wo.auth_date AS AuthDate,
+                            LTRIM(RTRIM(wo.wo_status)) AS WorkOrderStatus,
+                            LTRIM(RTRIM(wo.u_dlo_status)) AS DLOStatus,
+                            LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
+                            LTRIM(RTRIM(wo.prop_ref)) AS PropertyReference,
+                            LTRIM(RTRIM(t.job_code)) AS SORCode,
+                            LTRIM(RTRIM(tr.trade_desc)) AS Trade
+                        FROM 
+                            rmworder wo
+                            INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
+                            INNER JOIN rmtask t ON t.wo_ref = wo.wo_ref
+                            INNER JOIN rmtrade tr ON tr.trade = t.trade
+                        WHERE 
+                            wo.created > '{GetCutoffTime()}' AND wo.wo_ref IN('{String.Join("', '", workOrderReferences)}') AND t.task_no = 1";
+
+                    return connection.Query<UHWorkOrder>(query).ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+        }
+
 		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
 			IEnumerable<UHWorkOrder> workOrders;

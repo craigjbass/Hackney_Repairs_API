@@ -7,6 +7,7 @@ using HackneyRepairs.Entities;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.Repository;
+using HackneyRepairs.Formatters;
 
 namespace HackneyRepairs.Services
 {
@@ -16,6 +17,7 @@ namespace HackneyRepairs.Services
         private IUhwRepository _uhwRepository;
         private IUHWWarehouseRepository _uhWarehouseRepository;
         private ILoggerAdapter<WorkOrdersActions> _logger;
+        private string[] _terminatedWorkOrderCodes = { "300", "500", "700", "900" };
 
         public HackneyWorkOrdersService(IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository, ILoggerAdapter<WorkOrdersActions> logger)
         {
@@ -29,14 +31,38 @@ namespace HackneyRepairs.Services
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): Sent request to UhWarehouseRepository (WorkOrder reference: {workOrderReference})");
             var warehouseData = await _uhWarehouseRepository.GetWorkOrderByWorkOrderReference(workOrderReference);
-            if (warehouseData != null)
+            if (warehouseData != null && IsTerminatedWorkOrder(warehouseData))
             {
                 return warehouseData;
             }
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): No workOrders found in the warehouse. Request sent to UhtRepository (WorkOrder referenc)");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrder(): No workOrders found in the warehouse. Request sent to UhtRepository (WorkOrder references: {workOrderReference})");
             var uhtData = await _uhtRepository.GetWorkOrder(workOrderReference);
             return uhtData;
+        }
+
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrders(string[] workOrderReferences)
+        {
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): Sent request to UhWarehouseRepository (WorkOrder references: {GenericFormatter.CommaSeparate(workOrderReferences)})");
+
+            IEnumerable<UHWorkOrder> validWarehouseWorkOrders = new UHWorkOrder[0];
+
+            var warehouseWorkOrders = await _uhWarehouseRepository.GetWorkOrdersByWorkOrderReferences(workOrderReferences);
+
+            if (warehouseWorkOrders != null)
+            {
+                validWarehouseWorkOrders = warehouseWorkOrders.Where(wo => IsTerminatedWorkOrder(wo)).ToArray();
+            }
+
+            var foundWorkOrderRefs = validWarehouseWorkOrders.Select(wo => wo.WorkOrderReference).ToArray();
+            var remainingWorkOrderRefs = warehouseWorkOrders.Where(wo => !foundWorkOrderRefs.Contains(wo.WorkOrderReference)).Select(wo => wo.WorkOrderReference).ToArray();
+
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): One or more workOrders missing or still active in the warehouse. Request sent to UhtRepository (WorkOrder references: {GenericFormatter.CommaSeparate(remainingWorkOrderRefs)})");
+
+            var uhtWorkOrders = await _uhtRepository.GetWorkOrders(remainingWorkOrderRefs);
+            var combinedWorkOrders = validWarehouseWorkOrders.Concat(uhtWorkOrders);
+
+            return combinedWorkOrders;
         }
 
         public async Task<IEnumerable<string>> GetMobileReports(string servitorReference)
@@ -75,19 +101,19 @@ namespace HackneyRepairs.Services
 
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until)
         {
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UhtRepository to get data from live for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UhtRepository to get data from live for {GenericFormatter.CommaSeparate(propertyReferences)}");
             var liveData = await _uhtRepository.GetWorkOrdersByPropertyReferences(propertyReferences, since, until);
             var result = liveData.ToList();
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {result.Count} work orders returned for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {result.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for {GenericFormatter.CommaSeparate(propertyReferences)}");
             var warehouseData = await _uhWarehouseRepository.GetWorkOrdersByPropertyReferences(propertyReferences, since, until);
             var lWarehouseData = warehouseData.ToList();
 
             result.InsertRange(0, lWarehouseData);
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {lWarehouseData.Count} work orders returned for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {lWarehouseData.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Total {result.Count} work orders returned for {propertyReferences}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Total {result.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
             return result;
         }
 
@@ -181,6 +207,11 @@ namespace HackneyRepairs.Services
 			result.InsertRange(result.Count(), uhtResult);
 			_logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderFeed(): Joint list contains {result.Count()} work orders for: {startId}");
 			return result;
+        }
+
+        private bool IsTerminatedWorkOrder(UHWorkOrder workOrder)
+        {
+            return Array.IndexOf(_terminatedWorkOrderCodes, workOrder.WorkOrderStatus) > -1;
         }
     }
 }

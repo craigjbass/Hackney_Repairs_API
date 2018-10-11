@@ -71,7 +71,56 @@ namespace HackneyRepairs.Tests.Integration
 
         #endregion
 
-		#region GET All work orders by property reference tests
+        #region
+        [Fact]
+        public async Task when_retrieving_a_single_work_order_should_return_work_order_json()
+        {
+            var result = await _client.GetAsync("v1/work_orders/by_references?reference=123");
+            var jsonResult = await result.Content.ReadAsStringAsync();
+            var workOrders = JsonConvert.DeserializeObject<List<UHWorkOrder>>(jsonResult);
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Single(workOrders);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task when_retrieving_a_single_work_order_with_mobile_reports_should_return_with_mobile_reports()
+        {
+            var result = await _client.GetAsync("v1/work_orders/by_references?reference=123&include=mobilereports");
+            var jsonResult = await result.Content.ReadAsStringAsync();
+            var workOrders = JsonConvert.DeserializeObject<List<UHWorkOrderWithMobileReports>>(jsonResult);
+
+            Assert.Equal("Mobile report path", workOrders.ToArray()[0].MobileReports.ToArray()[0]);
+        }
+
+        [Fact]
+        public async Task when_retrieving_multiple_work_orders_should_return_work_order_json_for_each()
+        {
+            var result = await _client.GetAsync("v1/work_orders/by_references?reference=123&reference=456");
+            var jsonResult = await result.Content.ReadAsStringAsync();
+            var workOrders = JsonConvert.DeserializeObject<List<UHWorkOrder>>(jsonResult);
+
+            Assert.Equal(2, workOrders.ToArray().Length);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task when_retrieving_a_missing_work_order_should_return_an_error()
+        {
+            var result = await _client.GetAsync("v1/work_orders/by_references?reference=MISSING");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task when_retrieving_multiple_work_orders_and_one_is_missing_should_return_an_error()
+        {
+            var result = await _client.GetAsync("v1/work_orders/by_references?reference=1&reference=MISSING");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+        #endregion
+
+        #region GET All work orders by property reference tests
         [Fact]
         public async Task when_making_a_request_without_a_property_reference_returns_a_400()
         {
