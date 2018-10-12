@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Linq;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 
@@ -39,13 +38,16 @@ namespace HackneyRepairs.Services
             return Task.Run(() => workOrders);   
         }
 
-        public Task<IEnumerable<string>> GetMobileReports(string servitorReference)
+        public Task<IEnumerable<MobileReport>> GetMobileReports(string servitorReference)
         {
-            var fakeResponse = new List<string>
+            var fakeResponse = new List<MobileReport>
             {
-                "Mobile report path"
+                new MobileReport
+                {
+                    ReportUri = "Mobile report path"
+                }
             };
-            return Task.Run(() => (IEnumerable<string>)fakeResponse);
+            return Task.Run(() => (IEnumerable<MobileReport>)fakeResponse);
         }
         
 		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)

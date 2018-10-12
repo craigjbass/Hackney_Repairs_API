@@ -35,7 +35,7 @@ namespace HackneyRepairs.Actions
                 if (string.IsNullOrWhiteSpace(result.ServitorReference))
                 {
                     _logger.LogError($"Work order {workOrderReference} does not have a servitor reference, mobile reports cannot be found");
-                    resultWithMobileReports.MobileReports = new List<string>();
+                    resultWithMobileReports.MobileReports = new List<MobileReport>();
                     return resultWithMobileReports;
                 }
                 _logger.LogError($"Getting mobile reports matching servitor reference {result.ServitorReference} for work order {workOrderReference}");
@@ -68,7 +68,7 @@ namespace HackneyRepairs.Actions
                         if (string.IsNullOrWhiteSpace(workOrder.ServitorReference))
                         {
                             _logger.LogError($"Work order {workOrder.WorkOrderReference} does not have a servitor reference, mobile reports cannot be found");
-                            resultWithMobileReports.MobileReports = new List<string>();
+                        resultWithMobileReports.MobileReports = new List<MobileReport>();
                         }
                         else
                         {

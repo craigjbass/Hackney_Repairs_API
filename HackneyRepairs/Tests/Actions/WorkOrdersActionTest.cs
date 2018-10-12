@@ -109,7 +109,8 @@ namespace HackneyRepairs.Tests.Actions
         public async Task when_retrieving_multiple_work_orders_with_mobile_reports_returns_all_with_mobile_reports()
         {
             var references = new string[] { "12345", "67890" };
-            var expectedMobileReports = new string[] { "MOBILE_REPORT_NAME" };
+            var expectedMobileReports = new MobileReport[] { new MobileReport() };
+
             var expectedWorkOrders = new UHWorkOrderWithMobileReports[] {
                 new UHWorkOrderWithMobileReports { WorkOrderReference = "12345", ServitorReference = "VALID_SERVITOR_REF" },
                 new UHWorkOrderWithMobileReports { WorkOrderReference = "67890", ServitorReference = null }

@@ -91,7 +91,7 @@ namespace HackneyRepairs.Tests.Integration
             var jsonResult = await result.Content.ReadAsStringAsync();
             var workOrders = JsonConvert.DeserializeObject<List<UHWorkOrderWithMobileReports>>(jsonResult);
 
-            Assert.Equal("Mobile report path", workOrders.ToArray()[0].MobileReports.ToArray()[0]);
+            Assert.Equal("Mobile report path", workOrders.FirstOrDefault().MobileReports.FirstOrDefault().ReportUri);
         }
 
         [Fact]

@@ -9,7 +9,7 @@ namespace HackneyRepairs.Interfaces
     {
         Task<UHWorkOrder> GetWorkOrder(string workOrderReference);
         Task<IEnumerable<UHWorkOrder>> GetWorkOrders(string[] workOrderReferences);
-        Task<IEnumerable<string>> GetMobileReports(string servitorReference);
+        Task<IEnumerable<MobileReport>> GetMobileReports(string servitorReference);
 		Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference);
         Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until);
         Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade, DateTime since, DateTime until);

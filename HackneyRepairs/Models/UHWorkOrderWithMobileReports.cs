@@ -5,6 +5,6 @@ namespace HackneyRepairs.Models
 {
     public class UHWorkOrderWithMobileReports : UHWorkOrder
     {
-        public IEnumerable<string> MobileReports { get; set; }
+        public IEnumerable<MobileReport> MobileReports { get; set; }
     }
 }

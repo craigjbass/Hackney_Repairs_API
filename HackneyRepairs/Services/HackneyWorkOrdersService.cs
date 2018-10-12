@@ -65,7 +65,7 @@ namespace HackneyRepairs.Services
             return combinedWorkOrders;
         }
 
-        public async Task<IEnumerable<string>> GetMobileReports(string servitorReference)
+        public async Task<IEnumerable<MobileReport>> GetMobileReports(string servitorReference)
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetMobileReports(): Sent request to MobileReportsRepository (Servitor reference: {servitorReference})");
             return MobileReportsRepository.GetReports(servitorReference);

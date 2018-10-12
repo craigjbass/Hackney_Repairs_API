@@ -90,10 +90,7 @@ namespace HackneyRepairs.Controllers
                     exceptionError.userMessage = "We had an unknown issue processing your request.";
                     errorJsonResponse = Json(exceptionError);
                     errorJsonResponse.StatusCode = 500;
-
-                    throw;
                 }
-
                 return errorJsonResponse;
             }
         }
