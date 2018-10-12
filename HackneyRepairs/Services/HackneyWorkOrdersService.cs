@@ -45,17 +45,20 @@ namespace HackneyRepairs.Services
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): Sent request to UhWarehouseRepository (WorkOrder references: {GenericFormatter.CommaSeparate(workOrderReferences)})");
 
-            IEnumerable<UHWorkOrder> validWarehouseWorkOrders = new UHWorkOrder[0];
+            var validWarehouseWorkOrders = new UHWorkOrder[0];
+            var remainingWorkOrderRefs = new string[0];
+            var foundWorkOrderRefs = new string[0];
 
-            var warehouseWorkOrders = await _uhWarehouseRepository.GetWorkOrdersByWorkOrderReferences(workOrderReferences);
+            var retrievedWarehouseWorkOrders = await _uhWarehouseRepository.GetWorkOrdersByWorkOrderReferences(workOrderReferences);
 
-            if (warehouseWorkOrders != null)
+            if (retrievedWarehouseWorkOrders != null)
             {
-                validWarehouseWorkOrders = warehouseWorkOrders.Where(wo => IsTerminatedWorkOrder(wo)).ToArray();
+                validWarehouseWorkOrders = retrievedWarehouseWorkOrders.Where(wo => IsTerminatedWorkOrder(wo)).ToArray();
+                foundWorkOrderRefs = validWarehouseWorkOrders.Select(wo => wo.WorkOrderReference).ToArray();
+                remainingWorkOrderRefs = retrievedWarehouseWorkOrders.Where(wo => !foundWorkOrderRefs.Contains(wo.WorkOrderReference)).Select(wo => wo.WorkOrderReference).ToArray();
+            } else {
+                remainingWorkOrderRefs = workOrderReferences;
             }
-
-            var foundWorkOrderRefs = validWarehouseWorkOrders.Select(wo => wo.WorkOrderReference).ToArray();
-            var remainingWorkOrderRefs = warehouseWorkOrders.Where(wo => !foundWorkOrderRefs.Contains(wo.WorkOrderReference)).Select(wo => wo.WorkOrderReference).ToArray();
 
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrders(): One or more workOrders missing or still active in the warehouse. Request sent to UhtRepository (WorkOrder references: {GenericFormatter.CommaSeparate(remainingWorkOrderRefs)})");
 
