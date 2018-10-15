@@ -1,6 +1,7 @@
 FROM microsoft/dotnet:2.1.302-sdk AS base
 WORKDIR /app
 EXPOSE ${PORT:-80}
+RUN apt-get update && apt-get install -y samba smbclient cifs-utils
 
 FROM microsoft/dotnet:2.1.302-sdk AS build
 WORKDIR /src
