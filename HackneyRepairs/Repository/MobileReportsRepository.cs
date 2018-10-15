@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HackneyRepairs.Models;
 
 namespace HackneyRepairs.Repository
 {
     public static class MobileReportsRepository
     {
-        private static string ServerName = Environment.GetEnvironmentVariable("MobileReportsServerName");
-        private static string MountedPath = Environment.GetEnvironmentVariable("MobileReportsMountedPath");
+        private static readonly string ServerName = Environment.GetEnvironmentVariable("MobileReportsServerName");
+        private static readonly string MountedPath = Environment.GetEnvironmentVariable("MobileReportsMountedPath");
 
-        public static IEnumerable<string> GetReports(string servitorReference)
+        public static IEnumerable<MobileReport> GetReports(string servitorReference)
         {
             EnsureResourceAccess();
 
@@ -19,28 +20,23 @@ namespace HackneyRepairs.Repository
             var processedReport = new FileInfo(MountedPath + "Processed/" + $"Works Order_{servitorReference}.pdf");
             if (!processedReport.Exists)
             {
-                return new List<string>();
+                return new List<MobileReport>();
             }
-
+            var results = new List<MobileReport> { BuildMobileReportResponse(processedReport) };
+           
             var unprocessedReports = Directory.GetFiles(MountedPath + "Unprocessed/", $"*{servitorReference}*").ToList();
             if (unprocessedReports.Any())
             {
-                unprocessedReports.Add(processedReport.FullName);
-                return FormatReportStrings(unprocessedReports);
+                foreach (string reportUri in unprocessedReports)
+                {
+                    var report = new FileInfo(reportUri);
+                    if (report.Exists)
+                    {
+                        results.Add(BuildMobileReportResponse(report));
+                    }
+                }
             }
-
-            var singleProcessedReportInList = new List<string> { processedReport.FullName };
-            return FormatReportStrings(singleProcessedReportInList);
-        }
-
-        static IEnumerable<string> FormatReportStrings(IEnumerable<string> mobileReports)
-        {
-            var formattedMobileReportStrings = new List<string>();
-            foreach (string report in mobileReports.ToList())
-            {
-                formattedMobileReportStrings.Add(report.Replace("/", @"\").Replace("volumes", "\\" + ServerName));
-            }
-            return formattedMobileReportStrings;
+            return results;
         }
 
         static void EnsureResourceAccess()
@@ -50,6 +46,17 @@ namespace HackneyRepairs.Repository
             {
                 throw new MobileReportsConnectionException();
             }
+        }
+
+        static MobileReport BuildMobileReportResponse(FileInfo report)
+        {
+            var mountpoint = (MountedPath.Split('/').Where(portion => !string.IsNullOrWhiteSpace(portion))).FirstOrDefault();
+            var reportFormattedUri = report.FullName.Replace(mountpoint, "\\" + ServerName).Replace("/", @"\");
+            return new MobileReport
+            {
+                ReportUri = reportFormattedUri,
+                Date = report.CreationTime
+            };
         }
     }
 

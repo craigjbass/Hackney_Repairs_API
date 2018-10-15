@@ -35,7 +35,7 @@ namespace HackneyRepairs.Actions
                 if (string.IsNullOrWhiteSpace(result.ServitorReference))
                 {
                     _logger.LogError($"Work order {workOrderReference} does not have a servitor reference, mobile reports cannot be found");
-                    resultWithMobileReports.MobileReports = new List<string>();
+                    resultWithMobileReports.MobileReports = new List<MobileReport>();
                     return resultWithMobileReports;
                 }
                 _logger.LogError($"Getting mobile reports matching servitor reference {result.ServitorReference} for work order {workOrderReference}");
@@ -68,7 +68,7 @@ namespace HackneyRepairs.Actions
                         if (string.IsNullOrWhiteSpace(workOrder.ServitorReference))
                         {
                             _logger.LogError($"Work order {workOrder.WorkOrderReference} does not have a servitor reference, mobile reports cannot be found");
-                            resultWithMobileReports.MobileReports = new List<string>();
+                        resultWithMobileReports.MobileReports = new List<MobileReport>();
                         }
                         else
                         {
@@ -104,10 +104,10 @@ namespace HackneyRepairs.Actions
 			return result;
 		}
 
-        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences)
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until)
         {
             _logger.LogInformation($"Finding work order details for property references: {GenericFormatter.CommaSeparate(propertyReferences)}");
-            var result = await _workOrdersService.GetWorkOrdersByPropertyReferences(propertyReferences);
+            var result = await _workOrdersService.GetWorkOrdersByPropertyReferences(propertyReferences, since, until);
 
             if ((result.ToList()).Count == 0)
             {

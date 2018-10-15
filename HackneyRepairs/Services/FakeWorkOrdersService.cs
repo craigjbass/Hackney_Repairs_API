@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 
@@ -38,13 +38,16 @@ namespace HackneyRepairs.Services
             return Task.Run(() => workOrders);   
         }
 
-        public Task<IEnumerable<string>> GetMobileReports(string servitorReference)
+        public Task<IEnumerable<MobileReport>> GetMobileReports(string servitorReference)
         {
-            var fakeResponse = new List<string>
+            var fakeResponse = new List<MobileReport>
             {
-                "Mobile report path"
+                new MobileReport
+                {
+                    ReportUri = "Mobile report path"
+                }
             };
-            return Task.Run(() => (IEnumerable<string>)fakeResponse);
+            return Task.Run(() => (IEnumerable<MobileReport>)fakeResponse);
         }
         
 		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
@@ -67,7 +70,7 @@ namespace HackneyRepairs.Services
 			return Task.Run(() => (IEnumerable<UHWorkOrder>)workOrder);
         }
 
-        public Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences)
+        public Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until)
         {
             if (Array.Exists(propertyReferences, v => v == "9999999999"))
             {
@@ -83,7 +86,7 @@ namespace HackneyRepairs.Services
             return Task.Run(() => workOrders);
         }
 
-		public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade)
+        public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade, DateTime since, DateTime until)
         {
 			if (string.Equals(blockReference, "9999999999"))
             {
