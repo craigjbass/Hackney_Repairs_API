@@ -99,17 +99,15 @@ namespace HackneyRepairs.Actions
             try
             {
                 var response = await _propertyService.GetPropertyListByPostCode(postcode, maxLevel, minLevel);
-                if (response == null)
+                if (response.Any())
                 {
-                    _logger.LogError($"Finding property by postcode: {postcode}: No properties found");
-                    throw new MissingPropertyListException();                    
+                    GenericFormatter.TrimStringAttributesInEnumerable(response);
                 }
-                GenericFormatter.TrimStringAttributesInEnumerable(response);
+
                 return new
                 {
                     results = response
                 };
-
             }
             catch(Exception e)
             {
