@@ -46,7 +46,7 @@ namespace HackneyRepairs.Tests.Logging
 			var workOrdersService = new Mock<IHackneyWorkOrdersService>();
 			PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object,workOrdersService.Object,  mockLogger.Object);
             
-            var result = await propertyActions.FindProperty("E8 1DT");
+            var result = await propertyActions.FindProperty("E8 1DT", null, null);
 
             mockLogger.Verify(l => l.LogInformation(It.IsAny<string>()));
         }

@@ -140,23 +140,53 @@ namespace HackneyRepairs.Repository
             }
         }
 
-        public async Task<PropertySummary[]> GetPropertyListByPostCode(string postcode)
+        public async Task<PropertyLevelModel[]> GetPropertyListByPostCode(string postcode, int? maxLevel, int? minLevel)
         {
+            if (maxLevel == null && minLevel == null)
+            {
+                maxLevel = 7;
+                minLevel = 7;
+            }
+
+            string levelConditionString;
+            if (maxLevel == minLevel)
+            {
+                levelConditionString = $"AND level_code = {maxLevel}";
+            }
+            else if (maxLevel == null && minLevel != null)
+            {
+                levelConditionString = $"AND level_code >= {minLevel}";
+            }
+            else if (minLevel == null && maxLevel != null)
+            {
+                levelConditionString = $"AND level_code <= {maxLevel}";
+            }
+            else
+            {
+                levelConditionString = $"AND level_code >= {minLevel} AND level_code <= {maxLevel}";
+            }
+
             _logger.LogInformation($"Getting properties for postcode {postcode}");
             try
             {
+                
                 using (SqlConnection connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
                     string query = $@"
                         SELECT 
-                            short_address AS 'ShortAddress',
-                            post_code AS 'PostCodeValue', 
-                            prop_ref AS 'PropertyReference' 
+                            property.prop_ref AS 'PropertyReference',
+                            property.level_code AS 'LevelCode',
+                            property.major_ref AS 'MajorReference',
+                            lulevel.lu_desc AS 'Description', 
+                            property.address1 AS 'Address',
+                            property.post_code AS 'PostCode'
                         FROM 
-                            property 
+                            StagedDB.dbo.property
+                        INNER 
+                            JOIN lulevel ON property.level_code = lulevel.lu_ref 
                         WHERE 
-                            level_code = 7 AND post_code = '{postcode}'";
-                    var properties = connection.Query<PropertySummary>(query).ToArray();
+                            post_code = '{postcode}' {levelConditionString}";
+                    var properties = connection.Query<PropertyLevelModel>(query).ToArray();
                     return properties;
                 }
             }

@@ -93,26 +93,27 @@ namespace HackneyRepairs.Actions
             }
         }
 
-        public async Task<object> FindProperty(string postcode)
+        public async Task<object> FindProperty(string postcode, int? maxLevel, int? minLevel)
         {
             _logger.LogInformation($"Finding property by postcode: {postcode}");
-            var request = _requestBuilder.BuildListByPostCodeRequest(postcode);
             try
             {
-				var response = await _propertyService.GetPropertyListByPostCode(request);
-                if(response == null)
+                var response = await _propertyService.GetPropertyListByPostCode(postcode, maxLevel, minLevel);
+                if (response == null)
                 {
-                    _logger.LogError($"Finding property by postcode: {request} response not set to an instance of PropertySummary[].");
+                    _logger.LogError($"Finding property by postcode: {postcode}: No properties found");
                     throw new MissingPropertyListException();                    
                 }
+                GenericFormatter.TrimStringAttributesInEnumerable(response);
                 return new
                 {
-                    results = response.Select(BuildProperty).ToArray()
+                    results = response
                 };
+
             }
             catch(Exception e)
             {
-                _logger.LogError($"Finding property by postcode: {request} returned an error: {e.Message}");
+                _logger.LogError($"Finding property by postcode: {postcode} returned an error: {e.Message}");
                 throw new PropertyServiceException();
             }
         }

@@ -8,6 +8,6 @@ namespace HackneyRepairs.Models
         public string Description { get; set; }
         public string MajorReference { get; set; }
         public string Address { get; set; }
-        public string PostCode { get; set; }
+        public string Postcode { get; set; }
     }
 }

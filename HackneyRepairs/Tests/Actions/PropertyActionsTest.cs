@@ -18,43 +18,43 @@ namespace HackneyRepairs.Tests.Actions
 		public async Task find_properties_returns_a_list_of_properties()
 		{
 			var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
-			var property1 = new PropertySummary()
+            var property1 = new PropertyLevelModel()
 			{
-				ShortAddress = "Front Office, Robert House, 6 - 15 Florfield Road",
-				PostCodeValue = "E8 1DT",
+                Address = "Front Office, Robert House, 6 - 15 Florfield Road",
+                Postcode = "E8 1DT",
 				PropertyReference = "1/43453543"
 			};
-			var property2 = new PropertySummary()
+            var property2 = new PropertyLevelModel()
 			{
-				ShortAddress = "Maurice Bishop House, 17 Reading Lane",
-				PostCodeValue = "E8 1DT",
+                Address = "Maurice Bishop House, 17 Reading Lane",
+                Postcode = "E8 1DT",
 				PropertyReference = "2/32453245"
 			};
-			var PropertyList = new PropertySummary[2];
+            var PropertyList = new PropertyLevelModel[2];
 			PropertyList[0] = property1;
 			PropertyList[1] = property2;
 			var fakeService = new Mock<IHackneyPropertyService>();
-			fakeService.Setup(service => service.GetPropertyListByPostCode("E8 1DT"))
+            fakeService.Setup(service => service.GetPropertyListByPostCode("E8 1DT", null, null))
 				.ReturnsAsync(PropertyList);
 			var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
 			fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 1DT"))
 				.Returns("E8 1DT");
 			var workOrdersService = new Mock<IHackneyWorkOrdersService>();
 			PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
-			var results = await propertyActions.FindProperty("E8 1DT");
-			var outputproperty1 = new
+            var results = await propertyActions.FindProperty("E8 1DT", null, null);
+            var outputproperty1 = new PropertyLevelModel
 			{
-				address = "Front Office, Robert House, 6 - 15 Florfield Road",
-				postcode = "E8 1DT",
-				propertyReference = "1/43453543"
+				Address = "Front Office, Robert House, 6 - 15 Florfield Road",
+				Postcode = "E8 1DT",
+                PropertyReference = "1/43453543"
 			};
-			var outputproperty2 = new
+            var outputproperty2 = new PropertyLevelModel
 			{
-				address = "Maurice Bishop House, 17 Reading Lane",
-				postcode = "E8 1DT",
-				propertyReference = "2/32453245"
+				Address = "Maurice Bishop House, 17 Reading Lane",
+                Postcode = "E8 1DT",
+                PropertyReference = "2/32453245"
 			};
-			var properties = new object[2];
+            var properties = new PropertyLevelModel[2];
 			properties[0] = outputproperty1;
 			properties[1] = outputproperty2;
 			var json = new { results = properties };
@@ -65,15 +65,15 @@ namespace HackneyRepairs.Tests.Actions
 		public async Task find_properties_returns_an_empty_response_when_no_matches()
 		{
 			var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
-			var PropertyList = new PropertySummary[0];
+            var PropertyList = new PropertyLevelModel[0];
 			var fakeService = new Mock<IHackneyPropertyService>();
-			fakeService.Setup(service => service.GetPropertyListByPostCode(It.IsAny<string>()))
+            fakeService.Setup(service => service.GetPropertyListByPostCode(It.IsAny<string>(), null, null))
 				.ReturnsAsync(PropertyList);
 			var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
 			fakeRequestBuilder.Setup(service => service.BuildListByPostCodeRequest("E8 2LN")).Returns(string.Empty);
 			var workOrdersService = new Mock<IHackneyWorkOrdersService>();
 			PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
-			var results = await propertyActions.FindProperty("E8 2LN");
+            var results = await propertyActions.FindProperty("E8 2LN", null, null);
 			var properties = new object[0];
 			var json = new { results = properties };
 			Assert.Equal(JsonConvert.SerializeObject(json), JsonConvert.SerializeObject(results));
@@ -84,13 +84,13 @@ namespace HackneyRepairs.Tests.Actions
 		{
 			var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
 			var fakeService = new Mock<IHackneyPropertyService>();
-			PropertySummary[] response = null;
-			fakeService.Setup(service => service.GetPropertyListByPostCode(It.IsAny<string>()))
+            PropertyLevelModel[] response = null;
+            fakeService.Setup(service => service.GetPropertyListByPostCode(It.IsAny<string>(), null, null))
 				.ReturnsAsync(response);
 			var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
 			var workOrdersService = new Mock<IHackneyWorkOrdersService>();
 			PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
-			await Assert.ThrowsAsync<PropertyServiceException>(async () => await propertyActions.FindProperty("E8 2LN"));
+            await Assert.ThrowsAsync<PropertyServiceException>(async () => await propertyActions.FindProperty("E8 2LN", null, null));
 		}
 
 		[Fact]
