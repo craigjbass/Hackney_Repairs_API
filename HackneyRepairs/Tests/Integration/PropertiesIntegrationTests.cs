@@ -42,9 +42,9 @@ namespace HackneyRepairs.Tests
         [InlineData(0, 0)]
         [InlineData(6, 6)]
         [InlineData(7, 2)]
-        public async Task return_a_200_result_for_valid_requests_with_valid_level_parameters(int maxLevel, int minLevel)
+        public async Task return_a_200_result_for_valid_requests_with_valid_level_parameters(int max_level, int min_level)
         {
-            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&maxLevel={maxLevel}&minLevel={minLevel}");
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&max_level={max_level}&min_level={min_level}");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
@@ -53,9 +53,9 @@ namespace HackneyRepairs.Tests
         [InlineData(8)]
         [InlineData(0)]
         [InlineData(4)]
-        public async Task return_a_200_result_for_valid_requests_with_maxLevel_parameter(int maxLevel)
+        public async Task return_a_200_result_for_valid_requests_with_max_level_parameter(int max_level)
         {
-            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&maxLevel={maxLevel}");
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&max_level={max_level}");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
@@ -64,9 +64,9 @@ namespace HackneyRepairs.Tests
         [InlineData(8)]
         [InlineData(0)]
         [InlineData(4)]
-        public async Task return_a_200_result_for_valid_requests_with_minLevel_parameter(int minLevel)
+        public async Task return_a_200_result_for_valid_requests_with_min_level_parameter(int min_level)
         {
-            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&minLevel={minLevel}");
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&min_level={min_level}");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
@@ -93,9 +93,9 @@ namespace HackneyRepairs.Tests
         }
 
         [Fact]
-        public async Task return_a_400_result_if_minLevel_is_higher_than_maxLevel_param()
+        public async Task return_a_400_result_if_min_level_is_higher_than_max_level_param()
         {
-            var result = await _client.GetAsync("v1/properties?postcode=E8 1DT&maxLevel=1&minLevel=5");
+            var result = await _client.GetAsync("v1/properties?postcode=E8 1DT&max_level=1&min_level=5");
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
@@ -104,9 +104,9 @@ namespace HackneyRepairs.Tests
         [InlineData(-10)]
         [InlineData(9)]
         [InlineData(19)]
-        public async Task return_a_400_result_when_minLevel_is_out_of_boundaries(int minLevel)
+        public async Task return_a_400_result_when_min_level_is_out_of_boundaries(int min_level)
         {
-            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&minLevel={minLevel}");
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&min_level={min_level}");
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
@@ -115,9 +115,9 @@ namespace HackneyRepairs.Tests
         [InlineData(-10)]
         [InlineData(9)]
         [InlineData(19)]
-        public async Task return_a_400_result_when_maxLevel_is_out_of_boundaries(int maxLevel)
+        public async Task return_a_400_result_when_max_level_is_out_of_boundaries(int max_level)
         {
-            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&minLevel={maxLevel}");
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&min_level={max_level}");
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
