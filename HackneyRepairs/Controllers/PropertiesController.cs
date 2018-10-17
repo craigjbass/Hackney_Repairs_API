@@ -97,8 +97,8 @@ namespace HackneyRepairs.Controllers
         /// Gets a property or properties for a particular postcode
         /// </summary>
         /// <param name="postcode">The post code of the propterty being requested</param>
-        /// <param name="max_level">The maximum hierarchy level or the properties requested</param>
-        /// <param name="min_level">The minimum hierarchy level of the properties requested</param>
+        /// <param name="max_level">The highest hierarchy level or the properties requested. Higest is 0 (Owner, Hackney Council)</param>
+        /// <param name="min_level">The lowest hierarchy level of the properties requested. Lowest is 8 (Non-Dwell)</param>
         /// <returns>A list of properties matching the specified post code</returns>
         /// <response code="200">Returns the list of properties</response>
         /// <response code="400">If a post code is not provided</response>   
@@ -108,7 +108,7 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-                if (max_level < min_level || max_level > 8 || max_level < 0 || min_level > 8 || min_level < 0)
+                if (min_level < max_level || max_level > 8 || max_level < 0 || min_level > 8 || min_level < 0)
                 {
                     var errors = new List<ApiErrorMessage>
                     {

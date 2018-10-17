@@ -48,7 +48,7 @@ namespace HackneyRepairs.Repository
         {
             if (IsDevelopmentEnvironment())
             {
-                return new List<RepairRequest>();
+                return new List<RepairRequestBase>();
             }
 
             try
@@ -155,15 +155,15 @@ namespace HackneyRepairs.Repository
             }
             else if (maxLevel == null && minLevel != null)
             {
-                levelConditionString = $"AND level_code >= {minLevel}";
+                levelConditionString = $"AND level_code <= {minLevel}";
             }
             else if (minLevel == null && maxLevel != null)
             {
-                levelConditionString = $"AND level_code <= {maxLevel}";
+                levelConditionString = $"AND level_code >= {maxLevel}";
             }
             else
             {
-                levelConditionString = $"AND level_code >= {minLevel} AND level_code <= {maxLevel}";
+                levelConditionString = $"AND level_code <= {minLevel} AND level_code >= {maxLevel}";
             }
 
             _logger.LogInformation($"Getting properties for postcode {postcode}");
