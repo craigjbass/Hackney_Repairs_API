@@ -48,7 +48,7 @@ namespace HackneyRepairs.Repository
         {
             if (IsDevelopmentEnvironment())
             {
-                return new List<RepairRequest>();
+                return new List<RepairRequestBase>();
             }
 
             try
@@ -70,7 +70,7 @@ namespace HackneyRepairs.Repository
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                throw new UhtRepositoryException();
+                throw new UhwRepositoryException();
             }
         }
 

@@ -237,6 +237,7 @@ namespace HackneyRepairs.Controllers
                         jsonResponse.StatusCode = 400;
                         return jsonResponse;
                     }
+                    validUntil = validUntil.AddDays(1).AddSeconds(-1);
                 }
 
                 result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReference, validSince, validUntil)).ToList();
