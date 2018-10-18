@@ -42,7 +42,7 @@ namespace HackneyRepairs.Tests
         [InlineData(0, 0)]
         [InlineData(6, 6)]
         [InlineData(7, 2)]
-        public async Task return_a_200_result_for_valid_requests_with_valid_level_parameters(int max_level, int min_level)
+        public async Task return_a_200_result_for_valid_requests_with_valid_level_parameters(int min_level, int max_level)
         {
             var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&max_level={max_level}&min_level={min_level}");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
@@ -93,9 +93,9 @@ namespace HackneyRepairs.Tests
         }
 
         [Fact]
-        public async Task return_a_400_result_if_min_level_is_higher_than_max_level_param()
+        public async Task return_a_400_result_if_max_level_is_higher_than_min_level_param()
         {
-            var result = await _client.GetAsync("v1/properties?postcode=E8 1DT&max_level=1&min_level=5");
+            var result = await _client.GetAsync("v1/properties?postcode=E8 1DT&max_level=5&min_level=1");
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
