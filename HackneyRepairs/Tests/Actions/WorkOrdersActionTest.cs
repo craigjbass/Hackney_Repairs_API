@@ -109,7 +109,8 @@ namespace HackneyRepairs.Tests.Actions
         public async Task when_retrieving_multiple_work_orders_with_mobile_reports_returns_all_with_mobile_reports()
         {
             var references = new string[] { "12345", "67890" };
-            var expectedMobileReports = new string[] { "MOBILE_REPORT_NAME" };
+            var expectedMobileReports = new MobileReport[] { new MobileReport() };
+
             var expectedWorkOrders = new UHWorkOrderWithMobileReports[] {
                 new UHWorkOrderWithMobileReports { WorkOrderReference = "12345", ServitorReference = "VALID_SERVITOR_REF" },
                 new UHWorkOrderWithMobileReports { WorkOrderReference = "67890", ServitorReference = null }
@@ -334,11 +335,11 @@ namespace HackneyRepairs.Tests.Actions
             var workOrderService = new Mock<IHackneyWorkOrdersService>();
 
             workOrderService
-                .Setup(service => service.GetWorkOrdersByPropertyReferences(propReferences))
+                .Setup(service => service.GetWorkOrdersByPropertyReferences(propReferences, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(expectedWorkOrders));
 
             var workOrderActions = new WorkOrdersActions(workOrderService.Object, _mockLogger.Object);
-            var workOrders = await workOrderActions.GetWorkOrdersByPropertyReferences(propReferences);
+            var workOrders = await workOrderActions.GetWorkOrdersByPropertyReferences(propReferences, It.IsAny<DateTime>(), It.IsAny<DateTime>());
 
             Assert.Equal(expectedWorkOrders, workOrders);
         }
