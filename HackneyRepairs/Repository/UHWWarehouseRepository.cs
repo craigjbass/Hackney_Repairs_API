@@ -148,24 +148,6 @@ namespace HackneyRepairs.Repository
                 minLevel = 7;
             }
 
-            string levelConditionString;
-            if (maxLevel == minLevel)
-            {
-                levelConditionString = $"AND level_code = {maxLevel}";
-            }
-            else if (maxLevel == null && minLevel != null)
-            {
-                levelConditionString = $"AND level_code <= {minLevel}";
-            }
-            else if (minLevel == null && maxLevel != null)
-            {
-                levelConditionString = $"AND level_code >= {maxLevel}";
-            }
-            else
-            {
-                levelConditionString = $"AND level_code <= {minLevel} AND level_code >= {maxLevel}";
-            }
-
             _logger.LogInformation($"Getting properties for postcode {postcode}");
             try
             {
@@ -181,11 +163,11 @@ namespace HackneyRepairs.Repository
                             property.address1 AS 'Address',
                             property.post_code AS 'PostCode'
                         FROM 
-                            StagedDB.dbo.property
+                            property
                         INNER 
                             JOIN lulevel ON property.level_code = lulevel.lu_ref 
                         WHERE 
-                            post_code = '{postcode}' {levelConditionString}";
+                            post_code = '{postcode}' {SqlLevelCondition(minLevel, maxLevel)}";
                     var properties = connection.Query<PropertyLevelModel>(query).ToArray();
                     return properties;
                 }
@@ -721,7 +703,29 @@ namespace HackneyRepairs.Repository
             return dtCutoff.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
-        bool IsDevelopmentEnvironment()
+        private string SqlLevelCondition(int? minLevel, int? maxLevel)
+        {
+            string levelConditionString;
+            if (maxLevel == minLevel)
+            {
+                levelConditionString = $"AND level_code = {maxLevel}";
+            }
+            else if (maxLevel == null && minLevel != null)
+            {
+                levelConditionString = $"AND level_code <= {minLevel}";
+            }
+            else if (minLevel == null && maxLevel != null)
+            {
+                levelConditionString = $"AND level_code >= {maxLevel}";
+            }
+            else
+            {
+                levelConditionString = $"AND level_code <= {minLevel} AND level_code >= {maxLevel}";
+            }
+            return levelConditionString;
+        }
+
+        private bool IsDevelopmentEnvironment()
         {
             string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (environment.ToLower() != "development" && environment.ToLower() != "local")
