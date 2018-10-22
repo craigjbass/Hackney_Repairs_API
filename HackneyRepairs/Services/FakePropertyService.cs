@@ -76,20 +76,20 @@ namespace HackneyRepairs.Services
             return Task.Run(() => reference == "525252525");
         }
 
-        public Task<PropertySummary[]> GetPropertyListByPostCode(string post_code)
+        public Task<PropertyLevelModel[]> GetPropertyListByPostCode(string post_code, int? maxLevel, int? minLevel)
         {
-            var  PropertyList= new PropertySummary[2];
-            PropertySummary[] emptyPropertyList;
-            var property1 = new PropertySummary()
+            var  PropertyList= new PropertyLevelModel[2];
+            PropertyLevelModel[] emptyPropertyList;
+            var property1 = new PropertyLevelModel()
             {
-                ShortAddress = "Back Office, Robert House, 6 - 15 Florfield Road",
-                PostCodeValue = "E8 1DT",
+                Address = "Back Office, Robert House, 6 - 15 Florfield Road",
+                Postcode = "E8 1DT",
                 PropertyReference = "1/525252525"
             };
-            var property2 = new PropertySummary()
+            var property2 = new PropertyLevelModel()
             {
-                ShortAddress = "Meeting room, Maurice Bishop House, 17 Reading Lane",
-                PostCodeValue = "E8 1DT",
+                Address = "Meeting room, Maurice Bishop House, 17 Reading Lane",
+                Postcode = "E8 1DT",
                 PropertyReference = "6/32453245   "
             };
             PropertyList[0] = property1;
@@ -102,7 +102,7 @@ namespace HackneyRepairs.Services
                     emptyPropertyList = null;
                     return Task.Run(() => emptyPropertyList);
                  default:
-                    emptyPropertyList = new PropertySummary[0];
+                    emptyPropertyList = new PropertyLevelModel[0];
                     return Task.Run(() => emptyPropertyList);
             }
         }

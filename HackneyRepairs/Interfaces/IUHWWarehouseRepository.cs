@@ -11,7 +11,7 @@ namespace HackneyRepairs.Interfaces
         Task<bool> GetMaintainableFlag(string propertyReference);
         Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference);
         Task<PropertyLevelModel> GetPropertyLevelInfo(string reference);
-        Task<PropertySummary[]> GetPropertyListByPostCode(string post_code);
+        Task<PropertyLevelModel[]> GetPropertyListByPostCode(string post_code, int? maxLevel, int? minLevel);
         Task<PropertyDetails> GetPropertyDetailsByReference(string reference);
         Task<PropertyDetails> GetPropertyBlockByReference(string reference);
         Task<PropertyDetails> GetPropertyEstateByReference(string reference);

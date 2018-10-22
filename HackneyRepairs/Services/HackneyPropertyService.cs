@@ -54,10 +54,10 @@ namespace HackneyRepairs.Services
             return response;
         }
 
-        public async Task<PropertySummary[]> GetPropertyListByPostCode(string post_code)
+        public async Task<PropertyLevelModel[]> GetPropertyListByPostCode(string post_code, int? maxLevel, int? minLevel)
         {
             _logger.LogInformation($"HackneyPropertyService/GetPropertyListByPostCode(): Sent request to upstream data warehouse (Postcode: {post_code})");
-            var response = await _uhWarehouseRepository.GetPropertyListByPostCode(post_code);
+            var response = await _uhWarehouseRepository.GetPropertyListByPostCode(post_code, maxLevel, minLevel);
             _logger.LogInformation($"HackneyPropertyService/GetPropertyListByPostCode(): Received response from upstream data warehouse (Postcode: {post_code})");
             return response;
         }

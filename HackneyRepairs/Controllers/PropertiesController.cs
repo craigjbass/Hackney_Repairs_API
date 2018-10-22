@@ -98,19 +98,36 @@ namespace HackneyRepairs.Controllers
         /// Gets a property or properties for a particular postcode
         /// </summary>
         /// <param name="postcode">The post code of the propterty being requested</param>
+        /// <param name="max_level">The highest hierarchy level or the properties requested. Higest is 0 (Owner, Hackney Council)</param>
+        /// <param name="min_level">The lowest hierarchy level of the properties requested. Lowest is 8 (Non-Dwell)</param>
         /// <returns>A list of properties matching the specified post code</returns>
         /// <response code="200">Returns the list of properties</response>
         /// <response code="400">If a post code is not provided</response>   
         /// <response code="500">If any errors are encountered</response>   
         [HttpGet]
-        public async Task<JsonResult> Get([FromQuery]string postcode)
+        public async Task<JsonResult> Get([FromQuery]string postcode, int? max_level = null, int? min_level = null)
         {
             try
             {
+                if (min_level < max_level || max_level > 8 || max_level < 0 || min_level > 8 || min_level < 0)
+                {
+                    var errors = new List<ApiErrorMessage>
+                    {
+                        new ApiErrorMessage
+                        {
+                            developerMessage = "Invalid parameter - invalid level passed",
+                            userMessage = "Please provide a valid level"
+                        }
+                    };
+                    var json = Json(errors);
+                    json.StatusCode = 400;
+                    return json;
+                }
+
                 if (_postcodeValidator.Validate(postcode))
                 {
 					PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
-                    var json = Json(await actions.FindProperty(_propertyServiceRequestBuilder.BuildListByPostCodeRequest(postcode)));
+                    var json = Json(await actions.FindProperty(_propertyServiceRequestBuilder.BuildListByPostCodeRequest(postcode), max_level, min_level));
                     json.StatusCode = 200;
                     json.ContentType = "application/json";
                     return json;

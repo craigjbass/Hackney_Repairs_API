@@ -36,6 +36,41 @@ namespace HackneyRepairs.Tests
             Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
         }
 
+        [Theory]
+        [InlineData(8, 0)]
+        [InlineData(8, 8)]
+        [InlineData(0, 0)]
+        [InlineData(6, 6)]
+        [InlineData(7, 2)]
+        public async Task return_a_200_result_for_valid_requests_with_valid_level_parameters(int min_level, int max_level)
+        {
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&max_level={max_level}&min_level={min_level}");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Theory]
+        [InlineData(8)]
+        [InlineData(0)]
+        [InlineData(4)]
+        public async Task return_a_200_result_for_valid_requests_with_max_level_parameter(int max_level)
+        {
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&max_level={max_level}");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Theory]
+        [InlineData(8)]
+        [InlineData(0)]
+        [InlineData(4)]
+        public async Task return_a_200_result_for_valid_requests_with_min_level_parameter(int min_level)
+        {
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&min_level={min_level}");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
         [Fact]
         public async Task return_a_400_result_for_no_parameters()
         {
@@ -58,6 +93,35 @@ namespace HackneyRepairs.Tests
         }
 
         [Fact]
+        public async Task return_a_400_result_if_max_level_is_higher_than_min_level_param()
+        {
+            var result = await _client.GetAsync("v1/properties?postcode=E8 1DT&max_level=5&min_level=1");
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(-10)]
+        [InlineData(9)]
+        [InlineData(19)]
+        public async Task return_a_400_result_when_min_level_is_out_of_boundaries(int min_level)
+        {
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&min_level={min_level}");
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(-10)]
+        [InlineData(9)]
+        [InlineData(19)]
+        public async Task return_a_400_result_when_max_level_is_out_of_boundaries(int max_level)
+        {
+            var result = await _client.GetAsync($"v1/properties?postcode=E8+1DT&min_level={max_level}");
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Fact]
         public async Task return_a_500_result_when_there_is_an_internal_server_error_for_properties_by_postcode()
         {
             var result = await _client.GetAsync("v1/properties?postcode=E8+2LN");
@@ -74,14 +138,21 @@ namespace HackneyRepairs.Tests
             json.Append("\"results\":");
             json.Append("[");
             json.Append("{");
+            json.Append("\"propertyReference\":\"1/525252525\",");
+            json.Append("\"levelCode\":null,");
+            json.Append("\"description\":null,");
+            json.Append("\"majorReference\":null,");
             json.Append("\"address\":\"Back Office, Robert House, 6 - 15 Florfield Road\",");
-            json.Append("\"postcode\":\"E8 1DT\",");
-            json.Append("\"propertyReference\":\"1/525252525\"");
+            json.Append("\"postcode\":\"E8 1DT\"");
+
             json.Append("},");
             json.Append("{");
+            json.Append("\"propertyReference\":\"6/32453245\",");
+            json.Append("\"levelCode\":null,");
+            json.Append("\"description\":null,");
+            json.Append("\"majorReference\":null,");
             json.Append("\"address\":\"Meeting room, Maurice Bishop House, 17 Reading Lane\",");
-            json.Append("\"postcode\":\"E8 1DT\",");
-            json.Append("\"propertyReference\":\"6/32453245\"");
+            json.Append("\"postcode\":\"E8 1DT\"");
             json.Append("}");
             json.Append("]");
             json.Append("}");
@@ -98,14 +169,20 @@ namespace HackneyRepairs.Tests
             json.Append("\"results\":");
             json.Append("[");
             json.Append("{");
+            json.Append("\"propertyReference\":\"1/525252525\",");
+            json.Append("\"levelCode\":null,");
+            json.Append("\"description\":null,");
+            json.Append("\"majorReference\":null,");
             json.Append("\"address\":\"Back Office, Robert House, 6 - 15 Florfield Road\",");
-            json.Append("\"postcode\":\"E8 1DT\",");
-            json.Append("\"propertyReference\":\"1/525252525\"");
+            json.Append("\"postcode\":\"E8 1DT\"");
             json.Append("},");
             json.Append("{");
+            json.Append("\"propertyReference\":\"6/32453245\",");
+            json.Append("\"levelCode\":null,");
+            json.Append("\"description\":null,");
+            json.Append("\"majorReference\":null,");
             json.Append("\"address\":\"Meeting room, Maurice Bishop House, 17 Reading Lane\",");
-            json.Append("\"postcode\":\"E8 1DT\",");
-            json.Append("\"propertyReference\":\"6/32453245\"");
+            json.Append("\"postcode\":\"E8 1DT\"");
             json.Append("}");
             json.Append("]");
             json.Append("}");
@@ -122,14 +199,20 @@ namespace HackneyRepairs.Tests
             json.Append("\"results\":");
             json.Append("[");
             json.Append("{");
+            json.Append("\"propertyReference\":\"1/525252525\",");
+            json.Append("\"levelCode\":null,");
+            json.Append("\"description\":null,");
+            json.Append("\"majorReference\":null,");
             json.Append("\"address\":\"Back Office, Robert House, 6 - 15 Florfield Road\",");
-            json.Append("\"postcode\":\"E8 1DT\",");
-            json.Append("\"propertyReference\":\"1/525252525\"");
+            json.Append("\"postcode\":\"E8 1DT\"");
             json.Append("},");
             json.Append("{");
+            json.Append("\"propertyReference\":\"6/32453245\",");
+            json.Append("\"levelCode\":null,");
+            json.Append("\"description\":null,");
+            json.Append("\"majorReference\":null,");
             json.Append("\"address\":\"Meeting room, Maurice Bishop House, 17 Reading Lane\",");
-            json.Append("\"postcode\":\"E8 1DT\",");
-            json.Append("\"propertyReference\":\"6/32453245\"");
+            json.Append("\"postcode\":\"E8 1DT\"");
             json.Append("}");
             json.Append("]");
             json.Append("}");
