@@ -196,14 +196,14 @@ namespace HackneyRepairs.Tests.Integration
         }
 
         [Fact]
-        public async Task returns_a_200_response_when_invalid_since_parameter_is_passed()
+        public async Task returns_a_400_response_when_invalid_since_parameter_is_passed()
         {
             var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678&since=2018a-01-01");
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         [Fact]
-        public async Task returns_a_200_response_when_invalid_until_parameter_is_passed()
+        public async Task returns_a_400_response_when_invalid_until_parameter_is_passed()
         {
             var result = await _client.GetAsync("v1/work_orders?propertyreference=12345678&until=2018a-01-01");
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);

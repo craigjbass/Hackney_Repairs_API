@@ -48,8 +48,8 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = "Invalid parameter - Please use a valid startId",
-                    userMessage = @"Bad Request"
+                    DeveloperMessage = "Invalid parameter - Please use a valid startId",
+                    UserMessage = @"Bad Request"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 400;
@@ -59,8 +59,8 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = "Bad Request - Missing parameter",
-                    userMessage = @"Bad Request"
+                    DeveloperMessage = "Bad Request - Missing parameter",
+                    UserMessage = @"Bad Request"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 400;
@@ -79,25 +79,25 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message
+                    DeveloperMessage = ex.Message
                 };
 
                 JsonResult jsonResponse;
                 if (ex is MissingNoteTargetException)
                 {
-                    error.userMessage = "noteTarget parameter does not exist in the data source";
+                    error.UserMessage = "noteTarget parameter does not exist in the data source";
                     jsonResponse = Json(error);
                     jsonResponse.StatusCode = 404;
                 }
                 else if (ex is UHWWarehouseRepositoryException || ex is UhwRepositoryException)
                 {
-                    error.userMessage = "We had issues with connecting to the data source.";
+                    error.UserMessage = "We had issues with connecting to the data source.";
                     jsonResponse = Json(error);
                     jsonResponse.StatusCode = 500;
                 }
                 else
                 {
-                    error.userMessage = "We had issues processing your request.";
+                    error.UserMessage = "We had issues processing your request.";
                     jsonResponse = Json(error);
                     jsonResponse.StatusCode = 500;
                 }
