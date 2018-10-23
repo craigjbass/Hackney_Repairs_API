@@ -64,8 +64,8 @@ namespace HackneyRepairs.Controllers
                 {
                     var errors = validationResult.ErrorMessages.Select(error => new ApiErrorMessage
                     {
-                        developerMessage = error,
-                        userMessage = error
+                        DeveloperMessage = error,
+                        UserMessage = error
                     }).ToList();
                     var jsonResponse = Json(errors);
                     jsonResponse.StatusCode = 400;
@@ -79,8 +79,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = ex.Message,
-                        userMessage = "We had some problems processing your request"
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "We had some problems processing your request"
                     }
                 };
                 var json = Json(errors);
@@ -114,8 +114,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = ex.Message,
-                        userMessage = @"Cannot find repair."
+                        DeveloperMessage = ex.Message,
+                        UserMessage = @"Cannot find repair."
                     }
                 };
                 var json = Json(errors);
@@ -130,8 +130,8 @@ namespace HackneyRepairs.Controllers
                     new ApiErrorMessage
                     {
 
-                        developerMessage = ex.Message,
-                        userMessage = "We had some problems processing your request"
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "We had some problems processing your request"
                     }
                 };
                 var json = Json(errors);
@@ -159,8 +159,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = "Missing parameter - propertyReference",
-                        userMessage = "Missing parameter - propertyReference"
+                        DeveloperMessage = "Missing parameter - propertyReference",
+                        UserMessage = "Missing parameter - propertyReference"
                     }
                 };
                 var json = Json(errors);
@@ -181,8 +181,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = ex.Message,
-                        userMessage = @"Cannot find property."
+                        DeveloperMessage = ex.Message,
+                        UserMessage = @"Cannot find property."
                     }
                 };
                 var json = Json(errors);
@@ -197,8 +197,8 @@ namespace HackneyRepairs.Controllers
                     new ApiErrorMessage
                     {
 
-                        developerMessage = ex.Message,
-                        userMessage = "We had some problems processing your request"
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "We had some problems processing your request"
                     }
                 };
                 var json = Json(errors);

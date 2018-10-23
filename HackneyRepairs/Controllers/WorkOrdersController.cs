@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
+using HackneyRepairs.Builders;
 using HackneyRepairs.Factories;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
@@ -46,14 +47,7 @@ namespace HackneyRepairs.Controllers
         {
             if (reference.Length == 0)
             {
-                var error = new ApiErrorMessage
-                {
-                    developerMessage = "Bad Request - Missing reference parameter",
-                    userMessage = @"Bad Request"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 400;
-                return jsonResponse;
+                return ResponseBuilder.Error(400, "Bad request", "Bad Request - Missing reference parameter");
             }
 
             var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
@@ -63,35 +57,22 @@ namespace HackneyRepairs.Controllers
             try
             {
                 var workOrders = (await workOrdersActions.GetWorkOrders(reference, includeMobileReports)).ToList();
-                return Json(workOrders);
+                return ResponseBuilder.Ok(workOrders);
             }
             catch (Exception ex)
             {
-                JsonResult errorJsonResponse;
-                var exceptionError = new ApiErrorMessage
-                {
-                    developerMessage = ex.Message
-                };
-
                 if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException || ex is MobileReportsConnectionException)
                 {
-                    exceptionError.userMessage = "We had issues with connecting to the data source.";
-                    errorJsonResponse = Json(exceptionError);
-                    errorJsonResponse.StatusCode = 500;
+                    return ResponseBuilder.Error(500, "We had issues with connecting to the data source", ex.Message);
                 }
                 else if (ex is MissingWorkOrderException)
                 {
-                    exceptionError.userMessage = "Could not find one or more of the given work orders";
-                    errorJsonResponse = Json(exceptionError);
-                    errorJsonResponse.StatusCode = 404;
+                    return ResponseBuilder.Error(404, "Could not find one or more of the given work orders", ex.Message);
                 }
                 else
                 {
-                    exceptionError.userMessage = "We had an unknown issue processing your request.";
-                    errorJsonResponse = Json(exceptionError);
-                    errorJsonResponse.StatusCode = 500;
+                    return ResponseBuilder.Error(500, "We had an unknown issue processing your request", ex.Message);
                 }
-                return errorJsonResponse;
             }
         }
 
@@ -115,59 +96,35 @@ namespace HackneyRepairs.Controllers
             var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
 			try
 			{
-                JsonResult json;
                 if (string.IsNullOrWhiteSpace(include))
                 {
                     var workOrderResult = await workOrdersActions.GetWorkOrder(workOrderReference);
-                    json = Json(workOrderResult); 
+                    return ResponseBuilder.Ok(workOrderResult);
                 }
                 else if (string.Equals(include.ToLower(), "mobilereports"))
                 {
                     var workOrderWithMobileReports = await workOrdersActions.GetWorkOrder(workOrderReference, true);
-                    json = Json(workOrderWithMobileReports);
+                    return ResponseBuilder.Ok(workOrderWithMobileReports);
                 }
                 else
                 {
-                    var error = new ApiErrorMessage
-                    {
-                        developerMessage = $"Unknown parameter value: {include}",
-                        userMessage = $"Unknown parameter value: {include}"
-                    };
-                    json = Json(error);
-                    json.StatusCode = 400;
-                    return json;
+                    return ResponseBuilder.Error(400, $"Unknown parameter value: {include}", $"Unknown parameter value: {include}");
                 }
-
-				json.StatusCode = 200;
-				return json;
 			}
             catch (Exception ex)
             {
-                var exceptionError = new ApiErrorMessage
-                {
-                    developerMessage = ex.Message
-                };
-
-                JsonResult errorJsonResponse;
                 if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException || ex is MobileReportsConnectionException)
                 {
-                    exceptionError.userMessage = "We had issues with connecting to the data source.";
-                    errorJsonResponse = Json(exceptionError);
-                    errorJsonResponse.StatusCode = 500;
+                    return ResponseBuilder.Error(500, "We had issues with connecting to the data source", ex.Message);
                 }
                 else if (ex is MissingWorkOrderException)
                 {
-                    exceptionError.userMessage = "Cannot find work order";
-                    errorJsonResponse = Json(exceptionError);
-                    errorJsonResponse.StatusCode = 404;
+                    return ResponseBuilder.Error(404, "Cannit find work order", ex.Message);
                 }
                 else
                 {
-                    exceptionError.userMessage = "We had issues processing your request.";
-                    errorJsonResponse = Json(exceptionError);
-                    errorJsonResponse.StatusCode = 500;
+                    return ResponseBuilder.Error(500, "We had issues processing your request", ex.Message);
                 }
-                return errorJsonResponse;
             }
 		}
 
@@ -187,20 +144,12 @@ namespace HackneyRepairs.Controllers
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<JsonResult> GetWorkOrderByPropertyReference(string[] propertyReference, string since, string until)
         {
             if (propertyReference == null || propertyReference.Length == 0)
             {
-                var error = new ApiErrorMessage
-                {
-                   developerMessage = "Bad Request - Missing parameter",
-                   userMessage = @"Bad Request"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 400;
-                return jsonResponse;
+                return ResponseBuilder.Error(400, "Bad request", "Bad request - Missing parameter");
             }
 
 			var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
@@ -212,14 +161,7 @@ namespace HackneyRepairs.Controllers
                 {
                     if (!DateTime.TryParseExact(since, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out validSince))
                     {
-                        var error = new ApiErrorMessage
-                        {
-                            developerMessage = "parameter is not a valid DateTime",
-                            userMessage = "Invalid parameter value - since"
-                        };
-                        var jsonResponse = Json(error);
-                        jsonResponse.StatusCode = 400;
-                        return jsonResponse;
+                        return ResponseBuilder.Error(400, "Invalid parameter format - since", "Parameter is not a valid DateTime");
                     }
                 }
 
@@ -228,33 +170,25 @@ namespace HackneyRepairs.Controllers
                 {
                     if (!DateTime.TryParseExact(until, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out validUntil))
                     {
-                        var error = new ApiErrorMessage
-                        {
-                            developerMessage = "parameter is not a valid DateTime",
-                            userMessage = "Invalid parameter value - until"
-                        };
-                        var jsonResponse = Json(error);
-                        jsonResponse.StatusCode = 400;
-                        return jsonResponse;
+                        return ResponseBuilder.Error(400, "Invalid parameter format - since", "Parameter is not a valid DateTime");
                     }
                     validUntil = validUntil.AddDays(1).AddSeconds(-1);
                 }
 
                 result = (await workOrdersActions.GetWorkOrdersByPropertyReferences(propertyReference, validSince, validUntil)).ToList();
-                var json = Json(result);
-                json.StatusCode = 200;
-                return json;
+                return ResponseBuilder.Ok(result);
             }
-            catch (UhtRepositoryException ex)
+            catch (Exception ex)
             {
-                var error = new ApiErrorMessage
+                if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException)
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues with connecting to the data source."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                    return ResponseBuilder.Error(500, "We had issues with connecting to the data source", ex.Message);
+                }
+                else
+                {
+                    return ResponseBuilder.Error(500, "We had issues processing your request", ex.Message);
+
+                }
             }
         }
 
@@ -278,31 +212,19 @@ namespace HackneyRepairs.Controllers
             try
             {
                 result = await workOrdersActions.GetNotesByWorkOrderReference(workOrderReference);
-                var json = Json(result);
-                json.StatusCode = 200;
-                return json;
+                return ResponseBuilder.Ok(result);
             }
 			catch (MissingWorkOrderException ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    developerMessage = ex.Message,
-                    userMessage = @"Work order not found."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
+                return ResponseBuilder.Error(404, "Work order not found", ex.Message);
             }
             catch (UhtRepositoryException ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues with connecting to the data source."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had issues with connecting to the data source", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return ResponseBuilder.Error(500, "We had issues processing your request", ex.Message);
             }
         }
 
@@ -324,45 +246,23 @@ namespace HackneyRepairs.Controllers
         {
             if (string.IsNullOrWhiteSpace(startId))
             {
-                var error = new ApiErrorMessage
-                {
-                    developerMessage = "Missing parameter - startId",
-                    userMessage = @"Bad Request"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 400;
-                return jsonResponse;
+                return ResponseBuilder.Error(400, "Bad request", "Missing parameter - startId");
             }
 
             try
             {
 				var workOrdersActions = new WorkOrdersActions(_workOrdersService, _workOrderLoggerAdapter);
                 var result = await workOrdersActions.GetWorkOrdersFeed(startId, resultSize);
-                var jsonResponse = Json(result);
-                jsonResponse.StatusCode = 200;
-                return jsonResponse;
+                return ResponseBuilder.Ok(result);
             }
             catch (Exception ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    developerMessage = ex.Message
-                };
-
-                JsonResult jsonResponse;
                 if (ex is UhtRepositoryException || ex is UHWWarehouseRepositoryException)
                 {
-                    error.userMessage = "we had issues with connecting to the data source.";
-                    jsonResponse = Json(error);
-                }
-                else
-                {
-                    error.userMessage = "We had issues processing your request.";
-                    jsonResponse = Json(error);
+                    return ResponseBuilder.Error(500, "we had issues with connecting to the data source.", ex.Message);
                 }
 
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had issues processing your request.", ex.Message);
             }
         }
 	}

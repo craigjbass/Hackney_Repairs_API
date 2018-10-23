@@ -68,8 +68,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = ex.Message,
-                        userMessage = "Property not foundr"
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "Property not foundr"
                     }
                 };
                 var jsonResponse = Json(errors);
@@ -82,8 +82,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = "Internal Server Error",
-                        userMessage = "Internal Error"
+                        DeveloperMessage = "Internal Server Error",
+                        UserMessage = "Internal Error"
                     }
                 };
                 var jsonResponse = Json(errors);
@@ -115,8 +115,8 @@ namespace HackneyRepairs.Controllers
                     {
                         new ApiErrorMessage
                         {
-                            developerMessage = "Invalid parameter - invalid level passed",
-                            userMessage = "Please provide a valid level"
+                            DeveloperMessage = "Invalid parameter - invalid level passed",
+                            UserMessage = "Please provide a valid level"
                         }
                     };
                     var json = Json(errors);
@@ -138,8 +138,8 @@ namespace HackneyRepairs.Controllers
                     {
                         new ApiErrorMessage
                         {
-                            developerMessage = "Invalid parameter - postcode",
-                            userMessage = "Please provide a valid post code"
+                            DeveloperMessage = "Invalid parameter - postcode",
+                            UserMessage = "Please provide a valid post code"
                         }
                     };
                     var json = Json(errors);
@@ -154,8 +154,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = e.Message,
-                        userMessage = "We had some problems processing your request"
+                        DeveloperMessage = e.Message,
+                        UserMessage = "We had some problems processing your request"
                     }
                 };
                 var json = Json(errors);
@@ -190,8 +190,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = ex.Message,
-                        userMessage = "Resource identification error"
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "Resource identification error"
                     }
                 };
                 var jsonResponse = Json(errors);
@@ -204,8 +204,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = "Internal Server Error",
-                        userMessage = "Internal Error"
+                        DeveloperMessage = "Internal Server Error",
+                        UserMessage = "Internal Error"
                     }
                 };
                 var jsonResponse = Json(errors);
@@ -247,8 +247,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = "API Internal Error",
-                        userMessage = "API Internal Error"
+                        DeveloperMessage = "API Internal Error",
+                        UserMessage = "API Internal Error"
                     }
                 };
                 var jsonResponse = Json(errors);
@@ -282,8 +282,8 @@ namespace HackneyRepairs.Controllers
                     {
                         var error = new ApiErrorMessage
                         {
-                            developerMessage = "parameter is not a valid DateTime",
-                            userMessage = "Invalid parameter value - since"
+                            DeveloperMessage = "parameter is not a valid DateTime",
+                            UserMessage = "Invalid parameter value - since"
                         };
                         var jsonResponse = Json(error);
                         jsonResponse.StatusCode = 400;
@@ -298,8 +298,8 @@ namespace HackneyRepairs.Controllers
                     {
                         var error = new ApiErrorMessage
                         {
-                            developerMessage = "parameter is not a valid DateTime",
-                            userMessage = "Invalid parameter value - until"
+                            DeveloperMessage = "parameter is not a valid DateTime",
+                            UserMessage = "Invalid parameter value - until"
                         };
                         var jsonResponse = Json(error);
                         jsonResponse.StatusCode = 400;
@@ -319,8 +319,8 @@ namespace HackneyRepairs.Controllers
             {
 				var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"Cannot find property."
+                    DeveloperMessage = ex.Message,
+                    UserMessage = @"Cannot find property."
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 404;
@@ -330,8 +330,8 @@ namespace HackneyRepairs.Controllers
 			{
 				var error = new ApiErrorMessage
                 {
-					developerMessage = ex.Message,
-					userMessage = "403 Forbidden - Invalid parameter provided."
+					DeveloperMessage = ex.Message,
+					UserMessage = "403 Forbidden - Invalid parameter provided."
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 403;
@@ -343,8 +343,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = "API Internal Error",
-                        userMessage = "API Internal Error"
+                        DeveloperMessage = "API Internal Error",
+                        UserMessage = "API Internal Error"
                     }
                 };
                 var jsonResponse = Json(errors);
@@ -395,8 +395,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = "API Internal Error",
-                        userMessage = "API Internal Error"
+                        DeveloperMessage = "API Internal Error",
+                        UserMessage = "API Internal Error"
                     }
                 };
                 var jsonResponse = Json(errors);

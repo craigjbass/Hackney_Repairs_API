@@ -17,6 +17,7 @@
     <Folder Include="wwwroot\" />
     <Folder Include="Utils\" />
     <Folder Include="Entities\" />
+    <Folder Include="Builders\" />
   </ItemGroup>
 
   <ItemGroup>

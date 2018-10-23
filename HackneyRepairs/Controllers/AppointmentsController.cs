@@ -67,8 +67,8 @@ namespace HackneyRepairs.Controllers
 					{
 						new ApiErrorMessage
 						{
-							developerMessage = "Invalid parameter - workorderreference",
-							userMessage = "Please provide a valid work order reference"
+							DeveloperMessage = "Invalid parameter - workorderreference",
+							UserMessage = "Please provide a valid work order reference"
 						}
 					};
 					var json = Json(errors);
@@ -99,8 +99,8 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-                        developerMessage = ex.Message,
-                        userMessage = "WorkOrderReference not found"
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "WorkOrderReference not found"
                     }
                 };
                 var json = Json(errors);
@@ -113,8 +113,8 @@ namespace HackneyRepairs.Controllers
 				{
 					new ApiErrorMessage
 					{
-						developerMessage = ex.Message,
-						userMessage = "We had some problems processing your request"
+						DeveloperMessage = ex.Message,
+						UserMessage = "We had some problems processing your request"
 					}
 				};
 				var json = Json(errors);
@@ -153,8 +153,8 @@ namespace HackneyRepairs.Controllers
 				{
 					var errors = validationResult.ErrorMessages.Select(error => new ApiErrorMessage
 					{
-						developerMessage = error,
-						userMessage = error
+						DeveloperMessage = error,
+						UserMessage = error
 					}).ToList();
 					var jsonResponse = Json(errors);
 					jsonResponse.StatusCode = 400;
@@ -165,8 +165,8 @@ namespace HackneyRepairs.Controllers
 			{
 				var errorMessage = new ApiErrorMessage
 				{
-					developerMessage = e.Message,
-					userMessage = "We had some problems processing your request"
+					DeveloperMessage = e.Message,
+					UserMessage = "We had some problems processing your request"
 				};
 				var jsonResponse = Json(errorMessage);
 				jsonResponse.StatusCode = 500;
@@ -206,8 +206,8 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"workOrderReference not found"
+                    DeveloperMessage = ex.Message,
+                    UserMessage = @"workOrderReference not found"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 404;
@@ -217,8 +217,8 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues with connecting to the data source."
+                    DeveloperMessage = ex.Message,
+                    UserMessage = @"We had issues with connecting to the data source."
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 500;
@@ -228,8 +228,8 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues processing your request"
+                    DeveloperMessage = ex.Message,
+                    UserMessage = @"We had issues processing your request"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 500;
@@ -269,8 +269,8 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"workOrderReference not found"
+                    DeveloperMessage = ex.Message,
+                    UserMessage = @"workOrderReference not found"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 404;
@@ -280,8 +280,8 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues with connecting to the data source."
+                    DeveloperMessage = ex.Message,
+                    UserMessage = @"We had issues with connecting to the data source."
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 500;
@@ -291,8 +291,8 @@ namespace HackneyRepairs.Controllers
             {
                 var error = new ApiErrorMessage
                 {
-                    developerMessage = ex.Message,
-                    userMessage = @"We had issues processing your request"
+                    DeveloperMessage = ex.Message,
+                    UserMessage = @"We had issues processing your request"
                 };
                 var jsonResponse = Json(error);
                 jsonResponse.StatusCode = 500;
