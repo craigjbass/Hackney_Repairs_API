@@ -553,7 +553,7 @@ namespace HackneyRepairs.Repository
                                        WHERE wo.created < '{GetCutoffTime()}' 
                                        AND wo.created <= '{until.ToString("yyyy - MM - dd HH: mm:ss")}' 
                                        AND wo.created >= '{since.ToString("yyyy-MM-dd HH:mm:ss")}' 
-                                       AND p.u_block = '{blockReference}' AND tr.trade_desc = '{trade}' AND t.task_no = 1;";
+                                       AND (p.u_block = '{blockReference}' OR p.prop_ref = '{blockReference}') AND tr.trade_desc = '{trade}' AND t.task_no = 1;";
 					workOrders = await connection.QueryAsync<UHWorkOrder>(query);
                 }
             }
