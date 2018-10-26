@@ -268,7 +268,7 @@ namespace HackneyRepairs.Repository
                             INNER JOIN rmtask t ON t.wo_ref = wo.wo_ref
                             INNER JOIN rmtrade tr ON tr.trade = t.trade
                         WHERE 
-                            wo.created > '{GetCutoffTime()}' AND wo.wo_ref IN('{String.Join("', '", workOrderReferences)}') AND t.task_no = 1";
+                            wo.wo_ref IN('{String.Join("', '", workOrderReferences)}') AND t.task_no = 1";
 
                     return connection.Query<UHWorkOrder>(query).ToArray();
                 }
