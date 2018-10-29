@@ -217,7 +217,7 @@ namespace HackneyRepairs.Tests.Services
 
             public HackneyWorkOrdersServiceTestBuilder WithUHWarehouseWorkOrdersForPropertyRefs(string[] propertyRefs, UHWorkOrder[] workOrders)
             {
-                _uhWarehouseRepositoryMock.Setup(repo => repo.GetWorkOrdersByPropertyReferences(propertyRefs, It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(workOrders));
+                _uhWarehouseRepositoryMock.Setup(repo => repo.GetWorkOrdersByPropertyReferences(propertyRefs, It.IsAny<string[]>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(workOrders));
                 return this;
             }
 

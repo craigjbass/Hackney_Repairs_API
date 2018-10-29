@@ -109,8 +109,10 @@ namespace HackneyRepairs.Services
             var result = liveData.ToList();
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {result.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
 
+            var foundWorkOrders = new List<string>(result.Select(wo => wo.WorkOrderReference)).ToArray();
+                
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for {GenericFormatter.CommaSeparate(propertyReferences)}");
-            var warehouseData = await _uhWarehouseRepository.GetWorkOrdersByPropertyReferences(propertyReferences, since, until);
+            var warehouseData = await _uhWarehouseRepository.GetWorkOrdersByPropertyReferences(propertyReferences.ToArray(), foundWorkOrders.ToArray(), since, until);
             var lWarehouseData = warehouseData.ToList();
 
             result.InsertRange(0, lWarehouseData);

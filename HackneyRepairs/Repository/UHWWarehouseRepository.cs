@@ -18,6 +18,7 @@ namespace HackneyRepairs.Repository
     {
         private UHWWarehouseDbContext _context;
         private ILoggerAdapter<UHWWarehouseRepository> _logger;
+        private string[] _terminalWorkOrderStatusCodes = { "300", "500", "700", "900" };
 
         public UHWWarehouseRepository(UHWWarehouseDbContext context, ILoggerAdapter<UHWWarehouseRepository> logger)
         {
@@ -454,7 +455,9 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}' AND t.task_no = 1;";
+                                       WHERE wo.prop_ref = '{propertyReference}'
+                                       AND t.task_no = 1
+                                       AND LTRIM(RTRIM(wo.wo_status)) NOT IN ('{ String.Join("','", _terminalWorkOrderStatusCodes) }');";
                     workOrders = await connection.QueryAsync<UHWorkOrder>(query);
                 }
             }
@@ -466,7 +469,7 @@ namespace HackneyRepairs.Repository
 			return workOrders;
         }
 
-        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until)
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, string[] foundReferences, DateTime since, DateTime until)
         {
             if (IsDevelopmentEnvironment())
             {
@@ -501,9 +504,12 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created < '{GetCutoffTime()}' AND wo.created <= '{until.ToString("yyyy-MM-dd HH:mm:ss")}'
+                                       WHERE wo.created <= '{until.ToString("yyyy-MM-dd HH:mm:ss")}'
                                        AND wo.created >= '{since.ToString("yyyy-MM-dd HH:mm:ss")}'
-                                       AND wo.prop_ref IN('{String.Join("','", propertyReferences)}') AND t.task_no = 1";
+                                       AND wo.prop_ref IN('{String.Join("','", propertyReferences)}')
+                                       AND t.task_no = 1 
+                                       AND LTRIM(RTRIM(wo.wo_ref)) NOT IN ('{ String.Join("','", foundReferences) }')
+                                       AND LTRIM(RTRIM(wo.wo_status)) NOT IN ('{ String.Join("','", _terminalWorkOrderStatusCodes) }')";
                     workOrders = await connection.QueryAsync<UHWorkOrder>(query);
                 }
             }
