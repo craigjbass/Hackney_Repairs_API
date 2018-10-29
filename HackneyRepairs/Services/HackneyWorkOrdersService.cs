@@ -51,7 +51,7 @@ namespace HackneyRepairs.Services
 
             var retrievedWarehouseWorkOrders = await _uhWarehouseRepository.GetWorkOrdersByWorkOrderReferences(workOrderReferences);
 
-            if (retrievedWarehouseWorkOrders != null)
+            if (retrievedWarehouseWorkOrders.Any())
             {
                 validWarehouseWorkOrders = retrievedWarehouseWorkOrders.Where(wo => IsTerminatedWorkOrder(wo)).ToArray();
                 foundWorkOrderRefs = validWarehouseWorkOrders.Select(wo => wo.WorkOrderReference).ToArray();

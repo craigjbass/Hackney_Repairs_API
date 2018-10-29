@@ -317,7 +317,7 @@ namespace HackneyRepairs.Repository
         {
             if (IsDevelopmentEnvironment())
             {
-                return null;
+                return new List<UHWorkOrder>();
             }
             try
             {
