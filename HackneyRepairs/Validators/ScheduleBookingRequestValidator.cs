@@ -26,7 +26,7 @@ namespace HackneyRepairs.Validators
             else
             {
                 var workOrder = Task.Run(() => _hackneyRepairsService.GetWorkOrderDetails(workOrderReference)).Result;
-                if (string.IsNullOrEmpty(workOrder.wo_ref))
+                if (workOrder == null || string.IsNullOrEmpty(workOrder.wo_ref))
                 {
                     validationResult.Valid = false;
                     validationResult.ErrorMessages.Add("Please provide a valid work order reference");
