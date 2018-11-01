@@ -77,10 +77,10 @@ namespace HackneyRepairs.Repository
 
         public async Task<IEnumerable<RepairWithWorkOrderDto>> GetRepairRequest(string repairReference)
         {
-            //if (IsDevelopmentEnvironment())
-            //{
-            //    return new List<RepairWithWorkOrderDTO>();
-            //}
+            if (IsDevelopmentEnvironment())
+            {
+                return new List<RepairWithWorkOrderDto>();
+            }
 
             try
             {
