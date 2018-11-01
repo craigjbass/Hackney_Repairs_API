@@ -10,6 +10,7 @@ using RepairsService;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using HackneyRepairs.Logging;
+using HackneyRepairs.DTOs;
 
 namespace HackneyRepairs.Tests.Actions
 {
@@ -350,6 +351,21 @@ namespace HackneyRepairs.Tests.Actions
             var repairsActions = new RepairsActions(fakeRepairService.Object, fakeRequestBuilder.Object, mockLogger.Object);
 
 			await Assert.ThrowsAsync<HackneyRepairs.Actions.MissingPropertyException>(async () => await repairsActions.GetRepairByPropertyReference("12345678"));
+        }
+
+        [Fact]
+        public async Task get_repair_request_by_repair_reference_throws_an_exception_when_property_not_found()
+        {
+            var fakeRepairService = new Mock<IHackneyRepairsService>();
+            fakeRepairService.Setup(service => service.GetRepairRequest(It.IsAny<string>()))
+                             .Returns(Task.Run(() => (IEnumerable<RepairWithWorkOrderDto>)new List<RepairWithWorkOrderDto>()));
+
+            var fakeRequestBuilder = new Mock<IHackneyRepairsServiceRequestBuilder>();
+            var mockLogger = new Mock<ILoggerAdapter<RepairsActions>>();
+
+            var repairsActions = new RepairsActions(fakeRepairService.Object, fakeRequestBuilder.Object, mockLogger.Object);
+
+            await Assert.ThrowsAsync<MissingRepairRequestException>(async () => await repairsActions.GetRepair("12345678"));
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Models;
 using HackneyRepairs.Entities;
+using HackneyRepairs.Actions;
+using HackneyRepairs.DTOs;
 
 namespace HackneyRepairs.Services
 {
@@ -226,6 +228,21 @@ namespace HackneyRepairs.Services
                 default:
 					return Task.Run(() => requests);
             }
+        }
+
+        public Task<IEnumerable<RepairWithWorkOrderDto>> GetRepairRequest(string repairReference)
+        {
+            if (string.Equals(repairReference, "ABCXYZ"))
+            {
+                throw new RepairsServiceException();
+            }
+            var fakeResponse = new List<RepairWithWorkOrderDto>();
+            if (string.Equals(repairReference, "123456899"))
+            {
+                return Task.Run(() => (IEnumerable<RepairWithWorkOrderDto>)fakeResponse);
+            }
+            var fakeElement = new RepairWithWorkOrderDto();
+            return Task.Run(() => fakeResponse.Append(fakeElement));
         }
     }
 }

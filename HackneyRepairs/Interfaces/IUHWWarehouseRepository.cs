@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HackneyRepairs.DTOs;
 using HackneyRepairs.Models;
-using HackneyRepairs.PropertyService;
 
 namespace HackneyRepairs.Interfaces
 {
     public interface IUHWWarehouseRepository
     {
         Task<bool> GetMaintainableFlag(string propertyReference);
-        Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference);
+        Task<IEnumerable<RepairRequestBase>> GetRepairRequestsByPropertyReference(string propertyReference);
+        Task<IEnumerable<RepairWithWorkOrderDto>> GetRepairRequest(string repairReference);
         Task<PropertyLevelModel> GetPropertyLevelInfo(string reference);
         Task<PropertyLevelModel[]> GetPropertyListByPostCode(string post_code, int? maxLevel, int? minLevel);
         Task<PropertyDetails> GetPropertyDetailsByReference(string reference);

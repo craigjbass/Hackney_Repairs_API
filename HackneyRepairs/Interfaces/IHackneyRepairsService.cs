@@ -3,13 +3,14 @@ using HackneyRepairs.Models;
 using RepairsService;
 using System;
 using System.Collections.Generic;
-using HackneyRepairs.Entities;
+using HackneyRepairs.DTOs;
 
 namespace HackneyRepairs.Interfaces
 {
     public interface IHackneyRepairsService
     {
-		Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference);       
+        Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference);
+        Task<IEnumerable<RepairWithWorkOrderDto>> GetRepairRequest(string repairReference);
         Task<RepairCreateResponse> CreateRepairAsync(NewRepairRequest request);
         Task<RepairGetResponse> GetRepairRequestByReferenceAsync(RepairRefRequest request);
         Task<WorksOrderListResponse> CreateRepairWithOrderAsync(NewRepairTasksRequest repairRequest);
