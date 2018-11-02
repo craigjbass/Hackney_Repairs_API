@@ -65,53 +65,6 @@ namespace HackneyRepairs.Actions
             return repair;
         }
 
-        public async Task<object> GetRepairByReference(string reference)
-        {
-            _logger.LogInformation($"Getting repair by reference: {reference}");
-            var request = _requestBuilder.BuildRepairRequest(reference);
-            var response = await _repairsService.GetRepairRequestByReferenceAsync(request);
-            if (!response.Success)
-            {
-                if (response.ErrorCode == 9707)
-                {
-                    throw new MissingRepairRequestException();
-                }
-                throw new RepairsServiceException();
-            }
-            RepairRequestDto repairResponse = response.RepairRequest;
-            if (repairResponse == null)
-            {
-                throw new MissingRepairRequestException();
-            }
-            var tasksListResponse = await GetRepairTasksList(reference);
-            var tasksList = tasksListResponse.TaskList;
-            if (tasksList != null)
-            {
-                return new
-                {
-                    repairRequestReference = repairResponse.Reference.Trim(),
-                    problemDescription = repairResponse.Problem.Trim(),
-                    priority = repairResponse.PriorityCode.Trim(),
-                    propertyReference = repairResponse.PropertyReference.Trim(),
-                    contact = new { name = repairResponse.Name.Trim() },
-                    workOrders = tasksList.Select(s => new
-                    {
-                        workOrderReference = s.WorksOrderReference.Trim(),
-                        sorCode = s.JobCode.Trim(),
-                        supplierReference = s.SupplierReference.Trim()
-                    })
-                };
-            }
-            return new
-            {
-                repairRequestReference = repairResponse.Reference.Trim(),
-                problemDescription = repairResponse.Problem.Trim(),
-                priority = repairResponse.PriorityCode.Trim(),
-                propertyReference = repairResponse.PropertyReference.Trim(),
-                contact = new { name = repairResponse.Name.Trim() }
-            };
-        }
-
         private async Task<object> CreateRepairWithOrder(RepairRequest request)
         {
             _logger.LogInformation($"Creating repair with order (prop ref: {request.PropertyReference})");

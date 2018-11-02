@@ -113,15 +113,7 @@ namespace HackneyRepairs.Services
 			var response = _client.GetRepairTasksByRequestAsync(request);
 			_logger.LogInformation($"HackneyRepairsService/GetRepairTasksAsync(): Received response from upstream RepairServiceClient (Request ref: {request.RequestReference})");
 			return response;
-		}
-
-		public Task<RepairGetResponse> GetRepairRequestByReferenceAsync(RepairRefRequest request)
-		{
-			_logger.LogInformation($"HackneyRepairsService/GetRepairRequestByReferenceAsync(): Sent request to upstream RepairServiceClient (Request ref: {request.RequestReference})");
-			var response = _client.GetRepairRequestByReferenceAsync(request);
-			_logger.LogInformation($"HackneyRepairsService/GetRepairRequestByReferenceAsync(): Received response from upstream RepairServiceClient (Request ref: {request.RequestReference})");
-			return response;
-		}
+		}	
 
 		public Task<int?> UpdateUHTVisitAndBlockTrigger(string workOrderReference, DateTime startDate, DateTime endDate, int orderId, int bookingId, string slotDetail)
 		{
