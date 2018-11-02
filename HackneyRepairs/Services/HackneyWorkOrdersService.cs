@@ -55,7 +55,7 @@ namespace HackneyRepairs.Services
             {
                 validWarehouseWorkOrders = retrievedWarehouseWorkOrders.Where(wo => IsTerminatedWorkOrder(wo)).ToArray();
                 foundWorkOrderRefs = validWarehouseWorkOrders.Select(wo => wo.WorkOrderReference).ToArray();
-                remainingWorkOrderRefs = retrievedWarehouseWorkOrders.Where(wo => !foundWorkOrderRefs.Contains(wo.WorkOrderReference)).Select(wo => wo.WorkOrderReference).ToArray();
+                remainingWorkOrderRefs = workOrderReferences.Where(wo => !foundWorkOrderRefs.Contains(wo)).Select(wo => wo).ToArray();
             } else {
                 remainingWorkOrderRefs = workOrderReferences;
             }
@@ -110,31 +110,47 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {result.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
 
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for {GenericFormatter.CommaSeparate(propertyReferences)}");
-            var warehouseData = await _uhWarehouseRepository.GetWorkOrdersByPropertyReferences(propertyReferences, since, until);
-            var lWarehouseData = warehouseData.ToList();
+            var warehouseData = (await _uhWarehouseRepository.GetWorkOrdersByPropertyReferences(propertyReferences, since, until)).ToList();
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {warehouseData.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
 
-            result.InsertRange(0, lWarehouseData);
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {lWarehouseData.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
+            var validWarehouseWorkOrders = new UHWorkOrder[0];
+            var validWarehouseReferences = new string[0];
+            var referencesToRetrieveFromLive = new string[0];
+            if (warehouseData.Any())
+            {
+                validWarehouseWorkOrders = warehouseData.Where(wo => IsTerminatedWorkOrder(wo)).ToArray();
+                validWarehouseReferences = validWarehouseWorkOrders.Select(wo => wo.WorkOrderReference).ToArray();
+                referencesToRetrieveFromLive = warehouseData.Where(wo => !validWarehouseWorkOrders.Contains(wo)).Select(wo => wo.WorkOrderReference).ToArray();
 
+                if (referencesToRetrieveFromLive.Any())
+                {
+                    _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): {referencesToRetrieveFromLive.Count()} work orders retrieved from _UHWarehouseRepository may be outdated. Querying live for them");
+                    var updatedWorkOrders = await _uhtRepository.GetWorkOrders(referencesToRetrieveFromLive);
+                    var combinedWorkOders = validWarehouseWorkOrders.Concat(updatedWorkOrders);
+                    result.InsertRange(0, combinedWorkOders);
+                } else {
+                    result.InsertRange(0, warehouseData);
+                }
+            }
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Total {result.Count} work orders returned for {GenericFormatter.CommaSeparate(propertyReferences)}");
             return result;
         }
 
-        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade, DateTime since, DateTime until)
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string[] blockReferences, string trade, DateTime since, DateTime until)
         {
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Sent request to _UhtRepository to get data from live for block reference: {blockReference}");
-            var liveData = await _uhtRepository.GetWorkOrderByBlockReference(blockReference, trade, since, until);
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Sent request to _UhtRepository to get data from live for block references: {GenericFormatter.CommaSeparate(blockReferences)}");
+            var liveData = await _uhtRepository.GetWorkOrderByBlockReference(blockReferences, trade, since, until);
             var result = (List<UHWorkOrder>)liveData;
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): {result.Count} work orders returned for block reference: {blockReference}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): {result.Count} work orders returned for block references: {GenericFormatter.CommaSeparate(blockReferences)}");
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for block reference: {blockReference}");
-            var warehouseData = await _uhWarehouseRepository.GetWorkOrderByBlockReference(blockReference, trade, since, until);
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Sent request to _UHWarehouseRepository to get data from warehouse for block references: {GenericFormatter.CommaSeparate(blockReferences)}");
+            var warehouseData = await _uhWarehouseRepository.GetWorkOrderByBlockReference(blockReferences, trade, since, until);
             var lWarehouseData = (List<UHWorkOrder>)warehouseData;
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): {lWarehouseData.Count} work orders returned for block reference: {blockReference}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): {lWarehouseData.Count} work orders returned for block references: {GenericFormatter.CommaSeparate(blockReferences)}");
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Merging list from repositories to a single list");
             result.InsertRange(0, lWarehouseData);
 
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Total {result.Count} work orders returned for block reference: {blockReference}");
+            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByBlockReferences(): Total {result.Count} work orders returned for block references: {GenericFormatter.CommaSeparate(blockReferences)}");
             return result;
         }
 

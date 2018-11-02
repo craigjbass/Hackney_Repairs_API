@@ -37,6 +37,7 @@ namespace HackneyRepairs.Actions
             {
                 throw new MissingPropertyException();
             }
+
             int propertyLevel;
             int.TryParse(propertyInfo.LevelCode, out propertyLevel);
             if (propertyLevel < 3)
@@ -44,25 +45,23 @@ namespace HackneyRepairs.Actions
                 throw new InvalidParameterException();
             }
 
-            var hierarchy = await GetPropertyHierarchy(propertyReference);
-
-            string blockReference = (from prop in hierarchy
-                                    where prop.LevelCode == "3"
-                                     select prop.PropertyReference).FirstOrDefault();
+            _logger.LogError($"Gathering block or sub-block references for {propertyReference}");
+            var blockReferences = await GetBlockReferences(propertyReference);
+            if (!blockReferences.Any())
+            {
+                _logger.LogError($"No block or sub-block identified for {propertyReference}, returning an empty list");
+                return new List<UHWorkOrder>();
+            }
    
-			_logger.LogInformation($"Finding work order details for block reference (including children): {blockReference}, trade: {trade}");
-            var blockResult = await _workordersService.GetWorkOrderByBlockReference(blockReference, trade, since, until);
-			if ((blockResult.ToList()).Count == 0)
-			{
-				_logger.LogError($"Work orders not found for block reference (including children): {blockReference}, trade: {trade}");
-				return blockResult;
-			}
-			_logger.LogInformation($"Work order details returned for block reference (including children): {blockReference}, trade: {trade}");
+            _logger.LogInformation($"Finding work order details for block reference (including children): {GenericFormatter.CommaSeparate(blockReferences.ToArray())}, trade: {trade}");
+            var blockResult = await _workordersService.GetWorkOrderByBlockReference(blockReferences.ToArray(), trade, since, until);
+            _logger.LogInformation($"{blockResult.Count()} work order details returned for block or sub-block references (including children): {GenericFormatter.CommaSeparate(blockReferences.ToArray())}, trade: {trade}");
             return blockResult;
 		}
 
         public async Task<IEnumerable<PropertyLevelModel>> GetPropertyHierarchy(string reference)
         {
+            _logger.LogError($"Getting property hierarchy for {reference}");
             try
             {
                 var results = new List<PropertyLevelModel>();
@@ -70,10 +69,16 @@ namespace HackneyRepairs.Actions
 
                 while (!String.IsNullOrWhiteSpace(parent))
                 {
-					var response = await _propertyService.GetPropertyLevelInfo(parent);
+                    var response = await _propertyService.GetPropertyLevelInfo(parent);
+                    if (response == null && string.Equals(parent, reference))
+                    {
+                        _logger.LogError($"Property not found for {reference}");
+                        throw new MissingPropertyException();
+                    }
                     if (response == null)
                     {
-                        throw new MissingPropertyException();
+                        _logger.LogError($"Property hierarchy appears to be broken, parent property {reference} does not exist. Returning results until this point");
+                        break;
                     }
                     results.Add(response);
                     parent = response.MajorReference;
@@ -197,6 +202,21 @@ namespace HackneyRepairs.Actions
             }
         }
 
+        private async Task<IEnumerable<string>> GetBlockReferences(string propertyReference)
+        {
+            var hierarchy = await GetPropertyHierarchy(propertyReference);
+            var blockReferences = new List<string>();
+
+            foreach (var property in hierarchy)
+            {
+                if (property.LevelCode == "3" || property.LevelCode == "4")
+                {
+                    blockReferences.Add(property.PropertyReference);
+                }
+            }
+            return blockReferences;
+        }
+
         private object BuildProperty(PropertySummary property)
         {
             return new
@@ -219,9 +239,8 @@ namespace HackneyRepairs.Actions
         }
     }
 
-    public class MissingPropertyListException : System.Exception{}
-    public class PropertyServiceException : System.Exception { }
-    public class MissingPropertyException : System.Exception { }
+    public class MissingPropertyListException : Exception{ }
+    public class PropertyServiceException : Exception { }
+    public class MissingPropertyException : Exception { }
 	public class InvalidParameterException : Exception { }
-
 }
