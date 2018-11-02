@@ -515,7 +515,7 @@ namespace HackneyRepairs.Repository
             return workOrders;
         }
 
-        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade, DateTime since, DateTime until)
+        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string[] blockReferences, string trade, DateTime since, DateTime until)
         {
             if (IsDevelopmentEnvironment())
             {
@@ -553,7 +553,8 @@ namespace HackneyRepairs.Repository
                                        WHERE wo.created < '{GetCutoffTime()}' 
                                        AND wo.created <= '{until.ToString("yyyy - MM - dd HH: mm:ss")}' 
                                        AND wo.created >= '{since.ToString("yyyy-MM-dd HH:mm:ss")}' 
-                                       AND p.u_block = '{blockReference}' AND tr.trade_desc = '{trade}' AND t.task_no = 1;";
+                                       AND (p.u_block IN ('{string.Join("','", blockReferences)}') OR p.prop_ref IN ('{string.Join("','", blockReferences)}')) 
+                                       AND tr.trade_desc = '{trade}' AND t.task_no = 1;";
 					workOrders = await connection.QueryAsync<UHWorkOrder>(query);
                 }
             }

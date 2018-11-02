@@ -86,9 +86,9 @@ namespace HackneyRepairs.Services
             return Task.Run(() => workOrders);
         }
 
-        public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade, DateTime since, DateTime until)
+        public Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string[] blockReferences, string trade, DateTime since, DateTime until)
         {
-			if (string.Equals(blockReference, "9999999999"))
+            if (string.Equals(blockReferences.FirstOrDefault(), "9999999999"))
             {
                 return Task.Run(() => (IEnumerable<UHWorkOrder>)new List<UHWorkOrder>());
             }
@@ -96,8 +96,8 @@ namespace HackneyRepairs.Services
             {
                 new UHWorkOrder
                 {
-					PropertyReference = blockReference,
-					Trade = trade
+                    PropertyReference = blockReferences.FirstOrDefault(),
+                    Trade = trade
                 }
             };
             return Task.Run(() => (IEnumerable<UHWorkOrder>)workOrder);
