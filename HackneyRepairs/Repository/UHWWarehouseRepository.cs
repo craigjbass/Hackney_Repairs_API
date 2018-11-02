@@ -98,8 +98,8 @@ namespace HackneyRepairs.Repository
                                         task.job_code
                                     FROM
                                         rmreqst AS request
-                                        INNER JOIN rmworder AS worder ON request.rq_ref = worder.rq_ref
-                                        INNER JOIN rmtask AS task ON task.wo_ref = worder.wo_ref
+                                        LEFT OUTER JOIN rmworder AS worder ON request.rq_ref = worder.rq_ref
+                                        LEFT OUTER JOIN rmtask AS task ON task.wo_ref = worder.wo_ref
                                     WHERE
                                         request.rq_date < '{GetCutoffTime()}' AND
                                         request.rq_ref = '{repairReference}'";

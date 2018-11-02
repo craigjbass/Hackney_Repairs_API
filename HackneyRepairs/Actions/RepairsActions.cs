@@ -211,14 +211,18 @@ namespace HackneyRepairs.Actions
             var workOrders = new List<WorkOrder>();
             foreach (var result in repositoryResult)
             {
-                var workOrder = new WorkOrder()
+                
+                if (!string.IsNullOrWhiteSpace(result.wo_ref))
                 {
-                    WorkOrderReference = result.wo_ref,
-                    SupplierRef = result.sup_ref,
-                    SorCode = result.job_code
-                };
-                GenericFormatter.TrimStringAttributes(workOrder);
-                workOrders.Add(workOrder);
+                    var workOrder = new WorkOrder()
+                    {
+                        WorkOrderReference = result.wo_ref,
+                        SupplierRef = result.sup_ref,
+                        SorCode = result.job_code
+                    };
+                    GenericFormatter.TrimStringAttributes(workOrder);
+                    workOrders.Add(workOrder);
+                }
             }
             repair.WorkOrders = workOrders;
             GenericFormatter.TrimStringAttributes(repair);
