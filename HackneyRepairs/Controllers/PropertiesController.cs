@@ -158,7 +158,7 @@ namespace HackneyRepairs.Controllers
             }
             catch(Exception ex)
             {
-                return ResponseBuilder.Error(500, "API Internal Error", "API Internal Error");
+                return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }
 
@@ -213,7 +213,7 @@ namespace HackneyRepairs.Controllers
             }
             catch (Exception ex)
             {
-                return ResponseBuilder.Error(500, "API Internal Error", "API Internal Error");
+                return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }
 
@@ -243,9 +243,9 @@ namespace HackneyRepairs.Controllers
             {
                 return ResponseBuilder.Error(404, "Resource identification error", ex.Message);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return ResponseBuilder.Error(500, "API Internal Error", "API Internal Error");
+                return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }
     }
