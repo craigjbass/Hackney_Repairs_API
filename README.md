@@ -1,9 +1,26 @@
 # HackneyAPI
 The Hackney API code.
 
+## Testing
 
+### Universal Housing tests
 
-## List properties by postcode
+We use the [Universal Housing Simulator][universal-housing-simulator] to test the UHT and UH Warehouse repositories.
+
+You must have it running locally on port 1433 for these tests to run, otherwise they'll be automatically skipped.
+
+To build and run the simulator, follow these steps:
+
+```sh
+$ git clone https://github.com/LBHackney-IT/lbh-universal-housing-simulator
+$ cd lbh-universal-housing-simulator
+$ docker build -t uhsimulator .
+$ docker run -ti -p 1433:1433 --rm uhsimulator
+```
+
+## Endpoints
+
+### List properties by postcode
 
 Returns a list of properties matching the given criteria.
 
@@ -11,11 +28,11 @@ Returns a list of properties matching the given criteria.
 GET /v1/properties/
 ```
 
-### Parameters
+#### Parameters
 
 - postcode (required)
 
-### Response
+#### Response
 
 ```json
 {
@@ -40,7 +57,7 @@ GET /v1/properties/
 ```
 
 
-## Fetch property by id
+### Fetch property by id
 
 Return details of the given property
 
@@ -48,11 +65,11 @@ Return details of the given property
 GET /v1/properties/:propertyReference/
 ```
 
-### Parameters
+#### Parameters
 
 - propertyReference: (required) - the Id of the household to retrieve
 
-### Response
+#### Response
 
 This should mostly mirror the individual results from the List properties by
 ID endpoint, with the addition of the `maintainable` boolean. This is `true`
@@ -69,7 +86,7 @@ Properties with `maintainable = false` cannot have repairs raised against them.
 }
 ```
 
-## Create a new repair
+### Create a new repair
 
 Create a repair request, with or without a list of work orders
 
@@ -77,7 +94,7 @@ Create a repair request, with or without a list of work orders
 POST /v1/repairs
 ```
 
-### Request
+#### Request
 
 ```json
 {
@@ -119,7 +136,7 @@ POST /v1/repairs
   applicable
   - sorCode - a "Schedule of Rates" code which describes the problem
 
-### Response
+#### Response
 
 A successful request should return HTTP 201 Created
 
@@ -157,7 +174,7 @@ and data calculated based on the SOR code.
 If the repair was created without work orders, an empty array of workOrders
 should be returned (rather than no key or a null value)
 
-## Retrieve a repair by reference
+### Retrieve a repair by reference
 
 Retrieve a repair request, with or without a list of work orders
 
@@ -165,11 +182,11 @@ Retrieve a repair request, with or without a list of work orders
 GET /v1/repairs/:repairRequestReference
 ```
 
-### Parameters
+#### Parameters
 
 - Repair request reference (required)
 
-### Response
+#### Response
 
 The response contains the same data as when the repair was created:
 
@@ -199,7 +216,7 @@ The response contains the same data as when the repair was created:
 As above: if the repair was created without work orders, an empty array of
 workOrders should be returned (rather than no key or a null value)
 
-## Get appointment booked for a Work Order
+### Get appointment booked for a Work Order
 
 Returns the appointment booked for a work order
 
@@ -207,11 +224,11 @@ Returns the appointment booked for a work order
 GET /v1/work_orders/:workOrderReference/appointments/
 ```
 
-### Parameters
+#### Parameters
 
 - Work order reference (required)
 
-### Response
+#### Response
 
 ```json
 {
@@ -220,7 +237,7 @@ GET /v1/work_orders/:workOrderReference/appointments/
 }
 ```
 
-## Book an appointment for a Work Order
+### Book an appointment for a Work Order
 
 Creates the appointment in DRS and returns the booked appointment
 
@@ -228,18 +245,18 @@ Creates the appointment in DRS and returns the booked appointment
 POST /v1/work_orders/:workOrderReference/appointments/
 ```
 
-### Parameters
+#### Parameters
 
-#### Specified in path
+###### Specified in path
 
   - workOrderReference - Work order reference (required)
 
-#### Specified in JSON body
+###### Specified in JSON body
 
   - beginDate - The start time for the desired appointment (required)
   - endDate - The end time for the desired appointment (required)
 
-### Response
+#### Response
 
 A successful response should book the appointment in DRS
 
@@ -250,7 +267,7 @@ A successful response should book the appointment in DRS
 }
 ```
 
-## Get available appointments for Work Order
+### Get available appointments for Work Order
 
 Returns a list of available appointments for a work order
 
@@ -258,11 +275,11 @@ Returns a list of available appointments for a work order
 GET /v1/work_orders/:workOrderReference/available_appointments/
 ```
 
-### Parameters
+#### Parameters
 
 - Work order reference (required)
 
-### Response
+#### Response
 A successful response should create the Work order in DRS and get the list of available appointments.
 
 ```json
@@ -306,7 +323,7 @@ A successful response should create the Work order in DRS and get the list of av
   ]
 }
 ```
-## Get account and address for housing residents
+### Get account and address for housing residents
 
 Returns a list of account and address information
 
@@ -314,11 +331,11 @@ Returns a list of account and address information
 Get /v1/accounts/verifyhousingaccountlogindetail?parisReference=123434470&postcode=E8 1HH
 ```
 
-### Parameters
+#### Parameters
 - Paris reference (required)
 - Postcode (required)
 
-### Response
+#### Response
 A successful response should get a list of account and address information corresponding to the required parameters.
 
 ```json
@@ -336,7 +353,7 @@ A successful response should get a list of account and address information corre
  }
 ```
 
-## Get housing transactions for residents
+### Get housing transactions for residents
 
 Returns a list of transactions
 
@@ -344,10 +361,10 @@ Returns a list of transactions
 Get /v1/ transactions?tagReference=123456/01
 ```
 
-### Parameters
+#### Parameters
 - Tag Reference (required)
 
-### Response
+#### Response
 A successful response should get a list of transactions based on the tag reference provided.
 
 ```json
@@ -382,7 +399,7 @@ A successful response should get a list of transactions based on the tag referen
 }
 ```
 
-## Get payment agreement information for housing residents
+### Get payment agreement information for housing residents
 
 Returns a list of payment agreement information
 
@@ -390,10 +407,10 @@ Returns a list of payment agreement information
 Get /v1/accountpaymentagreement?TagRef=12345/01
 ```
 
-### Parameters
+#### Parameters
 - Tag reference (required)
 
-### Response
+#### Response
 A successful response should get a list of payment agreement information corresponding to the given tag reference.
 ```json
 {
@@ -410,16 +427,16 @@ A successful response should get a list of payment agreement information corresp
  }
 ...
 
-## Get account information for housing residents
+### Get account information for housing residents
 
 ```
 Get  /v1/accounts/accountdetailsbyparisreference?parisReference=123409789
 ```
 
-### Parameters
+#### Parameters
 - Parisreferencenumber (required)
 
-### Response
+#### Response
 A successful response should get a list of account information corresponding to the given Parisreferencenumber.
 ```json
 {
@@ -446,16 +463,16 @@ A successful response should get a list of account information corresponding to 
  }
 
 ```
-## Authenticate users based on Username and Password
+### Authenticate users based on Username and Password
 
-Returns the user detail 
+Returns the user detail
 Get/v1/login/authenticatenhoofficers?username=uaccount&password=hackney
 ```
-### Parameters
+#### Parameters
 - Username (required)
 - Password (required)
 
-### Response
+#### Response
 A successful response should get the detail of Authenticated neighbourhood officers corresponding to the required parameters.
 
 ```json
@@ -467,6 +484,7 @@ A successful response should get the detail of Authenticated neighbourhood offic
     "activeDirectoryUserName": "ssandilya"
   }
 }
-   
+
 ```
 
+[universal-housing-simulator]: https://github.com/LBHackney-IT/lbh-universal-housing-simulator
