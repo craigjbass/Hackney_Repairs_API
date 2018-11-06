@@ -11,6 +11,7 @@ using HackneyRepairs.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using Dapper;
+using HackneyRepairs.DTOs;
 
 namespace HackneyRepairs.Repository
 {
@@ -414,7 +415,7 @@ namespace HackneyRepairs.Repository
             return workOrders;
         }
 
-		public async Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference)
+		public async Task<IEnumerable<RepairRequestBase>> GetRepairRequestsByPropertyReference(string propertyReference)
         {
             try
             {
@@ -429,6 +430,44 @@ namespace HackneyRepairs.Repository
                                                 where r.rq_date > '{GetCutoffTime()}' AND r.prop_ref = '{propertyReference}'";
                     var repairs = connection.Query<RepairRequestBase>(query).ToList();
                     return repairs;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UhtRepositoryException();
+            }
+        }
+
+
+        public async Task<IEnumerable<RepairWithWorkOrderDto>> GetRepairRequest(string repairReference)
+        {
+            _logger.LogInformation($"Querying UHT db for repair reference: {repairReference}");
+
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = $@"set dateformat ymd;
+                                    SELECT
+                                        request.rq_ref,
+                                        rq_problem,
+                                        rq_priority,
+                                        request.prop_ref,
+                                        rq_name,
+                                        rq_phone,
+                                        worder.wo_ref,
+                                        task.sup_ref,
+                                        task.job_code
+                                    FROM
+                                        rmreqst AS request
+                                        LEFT OUTER JOIN rmworder AS worder ON request.rq_ref = worder.rq_ref
+                                        LEFT OUTER JOIN rmtask AS task ON task.wo_ref = worder.wo_ref
+                                    WHERE
+                                        (request.rq_date > '{GetCutoffTime()}' OR task.created > '{GetCutoffTime()}') AND
+                                        request.rq_ref = '{repairReference}'";
+                    var repair = connection.Query<RepairWithWorkOrderDto>(query).ToList();
+                    return repair;
                 }
             }
             catch (Exception ex)
