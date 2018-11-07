@@ -47,7 +47,7 @@ namespace HackneyRepairs.Repository
                 		rtrim(rmreqst.user_code) userid,
                 		null tasks,
                 		rtrim(short_address) propname,
-                		short_address address1,
+                		address1,
                 		post_code postcode,
                 		convert(varchar(50),rq_problem) comments
                         from rmworder 
