@@ -285,50 +285,7 @@ namespace HackneyRepairs.Repository
                 _logger.LogError(ex.Message);
                 throw new UhtRepositoryException();
             }
-        }
-
-        // unused
-		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
-        {
-			IEnumerable<UHWorkOrder> workOrders;
-            try
-            {
-                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
-                {
-					string query = $@"set dateformat ymd;
-                                    SELECT
-                                       LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
-                                       LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
-                                       r.rq_problem AS ProblemDescription,
-                                       wo.created AS Created,
-                                       wo.est_cost AS EstimatedCost,
-                                       wo.act_cost AS ActualCost,
-                                       wo.completed AS CompletedOn,
-                                       wo.date_due AS DateDue,
-                                       wo.auth_date AS AuthDate,
-                                       LTRIM(RTRIM(wo.wo_status)) AS WorkOrderStatus,
-                                       LTRIM(RTRIM(wo.u_dlo_status)) AS DLOStatus,
-                                       LTRIM(RTRIM(wo.u_servitor_ref)) AS ServitorReference,
-                                       LTRIM(RTRIM(wo.prop_ref)) AS PropertyReference,
-                                       LTRIM(RTRIM(t.job_code)) AS SORCode,
-                                       LTRIM(RTRIM(tr.trade_desc)) AS Trade
-
-                                    FROM
-                                       rmworder wo
-                                       INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
-                                       INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
-                                       INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created > '{GetCutoffTime()}' AND wo.prop_ref = '{propertyReference}' AND t.task_no = 1;";
-					workOrders = await connection.QueryAsync<UHWorkOrder>(query);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw new UhtRepositoryException();
-            }
-			return workOrders;
-        }
+        } 
 
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until)
         {

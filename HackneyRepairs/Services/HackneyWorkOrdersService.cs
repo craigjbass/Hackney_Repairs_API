@@ -73,35 +73,7 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyWorkOrdersService/GetMobileReports(): Sent request to MobileReportsRepository (Servitor reference: {servitorReference})");
             return MobileReportsRepository.GetReports(servitorReference);
         }
-
-        public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
-        {
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to _UhtRepository to get data from live for {propertyReference}");
-            var liveData = await _uhtRepository.GetWorkOrderByPropertyReference(propertyReference);
-            var result = liveData.ToList();
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {result.Count} work orders returned for {propertyReference}");
-
-
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Sent request to _UHWarehouseRepository to get data from warehouse for {propertyReference}");
-            var warehouseData = await _uhWarehouseRepository.GetWorkOrderByPropertyReference(propertyReference);
-            var lWarehouseData = warehouseData.ToList();
-            result.InsertRange(0, lWarehouseData);
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): {lWarehouseData.Count} work orders returned for {propertyReference}");
-
-            if (result.Count() == 0)
-            {
-                _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Repositories returned empty lists, checking if the property exists.");
-                var property = await _uhWarehouseRepository.GetPropertyDetailsByReference(propertyReference);
-                if (property == null)
-                {
-                    return null;
-                }
-            }
-
-            _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrderByPropertyReference(): Total {result.Count} work orders returned for {propertyReference}");
-            return result;
-        }
-
+         
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until)
         {
             _logger.LogInformation($"HackneyWorkOrdersService/GetWorkOrdersByPropertyReferences(): Sent request to _UhtRepository to get data from live for {GenericFormatter.CommaSeparate(propertyReferences)}");

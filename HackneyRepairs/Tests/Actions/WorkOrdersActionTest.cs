@@ -155,177 +155,44 @@ namespace HackneyRepairs.Tests.Actions
         }
         #endregion
 
-        #region GetWorkOrderByPropertyReference
+        #region GetWorkOrdersByPropertyReferences
         [Fact]
-        public async Task get_by_property_reference_returns_list_work_orders()
+        public async Task get_by_property_references_returns_list_work_orders()
         {
-			Random rnd = new Random();
-            string randomReference = rnd.Next(100000000, 999999990).ToString();
-			List<UHWorkOrder> fakeResponse = new List<UHWorkOrder>
-			{
-				new UHWorkOrder()
-				{
-					PropertyReference = randomReference
-				},
-				new UHWorkOrder()
+            var randomReferences = new string[] { new Random().Next(100000000, 999999990).ToString() };
+            var fakeResponse = new List<UHWorkOrder>
+            {
+                new UHWorkOrder()
                 {
-					PropertyReference = randomReference
+                    PropertyReference = randomReferences.First()
                 },
-				new UHWorkOrder()
+                new UHWorkOrder()
                 {
-					PropertyReference = randomReference
+                    PropertyReference = randomReferences.First()
+                },
+                new UHWorkOrder()
+                {
+                    PropertyReference = randomReferences.First()
                 }
             };
+
             Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
-            _workOrderService.Setup(service => service.GetWorkOrderByPropertyReference(It.IsAny<string>()))
+            _workOrderService.Setup(service => service.GetWorkOrdersByPropertyReferences(It.IsAny<string[]>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                              .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(fakeResponse));
-			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
-			var response = await workOrdersActions.GetWorkOrderByPropertyReference(randomReference);
-            
-			Assert.True(response is IEnumerable<UHWorkOrder>);
-			Assert.Equal(randomReference, response.FirstOrDefault().PropertyReference);
-
-            // Test if the work orders in response all related to the given property
-			var distinctPropIds = (from work_order in response
-									  select work_order.PropertyReference).Distinct();
-			Assert.True(distinctPropIds.Count() == 1);
-			Assert.True(distinctPropIds.First() == randomReference);
-        }
-        
-		//[Fact]
-		//public async Task get_property_reference_with_children_returns_list_work_orders()
-  //      {
-		//	// Setting up fake property service
-		//	Mock<IHackneyPropertyService> _propertyService = new Mock<IHackneyPropertyService>();
-   
-		//	Random rnd = new Random();
-  //          string parentPropReference = rnd.Next(100000000, 999999990).ToString();
-
-  //          PropertyLevelModel parent = new PropertyLevelModel()
-  //          {
-  //              PropertyReference = parentPropReference
-  //          };
-
-  //          _propertyService.Setup(service => service.GetPropertyLevelInfo(parentPropReference))
-  //                                 .Returns(Task.FromResult(parent));
-
-  //          string child1_PropReference = rnd.Next(100000000, 999999990).ToString();
-  //          string child2_PropReference = rnd.Next(100000000, 999999990).ToString();
-  //          string child3_PropReference = rnd.Next(100000000, 999999990).ToString();
-  //          List<PropertyLevelModel> childrenProperties = new List<PropertyLevelModel>
-  //          {
-  //              new PropertyLevelModel()
-  //              {
-  //                  PropertyReference = child1_PropReference,
-  //                  MajorReference = parentPropReference
-  //              },
-  //              new PropertyLevelModel()
-  //              {
-  //                  PropertyReference = child2_PropReference,
-  //                  MajorReference = parentPropReference
-  //              },
-  //              new PropertyLevelModel()
-  //              {
-  //                  PropertyReference = child3_PropReference,
-  //                  MajorReference = parentPropReference
-  //              }
-  //          };
-          
-		//	_propertyService.Setup(service => service.GetPropertyLevelInfosForParent(parentPropReference))
-		//	                       .Returns(Task.FromResult(childrenProperties));
-			
-		//	_propertyService.Setup(service => service.GetPropertyLevelInfosForParent(It.IsNotIn<string>(parentPropReference)))
-		//	                .Returns(Task.FromResult(new List<PropertyLevelModel>()));
-
-  //          // Setting up fake work order service         
-		//	List<UHWorkOrder> resultList = new List<UHWorkOrder>
-  //          {
-		//		new UHWorkOrder()
-  //              {
-  //                  PropertyReference = parentPropReference
-  //              },
-  //              new UHWorkOrder()
-  //              {
-		//			PropertyReference = child1_PropReference
-  //              },
-  //              new UHWorkOrder()
-  //              {
-		//			PropertyReference = child2_PropReference
-  //              },
-  //              new UHWorkOrder()
-  //              {
-		//			PropertyReference = child3_PropReference
-  //              }
-  //          };
-             
-  //          Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
-            
-		//	_workOrderService.Setup(service => service.GetWorkOrderByPropertyReferences(It.IsAny<List<string>>()))
-		//	                        .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(resultList));
-
-  //          WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _propertyService.Object, _mockLogger.Object);
-		//	var response = await workOrdersActions.GetWorkOrderByPropertyReferences(parentPropReference, true);
-
-  //          Assert.True(response is List<UHWorkOrder>);
-		//	Assert.True(resultList.Count() == response.Count());
-		//	Assert.True(!resultList.Except(response).Any());
-		//}
-        
-		//[Fact]
-		//public async Task get_by_higher_than_block_property_reference_returns_ChildrenForEstateNotAllowedException()
-		//{
-		//	Random rnd = new Random();
-  //          string randomReference = rnd.Next(100000000, 999999990).ToString();
-          
-  //          Mock<IHackneyPropertyService> _propertyService = new Mock<IHackneyPropertyService>();
-  //          Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
-  //          _workOrderService.Setup(service => service.GetWorkOrderByPropertyReferences(It.IsAny<List<string>>()))
-  //                           .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(fakeResponse));
-  //          WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _propertyService.Object, _mockLogger.Object);
-  //          var response = await workOrdersActions.GetWorkOrderByPropertyReferences(randomReference.ToString(), false);
-
-  //          Assert.True(response is List<UHWorkOrder>);
-  //          Assert.Equal(randomReference, response.FirstOrDefault().PropertyReference);
-
-  //          // Test if the work orders in response all related to the given property
-  //          var distinctPropIds = (from work_order in response
-  //                                 select work_order.PropertyReference).Distinct();
-  //          Assert.True(distinctPropIds.Count() == 1);
-  //          Assert.True(distinctPropIds.First() == randomReference);
-		//}
-		[Fact]
-        public async Task get_by_property_reference_returns_empty_list_when_work_orders_not_found()
-        {
-            Random rnd = new Random();
-            string propReference = rnd.Next(100000000, 999999990).ToString();
-
-            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
-            _workOrderService.Setup(service => service.GetWorkOrderByPropertyReference(It.IsAny<string>()))
-			                 .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>((new List<UHWorkOrder>())));
 
             WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
-			var result = await workOrdersActions.GetWorkOrderByPropertyReference(propReference);
-			Assert.IsType(new List<UHWorkOrder>().GetType(), result);
-			Assert.True(result.Count() == 0);
+            var response = await workOrdersActions.GetWorkOrdersByPropertyReferences(randomReferences, It.IsAny<DateTime>(), It.IsAny<DateTime>());
+
+            Assert.True(response is IEnumerable<UHWorkOrder>);
+            Assert.Equal(randomReferences.First(), response.FirstOrDefault().PropertyReference);
+
+            // Test if the work orders in response all related to the given property
+            var distinctPropIds = (from work_order in response
+                                   select work_order.PropertyReference).Distinct();
+            Assert.True(distinctPropIds.Count() == 1);
+            Assert.True(distinctPropIds.First() == randomReferences.First());
         }
-        
-        [Fact]
-        public async Task get_by_property_reference_throws_missing_property_exception_when_property_not_found()
-        {
-            Random rnd = new Random();
-            string propReference = rnd.Next(100000000, 999999990).ToString();
-   
-            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
-			_workOrderService.Setup(service => service.GetWorkOrderByPropertyReference(It.IsAny<string>()))
-                             .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>((null)));
 
-			WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
-
-			await Assert.ThrowsAsync<MissingPropertyException>(async () => await workOrdersActions.GetWorkOrderByPropertyReference(propReference));
-        }
-        #endregion
-
-        #region GetWorkOrdersByPropertyReferences
         [Fact]
         public async Task GetWorkOrdersByPropertyReferences_calls_the_work_orders_service_and_returns_its_result()
         {
@@ -342,6 +209,22 @@ namespace HackneyRepairs.Tests.Actions
             var workOrders = await workOrderActions.GetWorkOrdersByPropertyReferences(propReferences, It.IsAny<DateTime>(), It.IsAny<DateTime>());
 
             Assert.Equal(expectedWorkOrders, workOrders);
+        }
+
+        [Fact]
+         public async Task get_by_property_references_returns_empty_list_when_work_orders_not_found()
+         {
+            Random rnd = new Random();
+            var propReference = new string[] { rnd.Next(100000000, 999999990).ToString() };
+
+            Mock<IHackneyWorkOrdersService> _workOrderService = new Mock<IHackneyWorkOrdersService>();
+            _workOrderService.Setup(service => service.GetWorkOrdersByPropertyReferences(It.IsAny<string[]>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                 .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>((new List<UHWorkOrder>())));
+
+            WorkOrdersActions workOrdersActions = new WorkOrdersActions(_workOrderService.Object, _mockLogger.Object);
+            var result = await workOrdersActions.GetWorkOrdersByPropertyReferences(propReference, It.IsAny<DateTime>(), It.IsAny<DateTime>());
+            Assert.IsType(new List<UHWorkOrder>().GetType(), result);
+            Assert.True(result.Count() == 0);
         }
         #endregion
 

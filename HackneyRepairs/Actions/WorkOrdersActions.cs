@@ -86,24 +86,6 @@ namespace HackneyRepairs.Actions
             return results;
         }
 
-		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
-		{
-			_logger.LogInformation($"Finding work order details for property reference: {propertyReference}");
-			var result = await _workOrdersService.GetWorkOrderByPropertyReference(propertyReference);
-            if (result == null)
-			{
-				_logger.LogError($"Property not found for property reference: {propertyReference}");
-				throw new MissingPropertyException();
-			}
-			if ((result.ToList()).Count == 0)
-			{
-				_logger.LogError($"Work order not found for property reference: {propertyReference}");
-				return result;
-			}
-			_logger.LogInformation($"Work order details returned for property reference: {propertyReference}");
-			return result;
-		}
-
         public async Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until)
         {
             _logger.LogInformation($"Finding work order details for property references: {GenericFormatter.CommaSeparate(propertyReferences)}");
