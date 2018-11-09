@@ -84,7 +84,7 @@ namespace HackneyRepairs.Tests.Services
         {
             var propertyRefs = new string[] { "00000018", "00000019" };
             var uhtWorkOrders = new[] { new UHWorkOrder(), new UHWorkOrder() };
-            var uhwWorkOrders = new[] { new UHWorkOrder() };
+            var uhwWorkOrders = new[] { new UHWorkOrder() { WorkOrderStatus = "300"} };
 
             var service = new HackneyWorkOrdersServiceTestBuilder()
                 .WithUhtWorkOrdersForPropertyRefs(propertyRefs, uhtWorkOrders)
