@@ -54,8 +54,14 @@ namespace HackneyRepairs.Repository
                         from rmworder 
                 	    inner join property on rmworder.prop_ref=property.prop_ref
                 	    inner join rmreqst on rmworder.rq_ref=rmreqst.rq_ref
-                        where created > '{GetCutoffTime()}' AND wo_ref='{workOrderReference}'";
-                    var drsOrderResult = connection.Query<DrsOrder>(query).FirstOrDefault();
+                        where created > @CutoffTime AND wo_ref = @WorkOrderReference";
+
+                    var queryParameters = new
+                    {
+                        CutoffTime = GetCutoffTime(),
+                        WorkOrderReferene = workOrderReference
+                    };
+                    var drsOrderResult = connection.Query<DrsOrder>(query, queryParameters).FirstOrDefault();
 
                     if (drsOrderResult == null)
                     {
@@ -70,9 +76,9 @@ namespace HackneyRepairs.Repository
                             u_smv smv,
                             rmjob.trade
                         from rmtask inner join rmjob on rmtask.job_code = rmjob.job_code
-                        where created > '{GetCutoffTime()}' AND wo_ref = '{workOrderReference}'";
-                    drsOrderResult.Tasks = connection.Query<DrsTask>(query).ToList();
+                        where created > @CutoffTime AND wo_ref = @WorkOrderReference";
 
+                    drsOrderResult.Tasks = connection.Query<DrsTask>(query, queryParameters).ToList();
                     return drsOrderResult;
 				}
 			}
@@ -204,7 +210,7 @@ namespace HackneyRepairs.Repository
 			{
 				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
 				{
-                    string query = $@"set dateformat ymd;
+                    string query = @"set dateformat ymd;
                         SELECT    
                             LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
                             LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
@@ -227,9 +233,9 @@ namespace HackneyRepairs.Repository
                             INNER JOIN rmtask t ON t.wo_ref = wo.wo_ref
                             INNER JOIN rmtrade tr ON tr.trade = t.trade
                         WHERE 
-                            wo.wo_ref = '{workOrderReference}' AND t.task_no = 1";
+                            wo.wo_ref = @WorkOrderReference AND t.task_no = 1";
 					
-                    workOrder = connection.Query<UHWorkOrder>(query).FirstOrDefault();
+                    workOrder = connection.Query<UHWorkOrder>(query, new { WorkOrderReference = workOrderReference }).FirstOrDefault();
 				}
 			}
 			catch (Exception ex)
@@ -269,9 +275,10 @@ namespace HackneyRepairs.Repository
                             INNER JOIN rmtask t ON t.wo_ref = wo.wo_ref
                             INNER JOIN rmtrade tr ON tr.trade = t.trade
                         WHERE 
-                            wo.wo_ref IN('{String.Join("', '", workOrderReferences)}') AND t.task_no = 1";
+                            wo.wo_ref IN @WorkOrderReferences AND t.task_no = 1";
 
-                    return connection.Query<UHWorkOrder>(query).ToArray();
+                    var workOrders = connection.Query<UHWorkOrder>(query, new { WorkOrderReferences = workOrderReferences }).ToArray();
+                    return workOrders;
                 }
             }
             catch (Exception ex)
@@ -281,6 +288,7 @@ namespace HackneyRepairs.Repository
             }
         }
 
+        // unused
 		public async Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference)
         {
 			IEnumerable<UHWorkOrder> workOrders;
@@ -331,7 +339,7 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    string query = $@"set dateformat ymd;
+                    string query = @"set dateformat ymd;
                                     SELECT
                                        LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
                                        LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
@@ -354,10 +362,18 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmreqst r ON wo.rq_ref = r.rq_ref
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
-                                       WHERE wo.created > '{GetCutoffTime()}' AND wo.created <= '{until.ToString("yyyy-MM-dd HH:mm:ss")}'
-                                       AND wo.created >= '{since.ToString("yyyy-MM-dd HH:mm:ss")}' 
-                                       AND wo.prop_ref IN('{String.Join("','", propertyReferences)}') AND t.task_no = 1";
-                    workOrders = await connection.QueryAsync<UHWorkOrder>(query);
+                                       WHERE wo.created > @CutoffTime AND wo.created <= @Until
+                                       AND wo.created >= @Since
+                                       AND wo.prop_ref IN @PropertyReferences AND t.task_no = 1";
+
+                    var queryParameters = new
+                    {
+                        CutoffTime = GetCutoffTime(),
+                        Since = since.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Until = until.ToString("yyyy-MM-dd HH:mm:ss"),
+                        PropertyReferences = propertyReferences
+                    };
+                    workOrders = await connection.QueryAsync<UHWorkOrder>(query, queryParameters);
                 }
             }
             catch (Exception ex)
@@ -376,7 +392,7 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-					string query = $@"set dateformat ymd;
+					string query = @"set dateformat ymd;
                                     SELECT
                                        LTRIM(RTRIM(wo.wo_ref)) AS WorkOrderReference,
                                        LTRIM(RTRIM(r.rq_ref)) AS RepairRequestReference,
@@ -400,11 +416,20 @@ namespace HackneyRepairs.Repository
                                        INNER JOIN rmtask t ON wo.rq_ref = t.rq_ref
                                        INNER JOIN rmtrade tr ON t.trade = tr.trade
                                        INNER JOIN property p ON p.prop_ref = wo.prop_ref
-                                       WHERE wo.created > '{GetCutoffTime()}' AND wo.created <= '{until.ToString("yyyy-MM-dd HH:mm:ss")}'
-                                       AND wo.created >= '{since.ToString("yyyy-MM-dd HH:mm:ss")}'
-                                       AND (p.u_block IN ('{string.Join("','", blockReferences)}') OR p.prop_ref IN ('{string.Join("','", blockReferences)}')) 
-                                       AND tr.trade_desc = '{trade}' AND t.task_no = 1;";
-                    workOrders = await connection.QueryAsync<UHWorkOrder>(query);
+                                       WHERE wo.created > @CutoffTime AND wo.created <= @Until
+                                       AND wo.created >= @Since
+                                       AND (p.u_block IN @BlockReferences OR p.prop_ref IN @BlockReferences)
+                                       AND tr.trade_desc = @Trade AND t.task_no = 1;";
+
+                    var queryParameters = new
+                    {
+                        CutoffTime = GetCutoffTime(),
+                        Since = since.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Until = until.ToString("yyyy-MM-dd HH:mm:ss"),
+                        BlockReferences = blockReferences,
+                        Trade = trade
+                    };
+                    workOrders = await connection.QueryAsync<UHWorkOrder>(query, queryParameters);
                 }
             }
             catch (Exception ex)
@@ -421,14 +446,20 @@ namespace HackneyRepairs.Repository
             {
                 using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    string query = $@"set dateformat ymd;
+                    string query = @"set dateformat ymd;
                                       select    r.rq_ref as repairRequestReference,
                                                 r.rq_problem as problemDescription,
                                                 r.rq_priority as priority,
                                                 r.prop_ref as propertyReference
                                                 FROM rmreqst r
-                                                where r.rq_date > '{GetCutoffTime()}' AND r.prop_ref = '{propertyReference}'";
-                    var repairs = connection.Query<RepairRequestBase>(query).ToList();
+                                                where r.rq_date > @CutoffTime AND r.prop_ref = @PropertyReference";
+
+                    var queryParameters = new
+                    {
+                        CutoffTime = GetCutoffTime(),
+                        PropertyReference = propertyReference
+                    };
+                    var repairs = connection.Query<RepairRequestBase>(query, queryParameters).ToList();
                     return repairs;
                 }
             }
@@ -500,9 +531,9 @@ namespace HackneyRepairs.Repository
                                         rmworder ON rmworder.rmworder_sid = visit.reference_sid
                                     INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
                                     WHERE 
-                                        rmworder.wo_ref = '{workOrderReference}'
+                                        rmworder.wo_ref = @WorkOrderReference
                                     ORDER BY visit.visit_sid";
-                    appointments = connection.Query<DetailedAppointment>(query).ToList();
+                    appointments = connection.Query<DetailedAppointment>(query, new { WorkOrderReference = workOrderReference }).ToList();
                 }
             }
             catch (Exception ex)
@@ -513,14 +544,14 @@ namespace HackneyRepairs.Repository
             return appointments;
         }
 
-		public async Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference)
+        public async Task<DetailedAppointment> GetLatestAppointmentByWorkOrderReference(string workOrderReference)
         {
             DetailedAppointment appointment;
             try
             {
-				using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
-				{
-					string query = $@"SELECT
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = @"SELECT
                                             Id,
                                             Status,
                                             AssignedWorker,
@@ -549,15 +580,15 @@ namespace HackneyRepairs.Repository
                                             RIGHT OUTER JOIN rmworder ON rmworder.rmworder_sid = visit.reference_sid
                                             INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
                                             WHERE
-                                                rmworder.wo_ref = '{workOrderReference}') AS allApps
+                                                rmworder.wo_ref = @WorkOrderReference) AS allApps
                                         WHERE
                                             allApps.EndDate = allApps.ExpectedOn OR allApps.ExpectedOn = 'Jan 1 1900 12:00:00:000AM'";
 
-					appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
+                    appointment = connection.Query<DetailedAppointment>(query, new { WorkOrderReference = workOrderReference }).FirstOrDefault();
 
-					if (appointment == null)
-					{
-						query = $@"SELECT
+                    if (appointment == null)
+                    {
+                        query = $@"SELECT
                                     Id,
                                     Status,
                                     AssignedWorker,
@@ -586,10 +617,10 @@ namespace HackneyRepairs.Repository
                                     RIGHT OUTER JOIN rmworder ON rmworder.rmworder_sid = visit.reference_sid
                                     INNER JOIN supplier ON supplier.sup_ref = rmworder.sup_ref
                                     WHERE
-                                        rmworder.wo_ref = '{workOrderReference}') AS allApps
+                                        rmworder.wo_ref = @WorkOrderReference) AS allApps
                                 ORDER BY Id desc";
 
-						appointment = connection.Query<DetailedAppointment>(query).FirstOrDefault();
+                        appointment = connection.Query<DetailedAppointment>(query, new { WorkOrderReference = workOrderReference }).FirstOrDefault();
 					}
                 }
             }
@@ -620,10 +651,16 @@ namespace HackneyRepairs.Repository
                         INNER JOIN
                             rmreqst AS request ON work_order.rq_ref = request.rq_ref
                         WHERE 
-                            work_order.created > '{GetCutoffTime()}' AND work_order.wo_ref > '{startId}'
+                            work_order.created > @CutoffTime AND work_order.wo_ref > @StartId
                             AND work_order.wo_ref NOT LIKE '[A-Z]%'
                         ORDER BY work_order.wo_ref";
-                    var workOrders = connection.Query<UHWorkOrderFeed>(query);
+
+                    var queryParameters = new
+                    {
+                        CutoffTime = GetCutoffTime(),
+                        StartId = startId
+                    };
+                    var workOrders = connection.Query<UHWorkOrderFeed>(query, queryParameters);
                     return workOrders;
                 }
             }
