@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
+using HackneyRepairs.DTOs;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using RepairsService;
@@ -25,20 +27,20 @@ namespace HackneyRepairs.Services
 			_logger = logger;
 		}
 
-		public async Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference)
+        public async Task<IEnumerable<RepairRequestBase>> GetRepairByPropertyReference(string propertyReference)
         {
-			_logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
-			var result = (List<RepairRequestBase>)await _uhtRepository.GetRepairRequests(propertyReference);
-			_logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {result.Count} repair requests returned");
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhtRepository (Property reference: {propertyReference})");
+            var result = (List<RepairRequestBase>)await _uhtRepository.GetRepairRequestsByPropertyReference(propertyReference);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {result.Count} repair requests returned");
 
             _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Sent request to UhWarehouse (Property reference: {propertyReference})");
-            var uhwarehouseResults = (List<RepairRequestBase>)await _uhWarehouseRepository.GetRepairRequests(propertyReference);
-			_logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {uhwarehouseResults.Count} repair requests returned");
+            var uhwarehouseResults = (List<RepairRequestBase>)await _uhWarehouseRepository.GetRepairRequestsByPropertyReference(propertyReference);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): {uhwarehouseResults.Count} repair requests returned");
 
-			_logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Merging list from repositories to a single list");
-			result.InsertRange(0, uhwarehouseResults);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Merging list from repositories to a single list");
+            result.InsertRange(0, uhwarehouseResults);
 
-			if (result.Count == 0)
+            if (result.Count == 0)
             {
                 _logger.LogInformation($"HackneyWorkOrdersService/GetRepairByPropertyReference(): Repositories returned empty lists, checking if the property exists.");
                 var property = await _uhWarehouseRepository.GetPropertyDetailsByReference(propertyReference);
@@ -50,6 +52,21 @@ namespace HackneyRepairs.Services
 
             _logger.LogInformation($"HackneyRepairsService/GetRepairByPropertyReference(): Total {result.Count} work orders returned for: {propertyReference})");
             return result;
+        }
+
+        public async Task<IEnumerable<RepairWithWorkOrderDto>> GetRepairRequest(string repairReference)
+        {
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByReference(): Sent request to UhWarehouseRepository (Repair ref: {repairReference})");
+            var warehouseResult = await _uhWarehouseRepository.GetRepairRequest(repairReference);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByReference(): {warehouseResult.Count()} results returned from UhWarehouseRepository (Repair ref: {repairReference})");
+
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByReference(): Sent request to UhtRepository (Repair ref: {repairReference})");
+            var liveResult = await _uhtRepository.GetRepairRequest(repairReference);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByReference(): {liveResult.Count()} results returned from UhtRepository (Repair ref: {repairReference})");
+
+            var combinedResults = warehouseResult.Concat(liveResult);
+            _logger.LogInformation($"HackneyRepairsService/GetRepairByReference(): returning {combinedResults.Count()} results in total (Repair ref: {repairReference})");
+            return combinedResults;
         }
 
 		public Task<RepairCreateResponse> CreateRepairAsync(NewRepairRequest request)
@@ -96,15 +113,7 @@ namespace HackneyRepairs.Services
 			var response = _client.GetRepairTasksByRequestAsync(request);
 			_logger.LogInformation($"HackneyRepairsService/GetRepairTasksAsync(): Received response from upstream RepairServiceClient (Request ref: {request.RequestReference})");
 			return response;
-		}
-
-		public Task<RepairGetResponse> GetRepairRequestByReferenceAsync(RepairRefRequest request)
-		{
-			_logger.LogInformation($"HackneyRepairsService/GetRepairRequestByReferenceAsync(): Sent request to upstream RepairServiceClient (Request ref: {request.RequestReference})");
-			var response = _client.GetRepairRequestByReferenceAsync(request);
-			_logger.LogInformation($"HackneyRepairsService/GetRepairRequestByReferenceAsync(): Received response from upstream RepairServiceClient (Request ref: {request.RequestReference})");
-			return response;
-		}
+		}	
 
 		public Task<int?> UpdateUHTVisitAndBlockTrigger(string workOrderReference, DateTime startDate, DateTime endDate, int orderId, int bookingId, string slotDetail)
 		{

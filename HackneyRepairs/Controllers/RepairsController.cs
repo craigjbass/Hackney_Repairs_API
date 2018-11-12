@@ -11,6 +11,7 @@ using HackneyRepairs.Factories;
 using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
 using System.Collections;
+using HackneyRepairs.Repository;
 
 namespace HackneyRepairs.Controllers
 {
@@ -103,8 +104,8 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-                RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
-                var json = Json(await repairActions.GetRepairByReference(repairRequestReference));
+                var actions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
+                var json = Json(await actions.GetRepair(repairRequestReference));
                 json.StatusCode = 200;
                 return json;
             }
@@ -122,6 +123,36 @@ namespace HackneyRepairs.Controllers
                 json.StatusCode = 404;
                 return json;
 
+            }
+            catch (UhtRepositoryException ex)
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "We had some problems connecting to the data source"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 500;
+                return json;
+            }
+            catch (UHWWarehouseRepositoryException ex)
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "We had some issues connecting to the data source"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 500;
+                return json;
             }
             catch (Exception ex)
             {

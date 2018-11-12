@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using HackneyRepairs.Models;
 using HackneyRepairs.Entities;
+using HackneyRepairs.Actions;
+using HackneyRepairs.DTOs;
 
 namespace HackneyRepairs.Services
 {
@@ -137,46 +139,6 @@ namespace HackneyRepairs.Services
             return Task.Run(() => tasksListResponse);
         }
 
-        public Task<RepairGetResponse> GetRepairRequestByReferenceAsync(RepairRefRequest request)
-        {
-            var response = new RepairGetResponse
-            {
-                Success = true,
-                RepairRequest = new RepairRequestDto
-                {
-                    Reference = "43453543  ",
-                    Problem = "tap leaking ",
-                    PriorityCode = "N",
-                    PropertyReference = "123456890",
-                    Name="Al Smith"
-                }
-            };
-            switch (request.RequestReference)
-            {
-                case "123456890":
-                    return Task.Run(() => new RepairGetResponse
-                    {
-                        Success = false,
-                        RepairRequest = new RepairRequestDto()
-                    });
-                case "123456899":
-                    return Task.Run(() => new RepairGetResponse
-                    {
-                        Success = true
-                    });
-                case "123456":
-                    return Task.Run(() => response);
-                case "ABCXYZ":
-                    throw new Exception();
-                default:
-                    return Task.Run(() => new RepairGetResponse
-                    {
-                        Success = true,
-                        RepairRequest = new RepairRequestDto()
-                    });
-            }
-        }
-
         public Task<int?> UpdateUHTVisitAndBlockTrigger(string workOrderReference, DateTime startDate, DateTime endDate, int orderId, int bookingId, string slotDetail)
         {
             int? returnValue = 0;
@@ -226,6 +188,21 @@ namespace HackneyRepairs.Services
                 default:
 					return Task.Run(() => requests);
             }
+        }
+
+        public Task<IEnumerable<RepairWithWorkOrderDto>> GetRepairRequest(string repairReference)
+        {
+            if (string.Equals(repairReference, "ABCXYZ"))
+            {
+                throw new RepairsServiceException();
+            }
+            var fakeResponse = new List<RepairWithWorkOrderDto>();
+            if (string.Equals(repairReference, "123456899"))
+            {
+                return Task.Run(() => (IEnumerable<RepairWithWorkOrderDto>)fakeResponse);
+            }
+            var fakeElement = new RepairWithWorkOrderDto();
+            return Task.Run(() => fakeResponse.Append(fakeElement));
         }
     }
 }
