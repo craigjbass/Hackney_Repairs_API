@@ -313,7 +313,7 @@ namespace HackneyRepairs.Tests
             StringBuilder json = new StringBuilder();
             json.Append("[");
             json.Append("{");
-            json.Append("\"developerMessage\":\"API Internal Error\",");
+            json.Append("\"developerMessage\":\"Exception of type 'HackneyRepairs.Actions.PropertyServiceException' was thrown.\",");
             json.Append("\"userMessage\":\"API Internal Error\"");
             json.Append("}");
             json.Append("]");
@@ -409,7 +409,7 @@ namespace HackneyRepairs.Tests
             StringBuilder json = new StringBuilder();
             json.Append("[");
             json.Append("{");
-            json.Append("\"developerMessage\":\"API Internal Error\",");
+            json.Append("\"developerMessage\":\"Exception of type 'HackneyRepairs.Actions.PropertyServiceException' was thrown.\",");
             json.Append("\"userMessage\":\"API Internal Error\"");
             json.Append("}");
             json.Append("]");
@@ -461,7 +461,7 @@ namespace HackneyRepairs.Tests
             StringBuilder json = new StringBuilder();
             json.Append("[");
             json.Append("{");
-            json.Append("\"developerMessage\":\"API Internal Error\",");
+            json.Append("\"developerMessage\":\"Exception of type 'HackneyRepairs.Actions.PropertyServiceException' was thrown.\",");
             json.Append("\"userMessage\":\"API Internal Error\"");
             json.Append("}");
             json.Append("]");

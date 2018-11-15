@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HackneyRepairs.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,16 +9,28 @@ namespace HackneyRepairs.Builders
     {
         public static JsonResult Error(int errorCode, string userMessage, string developerMessage)
         {
-            var error = new ApiErrorMessage
+            var error = new List<ApiErrorMessage>
             {
-                DeveloperMessage = developerMessage,
-                UserMessage = userMessage
+                new ApiErrorMessage
+                {
+                    DeveloperMessage = developerMessage,
+                    UserMessage = userMessage
+                }
             };
             var jsonResponse = new JsonResult(error)
             {
                 StatusCode = errorCode
             };
 
+            return jsonResponse;
+        }
+
+        public static JsonResult ErrorFromList(int errorCode, IEnumerable<ApiErrorMessage> errors)
+        {
+            var jsonResponse = new JsonResult(errors)
+            {
+                StatusCode = errorCode
+            };
             return jsonResponse;
         }
 
