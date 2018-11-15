@@ -18,4 +18,4 @@ RUN dotnet publish HackneyRepairs.csproj -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-CMD ASPNETCORE_URLS=http://+:${PORT:-80} dotnet HackneyRepairs.dll
+CMD mount -t cifs ${MOBILE_REPORTS_SERVER_PATH} /mnt -o username=${MOBILE_REPORTS_USER},password=${MOBILE_REPORTS_PASSWORD} && ASPNETCORE_URLS=http://+:${PORT:-80} dotnet HackneyRepairs.dll
