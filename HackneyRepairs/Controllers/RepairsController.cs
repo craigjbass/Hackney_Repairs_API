@@ -88,7 +88,7 @@ namespace HackneyRepairs.Controllers
             try
             {
                 RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
-                var result = await repairActions.GetRepairByReference(repairRequestReference);
+                var result = await repairActions.GetRepair(repairRequestReference);
                 return ResponseBuilder.Ok(result);
             }
 			      catch (MissingRepairRequestException ex)
