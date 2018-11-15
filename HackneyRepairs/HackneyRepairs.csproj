@@ -47,6 +47,7 @@
 
   <ItemGroup>
     <Content Remove="app.config" />
+    <Content Remove="NLog.config" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Dockerfile" />
@@ -65,9 +66,6 @@
     </Content>
     <Content Update="ExtendedAppSettings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
