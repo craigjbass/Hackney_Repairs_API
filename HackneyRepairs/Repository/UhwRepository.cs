@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using HackneyRepairs.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
-using HackneyRepairs.Entities;
 using Dapper;
 using HackneyRepairs.Models;
 
@@ -93,7 +92,7 @@ namespace HackneyRepairs.Repository
                 {
                     var query = $@"set dateformat ymd;
                             SELECT
-                               '{workOrderReference}' AS WorkOrderReference,
+                                @WorkOrderReference AS WorkOrderReference,
                                 note.NoteID AS NoteId,
                                 note.NoteText AS Text,
                                 note.NDate AS LoggedAt,
@@ -104,8 +103,8 @@ namespace HackneyRepairs.Repository
                                 uht{environmentDbWord}.dbo.rmworder AS work_order
                                 ON note.KeyNumb = work_order.rmworder_sid
                             WHERE 
-                                work_order.wo_ref = '{workOrderReference}'";
-                    var notes = connection.Query<Note>(query);
+                                work_order.wo_ref = @WorkOrderReference";
+                    var notes = connection.Query<Note>(query, new { WorkOrderReference = workOrderReference });
                     return notes;
                 }
             }
@@ -137,10 +136,17 @@ namespace HackneyRepairs.Repository
                         INNER JOIN
                             uht{environmentDbWord}.dbo.rmworder AS work_order ON note.KeyNumb = work_order.rmworder_sid
                         WHERE
-                            note.NDate > '{GetCutoffTime()}' AND note.NoteID > {noteId}
-                            AND note.KeyObject IN ('{noteTarget}') 
+                            note.NDate > @CutoffTime AND note.NoteID > @NoteId
+                            AND note.KeyObject IN (@NoteTarget) 
                         ORDER BY NoteID";
-                    var notes = connection.Query<Note>(query);
+
+                    var queryParameters = new
+                    {
+                        NoteId = noteId,
+                        CutoffTime = GetCutoffTime(),
+                        NoteTarget = noteTarget
+                    };
+                    var notes = connection.Query<Note>(query, queryParameters);
                     return notes;
                 }
             }

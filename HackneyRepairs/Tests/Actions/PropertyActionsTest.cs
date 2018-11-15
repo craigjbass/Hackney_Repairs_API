@@ -327,8 +327,8 @@ namespace HackneyRepairs.Tests.Actions
 				}
 			};
 
-            mockWorkordersService.Setup(service => service.GetWorkOrderByBlockReference("00074866", "Plumbing", It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-			                     .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(workOrders));
+            mockWorkordersService.Setup(service => service.GetWorkOrderByBlockReference(It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+			                     .Returns(Task.FromResult(workOrders));
 			var mockRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
 
 			PropertyActions propertyActions = new PropertyActions(mockPropertyService.Object, mockRequestBuilder.Object, mockWorkordersService.Object, mockLogger.Object);
@@ -386,7 +386,7 @@ namespace HackneyRepairs.Tests.Actions
             mockPropertyService.Setup(service => service.GetPropertyLevelInfo("00087086"))
                    .Returns(Task.FromResult<PropertyLevelModel>(null));
 
-            mockWorkordersService.Setup(service => service.GetWorkOrderByBlockReference("00074866", "Plumbing", It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            mockWorkordersService.Setup(service => service.GetWorkOrderByBlockReference(It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
 			                     .Returns(Task.FromResult<IEnumerable<UHWorkOrder>>(new List<UHWorkOrder>()));
             var mockRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
 

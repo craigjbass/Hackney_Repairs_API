@@ -12,6 +12,7 @@ using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
 using System.Collections;
 using HackneyRepairs.Builders;
+using HackneyRepairs.Repository;
 
 namespace HackneyRepairs.Controllers
 {
@@ -44,7 +45,6 @@ namespace HackneyRepairs.Controllers
         /// <param name="repairorders">Optionally, a list repair order objects can be included in the request</param>
         /// <returns>A JSON object for a successfully created repair request</returns>
         /// <response code="200">A successfully created repair request</response>
-
         [HttpPost]
         public async Task<JsonResult> Post([FromBody]RepairRequest request)
         {
@@ -91,10 +91,38 @@ namespace HackneyRepairs.Controllers
                 var result = await repairActions.GetRepairByReference(repairRequestReference);
                 return ResponseBuilder.Ok(result);
             }
-			catch (MissingRepairRequestException ex)
+			      catch (MissingRepairRequestException ex)
             {
                 return ResponseBuilder.Error(404, "Cannot find repair", ex.Message);
+            }
+            catch (UhtRepositoryException ex)
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "We had some problems connecting to the data source"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 500;
+                return json;
+            }
+            catch (UHWWarehouseRepositoryException ex)
+            {
+                var errors = new List<ApiErrorMessage>
+                {
+                    new ApiErrorMessage
+                    {
 
+                        DeveloperMessage = ex.Message,
+                        UserMessage = "We had some issues connecting to the data source"
+                    }
+                };
+                var json = Json(errors);
+                json.StatusCode = 500;
+                return json;
             }
             catch (Exception ex)
             {
@@ -103,13 +131,13 @@ namespace HackneyRepairs.Controllers
 
         }
 
-		// GET Repair Requests by property reference
+		    // GET Repair Requests by property reference
         /// <summary>
-		/// Returns all Repair Requests for a property, for the work orders and contact details call /v1/repairs/{repairRequestReference}
+		    /// Returns all Repair Requests for a property, for the work orders and contact details call /v1/repairs/{repairRequestReference}
         /// </summary>
-		/// <param name="propertyReference">Universal Housing property reference</param>
+		    /// <param name="propertyReference">Universal Housing property reference</param>
         /// <returns>A list of Repair Requests</returns>
-		/// <response code="200">Returns a list of Repair Requests</response>
+		    /// <response code="200">Returns a list of Repair Requests</response>
         /// <response code="404">If no Repair Request was found for the property</response>   
         /// <response code="500">If any errors are encountered</response> 
         [HttpGet]
@@ -126,7 +154,7 @@ namespace HackneyRepairs.Controllers
                 var result = await repairActions.GetRepairByPropertyReference(propertyReference);
                 return ResponseBuilder.Ok(result);
             }
-			catch (MissingPropertyException ex)
+            catch (MissingPropertyException ex)
             {
                 return ResponseBuilder.Error(404, "Cannot find property", ex.Message);
             }

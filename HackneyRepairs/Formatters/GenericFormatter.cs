@@ -12,9 +12,9 @@ namespace HackneyRepairs.Formatters
                 if (property.PropertyType.Name == "String") 
                 {
                     string value = (string)property.GetValue(result, null);
-                    if (!string.IsNullOrWhiteSpace(value))
+                    if (!string.IsNullOrEmpty(value))
                     {
-                        property.SetValue(result, value.Trim());
+                        property.SetValue(result, value.TrimEnd());
                     }
                 }
             }

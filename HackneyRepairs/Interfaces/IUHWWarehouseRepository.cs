@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HackneyRepairs.DTOs;
 using HackneyRepairs.Models;
-using HackneyRepairs.PropertyService;
 
 namespace HackneyRepairs.Interfaces
 {
     public interface IUHWWarehouseRepository
     {
         Task<bool> GetMaintainableFlag(string propertyReference);
-        Task<IEnumerable<RepairRequestBase>> GetRepairRequests(string propertyReference);
+        Task<IEnumerable<RepairRequestBase>> GetRepairRequestsByPropertyReference(string propertyReference);
+        Task<IEnumerable<RepairWithWorkOrderDto>> GetRepairRequest(string repairReference);
         Task<PropertyLevelModel> GetPropertyLevelInfo(string reference);
         Task<PropertyLevelModel[]> GetPropertyListByPostCode(string post_code, int? maxLevel, int? minLevel);
         Task<PropertyDetails> GetPropertyDetailsByReference(string reference);
@@ -17,9 +18,9 @@ namespace HackneyRepairs.Interfaces
         Task<PropertyDetails> GetPropertyEstateByReference(string reference);
         Task<UHWorkOrder> GetWorkOrderByWorkOrderReference(string reference);
         Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByWorkOrderReferences(string[] reference);
-		Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference);
+        Task<IEnumerable<UHWorkOrder>> GetWorkOrderByPropertyReference(string propertyReference);
         Task<IEnumerable<UHWorkOrder>> GetWorkOrdersByPropertyReferences(string[] propertyReferences, DateTime since, DateTime until);
-        Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string blockReference, string trade, DateTime since, DateTime until);
+        Task<IEnumerable<UHWorkOrder>> GetWorkOrderByBlockReference(string[] blockReferences, string trade, DateTime since, DateTime until);
         Task<DrsOrder> GetWorkOrderDetails(string workOrderReference);        
         Task<IEnumerable<Note>> GetNotesByWorkOrderReference(string workOrderReference);
         Task<IEnumerable<UHWorkOrderFeed>> GetWorkOrderFeed(string startID, int size);

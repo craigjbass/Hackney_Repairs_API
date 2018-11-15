@@ -24,7 +24,6 @@ namespace HackneyRepairs.Repository
 
 		public async Task<IEnumerable<DetailedAppointment>> GetAppointmentsByWorkOrderReference(string workOrderReference)
 		{
-			string[] appointmentReferences;
 			List<DetailedAppointment> appointments;
 			_logger.LogInformation($"Getting appointment details from DRS for {workOrderReference}");
 
@@ -32,50 +31,12 @@ namespace HackneyRepairs.Repository
 			{
 				using (var connection = new MySqlConnection(_context.Database.GetDbConnection().ConnectionString))
 				{
-					//string query = $@"
-     //                   (
-     //                       SELECT
-     //                           s_job.NAME AS Id
-     //                       FROM
-     //                           s_serviceorder
-     //                       INNER JOIN s_job ON s_job.PARENTID = s_serviceorder.USERID
-     //                       WHERE
-     //                           s_serviceorder.NAME = '{workOrderReference}')
-     //                   UNION (
-     //                       SELECT
-     //                           p_job.NAME AS Id
-     //                       FROM
-     //                           p_serviceorder
-     //                       INNER JOIN p_job ON p_job.PARENTID = p_serviceorder.USERID
-     //                       WHERE
-     //                           p_serviceorder.NAME = '{workOrderReference}')
-     //                   UNION (
-     //                       SELECT
-     //                           s_job.NAME AS Id
-     //                       FROM
-     //                           p_serviceorder
-     //                       INNER JOIN s_job ON s_job.PARENTID = p_serviceorder.USERID
-     //                       WHERE
-     //                           p_serviceorder.NAME = '{workOrderReference}')";
-
-					//appointmentReferences = connection.Query<string>(query).ToArray();
-
-					//if (appointmentReferences.Length == 0)
-					//{
-					//	return new List<DetailedAppointment>();
-					//}
-     //               string sAppointmenReferences = "";
-					//for (int i = 0; i < appointmentReferences.Length - 1; i++)
-					//{
-					//	sAppointmenReferences += "'" + appointmentReferences[i] + "',";
-					//}
-					//sAppointmenReferences += "'" + appointmentReferences[appointmentReferences.Length-1] + "'";
-
-					var query = $@"SELECT
+			    	var query = @"SELECT
                                     jobs.Id,
                                     jobs.BeginDate,
                                     jobs.EndDate,
                                     jobs.Status,
+                                    jobs.Outcome,
                                     jobs.AssignedWorker,
                                     s_worker.mobilephone AS Phonenumber,
                                     jobs.Priority,
@@ -88,6 +49,7 @@ namespace HackneyRepairs.Repository
                                         s_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
                                         s_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
                                         s_job.status AS Status,
+                                        s_job.BD_TASK_COMPLETION_STAT AS Outcome,
                                         s_job.ASSIGNEDWORKERS AS AssignedWorker,
                                         s_job.priority AS Priority,
                                         s_job.CREATIONDATE AS CreationDate,
@@ -95,13 +57,14 @@ namespace HackneyRepairs.Repository
                                     FROM
                                         s_job
                                     WHERE
-                                        s_job.NAME = '{workOrderReference}')
+                                        s_job.NAME = @WorkOrderReference)
                                 UNION (
                                     SELECT
                                         p_job.NAME AS Id,
                                         p_job.GLOBALCURRENTTIMEWINDOW_START AS BeginDate,
                                         p_job.GLOBALCURRENTTIMEWINDOW_END AS EndDate,
                                         p_job.status AS Status,
+                                        p_job.BD_TASK_COMPLETION_STAT AS Outcome,
                                         p_job.ASSIGNEDWORKERS AS AssignedWorker,
                                         p_job.priority AS Priority,
                                         p_job.CREATIONDATE AS CreationDate,
@@ -109,10 +72,10 @@ namespace HackneyRepairs.Repository
                                     FROM
                                         p_job
                                     WHERE
-                                        p_job.NAME = '{workOrderReference}')) AS jobs
+                                        p_job.NAME = @WorkOrderReference)) AS jobs
                                         
                                 INNER JOIN s_worker ON jobs.AssignedWorker = s_worker.name";
-					appointments = connection.Query<DetailedAppointment>(query).ToList();
+                    appointments = connection.Query<DetailedAppointment>(query, new {WorkOrderReference = workOrderReference}).ToList();
 				}
 				return appointments;
 			}

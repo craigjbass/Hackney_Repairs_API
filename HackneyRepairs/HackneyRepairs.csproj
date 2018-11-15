@@ -18,6 +18,7 @@
     <Folder Include="Utils\" />
     <Folder Include="Entities\" />
     <Folder Include="Builders\" />
+    <Folder Include="DTOs\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,5 +69,8 @@
     <Content Update="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Builders\RepairBuilder.cs" />
   </ItemGroup>
 </Project>
