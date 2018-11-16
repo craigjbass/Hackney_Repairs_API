@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
+using HackneyRepairs.Formatters;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
@@ -43,6 +44,14 @@ namespace HackneyRepairs.Services
             _logger.LogInformation($"HackneyPropertyService/GetPropertyByRefAsync(): Sent request to upstream PropertyServiceClient (Property reference: {reference})");
             var response =  _uhWarehouseRepository.GetPropertyDetailsByReference(reference);
             _logger.LogInformation($"HackneyPropertyService/GetPropertyByRefAsync(): Received response from upstream PropertyServiceClient (Property reference: {reference})");
+            return response;
+        }
+
+        public async Task<PropertyDetails[]> GetPropertiesByReferences(string[] references)
+        {
+            _logger.LogInformation($"HackneyPropertyService/GetPropertyByRefAsync(): Sent request to upstream PropertyServiceClient (Property references: {GenericFormatter.CommaSeparate(references)})");
+            var response = await _uhWarehouseRepository.GetPropertiesDetailsByReference(references);
+            _logger.LogInformation($"HackneyPropertyService/GetPropertyByRefAsync(): Received response from upstream PropertyServiceClient (Property references: {GenericFormatter.CommaSeparate(references)})");
             return response;
         }
 

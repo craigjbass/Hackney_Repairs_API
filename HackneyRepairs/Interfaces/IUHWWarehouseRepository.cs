@@ -14,6 +14,7 @@ namespace HackneyRepairs.Interfaces
         Task<PropertyLevelModel> GetPropertyLevelInfo(string reference);
         Task<PropertyLevelModel[]> GetPropertyListByPostCode(string post_code, int? maxLevel, int? minLevel);
         Task<PropertyDetails> GetPropertyDetailsByReference(string reference);
+        Task<PropertyDetails[]> GetPropertiesDetailsByReference(string[] references);
         Task<PropertyDetails> GetPropertyBlockByReference(string reference);
         Task<PropertyDetails> GetPropertyEstateByReference(string reference);
         Task<UHWorkOrder> GetWorkOrderByWorkOrderReference(string reference);

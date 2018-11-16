@@ -10,12 +10,14 @@ using HackneyRepairs.Models;
 using HackneyRepairs.Services;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace HackneyRepairs.Tests.Actions
 {
 	public class PropertyActionsTest
 	{
-		[Fact]
+        #region property by postcode
+        [Fact]
 		public async Task find_properties_returns_a_list_of_properties()
 		{
 			var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
@@ -93,8 +95,10 @@ namespace HackneyRepairs.Tests.Actions
 			PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
             await Assert.ThrowsAsync<PropertyServiceException>(async () => await propertyActions.FindProperty("E8 2LN", null, null));
 		}
+        #endregion
 
-		[Fact]
+        #region property details by reference
+        [Fact]
 		public async Task get_property_details_by_reference_returns_a_property_object_for_a_valid_request()
 		{
 			var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
@@ -147,8 +151,61 @@ namespace HackneyRepairs.Tests.Actions
 			PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
 			await Assert.ThrowsAsync<PropertyServiceException>(async () => await propertyActions.FindPropertyDetailsByRef("525252525"));
 		}
+        #endregion
 
-		[Fact]
+        #region properties details by multiple references
+        [Fact]
+        public async Task get_properties_details_by_references_returns_a_property_object_for_a_valid_request()
+        {
+            var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
+            var response = new PropertyDetails[]
+            {
+                new PropertyDetails()
+                {
+                    ShortAddress = "Front Office, Robert House, 6 - 15 Florfield Road",
+                    PostCodeValue = "E8 1DT",
+                    PropertyReference = "43453543",
+                    Maintainable = false,
+                    LevelCode = 7,
+                    Description = "Dwelling"
+                }
+            };
+
+            var fakeService = new Mock<IHackneyPropertyService>();
+            fakeService.Setup(service => service.GetPropertiesByReferences(It.IsAny<string[]>())).ReturnsAsync(response);
+            var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
+            var workOrdersService = new Mock<IHackneyWorkOrdersService>();
+            PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
+            var results = await propertyActions.FindPropertiesDetailsByReferences(new string[] { "43453543" });
+            var property = new
+            {
+                address = "Front Office, Robert House, 6 - 15 Florfield Road",
+                postcode = "E8 1DT",
+                propertyReference = "43453543",
+                maintainable = false,
+                levelCode = 7,
+                description = "Dwelling"
+            };
+            Assert.Equal(property, results.First());
+        }
+
+        [Fact]
+        public async Task get_properties_details_by_references_raises_an_exception_if_one_the_properties_is_missing()
+        {
+            var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
+            var response = new PropertyDetails[] { new PropertyDetails() };
+            var fakeService = new Mock<IHackneyPropertyService>();
+            fakeService.Setup(service => service.GetPropertiesByReferences(It.IsAny<string[]>()))
+                .ReturnsAsync(response);
+            var fakeRequestBuilder = new Mock<IHackneyPropertyServiceRequestBuilder>();
+            var workOrdersService = new Mock<IHackneyWorkOrdersService>();
+            PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
+            await Assert.ThrowsAsync<MissingPropertyException>(async () => await propertyActions.FindPropertiesDetailsByReferences(new string[] { "52525252534", "345356456" }));
+        }
+        #endregion
+
+        #region get property block
+        [Fact]
 		public async Task get_property_block_details_by_reference_returns_a_property_object_for_a_valid_request()
 		{
 			var mockLogger = new Mock<ILoggerAdapter<PropertyActions>>();
@@ -189,7 +246,9 @@ namespace HackneyRepairs.Tests.Actions
 			PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
 			await Assert.ThrowsAsync<PropertyServiceException>(async () => await propertyActions.FindPropertyBlockDetailsByRef("525252525"));
 		}
+        #endregion
 
+        #region get property estate
 		[Fact]
 		public async Task get_property_estate_details_by_reference_returns_a_property_object_for_a_valid_request()
 		{
@@ -258,9 +317,9 @@ namespace HackneyRepairs.Tests.Actions
 			PropertyActions propertyActions = new PropertyActions(fakeService.Object, fakeRequestBuilder.Object, workOrdersService.Object, mockLogger.Object);
 			await Assert.ThrowsAsync<MissingPropertyException>(async () => await propertyActions.FindPropertyEstateDetailsByRef("525252525"));
 		}
+        #endregion
 
 		#region GetWorkOrdersForBlock
-
         [Fact]
         public async Task get_workorders_for_block_should_return_list_of_workorders_when_block_or_lower_property_passed()
 		{
@@ -525,7 +584,6 @@ namespace HackneyRepairs.Tests.Actions
 
 			await Assert.ThrowsAsync<InvalidParameterException>(async () => await propertyActions.GetWorkOrdersForBlock("00079999", "", date, date));
         }
-  
         #endregion
 	}
     
