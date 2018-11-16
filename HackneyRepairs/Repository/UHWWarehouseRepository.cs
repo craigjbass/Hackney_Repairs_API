@@ -214,8 +214,8 @@ namespace HackneyRepairs.Repository
                         INNER 
                             JOIN lulevel ON property.level_code = lulevel.lu_ref 
                         WHERE 
-                            post_code = @Postcode {SqlLevelCondition(minLevel, maxLevel)}";
-                    
+                            post_code = @Postcode {SqlLevelCondition(minLevel, maxLevel)}
+                    ORDER BY property.prop_ref";
                     var properties = connection.Query<PropertyLevelModel>(query, new { Postcode = postcode }).ToArray();
                     return properties;
                 }
