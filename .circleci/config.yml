@@ -1,9 +1,20 @@
 version: 2
 jobs:
   check:
-    machine:true
+    docker:
+      - image: circleci/cci-demo-docker-primary:0.0.1
     steps:
       - checkout
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="18.09.0"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Build projects
           command: docker build --build-arg VERSION_SUFFIX=$CIRCLE_BUILD_NUM --file .circleci/Dockerfile -t repairs-api-test .
@@ -11,17 +22,31 @@ jobs:
           name: Run tests
           command: docker run -it --rm repairs-api-test dotnet test
   staging_release:
-    machine: true
+    docker:
+      - image: circleci/cci-demo-docker-primary:0.0.1
     steps:
       - checkout
       - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="18.09.0"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Install sudo
+          command: |
+            apt-get update
+            apt-get install -y sudo
+      - run:
           name: Install AWS CLI
-          command: pip install awscli --upgrade --user
+          command: sudo apt-get -y -qq install awscli
       - run:
           name: Install jq
-          command: |
-            sudo apt-get update
-            sudo apt-get install jq
+          command: sudo apt-get install jq
       - run:
           name: Install ecs-deploy
           command: |
@@ -50,12 +75,28 @@ jobs:
           command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_APP_NAME --image $ECR_IMAGE_URL:staging --timeout $ECS_DEPLOY_TIMEOUT
 
   production_release:
-    machine: true
+    docker:
+      - image: circleci/cci-demo-docker-primary:0.0.1
     steps:
       - checkout
       - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="18.09.0"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Install sudo
+          command: |
+            apt-get update
+            apt-get install -y sudo
+      - run:
           name: Install AWS CLI
-          command: pip install awscli --upgrade --user
+          command: sudo apt-get -y -qq install awscli
       - run:
           name: Install jq
           command: |
@@ -71,7 +112,7 @@ jobs:
           command: aws ecr get-login --region $AWS_REGION --no-include-email | sh
       - run:
           name: Build new application Docker image
-          command: docker build --file Dockerfile --tag hackney/apps/repairs-api --build-arg VERSION_SUFFIX=$CIRCLE_BUILD_NUM . 
+          command: docker build --file Dockerfile --tag hackney/apps/repairs-api --build-arg VERSION_SUFFIX=$CIRCLE_BUILD_NUM .
       - run:
           name: Tag new image for production release
           command: docker tag hackney/apps/repairs-api:latest $ECR_IMAGE_URL:production
