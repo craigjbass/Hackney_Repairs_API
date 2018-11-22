@@ -13,6 +13,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
 using HackneyRepairs.Extension;
+using HackneyRepairs.Logging;
 using System.Reflection;
 
 namespace HackneyRepairs
@@ -35,6 +36,9 @@ namespace HackneyRepairs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<Settings.ConfigurationSettings>(Configuration);
+            var settings = Configuration.Get<Settings.ConfigurationSettings>();
+
             // Add framework services.
             services.AddDbContext<UhtDbContext>(options =>
                                                 options.UseSqlServer(Configuration.GetSection("UhtDb").Value));
@@ -61,7 +65,12 @@ namespace HackneyRepairs
 
 			});
 			services.AddCustomServices();
-		}
+
+            services.AddLogging(configure =>
+            {
+                configure.AddProvider(new SentryLoggerProvider(settings.SentrySettings?.Url));
+            });
+        }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
