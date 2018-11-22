@@ -1,20 +1,9 @@
 version: 2
 jobs:
   check:
-    docker:
-      - image: circleci/cci-demo-docker-primary:0.0.1
+    machine: true
     steps:
       - checkout
-      - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="18.09.0"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: Build projects
           command: docker build --build-arg VERSION_SUFFIX=$CIRCLE_BUILD_NUM --file .circleci/Dockerfile -t repairs-api-test .
@@ -22,31 +11,18 @@ jobs:
           name: Run tests
           command: docker run -it --rm repairs-api-test dotnet test
   staging_release:
-    docker:
-      - image: circleci/cci-demo-docker-primary:0.0.1
+    machine: true
     steps:
       - checkout
       - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="18.09.0"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Install sudo
-          command: |
-            apt-get update
-            apt-get install -y sudo
-      - run:
           name: Install AWS CLI
-          command: sudo apt-get -y -qq install awscli
+          command: |
+            pip install awscli --upgrade --user
       - run:
           name: Install jq
-          command: sudo apt-get install jq
+          command: |
+           sudo apt-get update
+           sudo apt-get install jq
       - run:
           name: Install ecs-deploy
           command: |
@@ -75,28 +51,12 @@ jobs:
           command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_APP_NAME --image $ECR_IMAGE_URL:staging --timeout $ECS_DEPLOY_TIMEOUT
 
   production_release:
-    docker:
-      - image: circleci/cci-demo-docker-primary:0.0.1
+    machine: true
     steps:
       - checkout
       - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="18.09.0"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Install sudo
-          command: |
-            apt-get update
-            apt-get install -y sudo
-      - run:
           name: Install AWS CLI
-          command: sudo apt-get -y -qq install awscli
+          command: pip install awscli --upgrade --user
       - run:
           name: Install jq
           command: |
@@ -131,9 +91,9 @@ workflows:
       - staging_release:
           requires:
             - check
-          filters:
-            branches:
-              only: central
+          # filters:
+          #   branches:
+          #     only: central
       - permit_production_release:
           type: approval
           requires:
