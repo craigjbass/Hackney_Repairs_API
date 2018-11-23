@@ -6,7 +6,7 @@ jobs:
       - checkout
       - run:
           name: Build projects
-          command: docker build --build-arg VERSION_SUFFIX=$CIRCLE_BUILD_NUM --file .circleci/Dockerfile -t repairs-api-test .
+          command: docker build --build-arg VERSION_SUFFIX=$CIRCLE_BUILD_NUM --file ./HackneyRepairs/Tests/Dockerfile-test -t repairs-api-test .
       - run:
           name: Run tests
           command: docker run -it --rm repairs-api-test dotnet test
