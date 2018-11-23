@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using HackneyRepairs.Tests;
+﻿using HackneyRepairs.Tests;
 using HackneyRepairs.DbContext;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +13,7 @@ using System;
 using System.IO;
 using HackneyRepairs.Extension;
 using HackneyRepairs.Logging;
+using HackneyRepairs.Settings;
 using System.Reflection;
 
 namespace HackneyRepairs
@@ -68,6 +68,7 @@ namespace HackneyRepairs
 
             services.AddLogging(configure =>
             {
+                if(!string.IsNullOrEmpty(settings.SentrySettings?.Url))
                 configure.AddProvider(new SentryLoggerProvider(settings.SentrySettings?.Url));
             });
         }
