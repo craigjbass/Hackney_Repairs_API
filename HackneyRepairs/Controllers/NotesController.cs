@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using HackneyRepairs.Actions;
+using HackneyRepairs.Builders;
 using HackneyRepairs.Factories;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
@@ -46,62 +47,32 @@ namespace HackneyRepairs.Controllers
         {
             if (startId < 1)
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = "Invalid parameter - Please use a valid startId",
-                    UserMessage = @"Bad Request"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 400;
-                return jsonResponse;   
+                return ResponseBuilder.Error(400, "Invalid parameter - Please use a valid startId", "Invalid parameter - Please use a valid startId");
             }
             if (string.IsNullOrWhiteSpace(noteTarget))
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = "Bad Request - Missing parameter",
-                    UserMessage = @"Bad Request"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 400;
-                return jsonResponse;
+                return ResponseBuilder.Error(400, "Missing parameter - notetarget", "Missing parameter - notetarget");
             }
             
             var notesActions = new NotesActions(_workOrdersService, _notesLoggerAdapter);
             try
             {
                 var result = await notesActions.GetNoteFeed(startId, noteTarget, resultSize);
-                var json = Json(result);
-                json.StatusCode = 200;
-                return json;
+                return ResponseBuilder.Ok(result);
             }
             catch (Exception ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = ex.Message
-                };
-
-                JsonResult jsonResponse;
                 if (ex is MissingNoteTargetException)
                 {
-                    error.UserMessage = "noteTarget parameter does not exist in the data source";
-                    jsonResponse = Json(error);
-                    jsonResponse.StatusCode = 404;
+                    var userMessage = "noteTarget parameter does not exist in the data source";
+                    return ResponseBuilder.Error(404, userMessage, ex.Message);
                 }
-                else if (ex is UHWWarehouseRepositoryException || ex is UhwRepositoryException)
+                if (ex is UHWWarehouseRepositoryException || ex is UhwRepositoryException)
                 {
-                    error.UserMessage = "We had issues with connecting to the data source.";
-                    jsonResponse = Json(error);
-                    jsonResponse.StatusCode = 500;
+                    var userMessage = "We had issues with connecting to the data source.";
+                    return ResponseBuilder.Error(500, userMessage, ex.Message);
                 }
-                else
-                {
-                    error.UserMessage = "We had issues processing your request.";
-                    jsonResponse = Json(error);
-                    jsonResponse.StatusCode = 500;
-                }
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had issues processing your request.", ex.Message);
             }
         }
     }

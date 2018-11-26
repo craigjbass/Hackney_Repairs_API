@@ -11,6 +11,7 @@ using HackneyRepairs.Factories;
 using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
 using System.Collections;
+using HackneyRepairs.Builders;
 using HackneyRepairs.Repository;
 
 namespace HackneyRepairs.Controllers
@@ -44,7 +45,6 @@ namespace HackneyRepairs.Controllers
         /// <param name="repairorders">Optionally, a list repair order objects can be included in the request</param>
         /// <returns>A JSON object for a successfully created repair request</returns>
         /// <response code="200">A successfully created repair request</response>
-
         [HttpPost]
         public async Task<JsonResult> Post([FromBody]RepairRequest request)
         {
@@ -57,36 +57,19 @@ namespace HackneyRepairs.Controllers
                 {
                     RepairsActions actions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
                     var result = await actions.CreateRepair(request);
-                    var jsonResponse = Json(result);
-                    jsonResponse.StatusCode = 200;
-                    return jsonResponse;
+                    return ResponseBuilder.Ok(result);
                 }
-                else
+                var errors = validationResult.ErrorMessages.Select(error => new ApiErrorMessage
                 {
-                    var errors = validationResult.ErrorMessages.Select(error => new ApiErrorMessage
-                    {
-                        DeveloperMessage = error,
-                        UserMessage = error
-                    }).ToList();
-                    var jsonResponse = Json(errors);
-                    jsonResponse.StatusCode = 400;
-                    return jsonResponse;
-                }
+                    DeveloperMessage = error,
+                    UserMessage = error
+                }).ToList();
+                return ResponseBuilder.ErrorFromList(400, errors);
 
             }
             catch (Exception ex)
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = ex.Message,
-                        UserMessage = "We had some problems processing your request"
-                    }
-                };
-                var json = Json(errors);
-                json.StatusCode = 500;
-                return json;
+                return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
             }
         }
 
@@ -104,25 +87,13 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-                var actions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
-                var json = Json(await actions.GetRepair(repairRequestReference));
-                json.StatusCode = 200;
-                return json;
+                RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
+                var result = await repairActions.GetRepair(repairRequestReference);
+                return ResponseBuilder.Ok(result);
             }
-			catch (MissingRepairRequestException ex)
+			      catch (MissingRepairRequestException ex)
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = ex.Message,
-                        UserMessage = @"Cannot find repair."
-                    }
-                };
-                var json = Json(errors);
-                json.StatusCode = 404;
-                return json;
-
+                return ResponseBuilder.Error(404, "Cannot find repair", ex.Message);
             }
             catch (UhtRepositoryException ex)
             {
@@ -130,7 +101,6 @@ namespace HackneyRepairs.Controllers
                 {
                     new ApiErrorMessage
                     {
-
                         DeveloperMessage = ex.Message,
                         UserMessage = "We had some problems connecting to the data source"
                     }
@@ -156,29 +126,18 @@ namespace HackneyRepairs.Controllers
             }
             catch (Exception ex)
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-
-                        DeveloperMessage = ex.Message,
-                        UserMessage = "We had some problems processing your request"
-                    }
-                };
-                var json = Json(errors);
-                json.StatusCode = 500;
-                return json;
+                return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
             }
 
         }
 
-		// GET Repair Requests by property reference
+		    // GET Repair Requests by property reference
         /// <summary>
-		/// Returns all Repair Requests for a property, for the work orders and contact details call /v1/repairs/{repairRequestReference}
+		    /// Returns all Repair Requests for a property, for the work orders and contact details call /v1/repairs/{repairRequestReference}
         /// </summary>
-		/// <param name="propertyReference">Universal Housing property reference</param>
+		    /// <param name="propertyReference">Universal Housing property reference</param>
         /// <returns>A list of Repair Requests</returns>
-		/// <response code="200">Returns a list of Repair Requests</response>
+		    /// <response code="200">Returns a list of Repair Requests</response>
         /// <response code="404">If no Repair Request was found for the property</response>   
         /// <response code="500">If any errors are encountered</response> 
         [HttpGet]
@@ -186,55 +145,22 @@ namespace HackneyRepairs.Controllers
         {
             if (String.IsNullOrWhiteSpace(propertyReference))
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = "Missing parameter - propertyReference",
-                        UserMessage = "Missing parameter - propertyReference"
-                    }
-                };
-                var json = Json(errors);
-                json.StatusCode = 400;
-                return json;
+                return ResponseBuilder.Error(400, "Missing parameter - propertyReference", "Missing parameter - propertyReference");
             }
 
             try
             {
                 RepairsActions repairActions = new RepairsActions(_repairsService, _requestBuilder, _loggerAdapter);
-                var json = Json(await repairActions.GetRepairByPropertyReference(propertyReference));
-                json.StatusCode = 200;
-                return json;
+                var result = await repairActions.GetRepairByPropertyReference(propertyReference);
+                return ResponseBuilder.Ok(result);
             }
-			catch (MissingPropertyException ex)
+            catch (MissingPropertyException ex)
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = ex.Message,
-                        UserMessage = @"Cannot find property."
-                    }
-                };
-                var json = Json(errors);
-                json.StatusCode = 404;
-                return json;
-
+                return ResponseBuilder.Error(404, "Cannot find property", ex.Message);
             }
             catch (Exception ex)
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-
-                        DeveloperMessage = ex.Message,
-                        UserMessage = "We had some problems processing your request"
-                    }
-                };
-                var json = Json(errors);
-                json.StatusCode = 500;
-                return json;
+                return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
             }
         }
     }

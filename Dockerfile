@@ -29,4 +29,5 @@ COPY --from=publish /app .
 COPY newrelic ./newrelic
 
 EXPOSE ${PORT:-80}
-CMD ASPNETCORE_URLS=http://+:${PORT:-80} dotnet HackneyRepairs.dll
+CMD mount -t cifs ${MOBILE_REPORTS_SERVER_PATH} /mnt -o username=${MOBILE_REPORTS_USER},password=${MOBILE_REPORTS_PASSWORD} && ASPNETCORE_URLS=http://+:${PORT:-80} dotnet HackneyRepairs.dll
+

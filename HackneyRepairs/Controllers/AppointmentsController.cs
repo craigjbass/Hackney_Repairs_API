@@ -13,6 +13,7 @@ using HackneyRepairs.Validators;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using HackneyRepairs.Repository;
+using HackneyRepairs.Builders;
 
 namespace HackneyRepairs.Controllers
 {
@@ -61,65 +62,26 @@ namespace HackneyRepairs.Controllers
 		{
 			try
 			{
-				if (string.IsNullOrWhiteSpace(workOrderReference))
-				{
-					var errors = new List<ApiErrorMessage>
-					{
-						new ApiErrorMessage
-						{
-							DeveloperMessage = "Invalid parameter - workorderreference",
-							UserMessage = "Please provide a valid work order reference"
-						}
-					};
-					var json = Json(errors);
-					json.StatusCode = 400;
-					return json;
-				}
-				else
-				{
-					var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
-					var response = await appointmentsActions.GetAppointments(workOrderReference);
-					var json = Json(new { results = response.ToList().FormatAppointmentsDaySlots() });
-					json.StatusCode = 200;
-					json.ContentType = "application/json";
-					return json;
-				}
-			}
+                if (string.IsNullOrWhiteSpace(workOrderReference))
+                {
+                    return ResponseBuilder.Error(400, "Please provide a valid work order reference", "Invalid parameter - workorderreference");
+                }
+
+                var appointmentsActions = new AppointmentActions(_loggerAdapter, _appointmentsService, _serviceRequestBuilder, _repairsService, _repairsServiceRequestBuilder, _configBuilder.getConfiguration());
+                var response = await appointmentsActions.GetAppointments(workOrderReference);
+                return ResponseBuilder.Ok(new { results = response.ToList().FormatAppointmentsDaySlots() });
+            }
 			catch (NoAvailableAppointmentsException)
 			{
-				var data = new List<string>();
-				var json = Json(new { results = data });
-				json.StatusCode = 200;
-				json.ContentType = "application/json";
-				return json;
+                return ResponseBuilder.Ok(new { results = new List<string>() });
 			}
             catch (InvalidWorkOrderInUHException ex)
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = ex.Message,
-                        UserMessage = "WorkOrderReference not found"
-                    }
-                };
-                var json = Json(errors);
-                json.StatusCode = 404;
-                return json;
+                return ResponseBuilder.Error(404, "WorkOrderReference not found", ex.Message);
             }
 			catch (Exception ex)
 			{
-				var errors = new List<ApiErrorMessage>
-				{
-					new ApiErrorMessage
-					{
-						DeveloperMessage = ex.Message,
-						UserMessage = "We had some problems processing your request"
-					}
-				};
-				var json = Json(errors);
-				json.StatusCode = 500;
-				return json;
+                return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
 			}
 		}
 
@@ -144,10 +106,7 @@ namespace HackneyRepairs.Controllers
 					var result = await appointmentsActions.BookAppointment(workOrderReference,
 						DateTime.Parse(request.BeginDate),
 						DateTime.Parse(request.EndDate));
-					var json = Json(result);
-					json.StatusCode = 200;
-					json.ContentType = "application/json";
-					return json;
+                    return ResponseBuilder.Ok(result);
 				}
 				else
 				{
@@ -156,21 +115,12 @@ namespace HackneyRepairs.Controllers
 						DeveloperMessage = error,
 						UserMessage = error
 					}).ToList();
-					var jsonResponse = Json(errors);
-					jsonResponse.StatusCode = 400;
-					return jsonResponse;
+                    return ResponseBuilder.ErrorFromList(400, errors);
 				}
 			}
 			catch (Exception e)
 			{
-				var errorMessage = new ApiErrorMessage
-				{
-					DeveloperMessage = e.Message,
-					UserMessage = "We had some problems processing your request"
-				};
-				var jsonResponse = Json(errorMessage);
-				jsonResponse.StatusCode = 500;
-				return jsonResponse;
+                return ResponseBuilder.Error(500, "We had some problems processing your request", e.Message);
 			}
 		}
 
@@ -194,46 +144,23 @@ namespace HackneyRepairs.Controllers
             try
             {
                 result = await appointmentsActions.GetAppointmentsByWorkOrderReference(workOrderReference);
-                var json = Json(result);
-                json.StatusCode = 200;
-                return json;
+                return ResponseBuilder.Ok(result);
             }
             catch (MissingAppointmentsException)
             {
-                return new JsonResult(new string[0]);
+                return ResponseBuilder.Ok(new string[0]);
             }
             catch (InvalidWorkOrderInUHException ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = ex.Message,
-                    UserMessage = @"workOrderReference not found"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
+                return ResponseBuilder.Error(404, "workOrderReference not found", ex.Message);
             }
             catch (UhtRepositoryException ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = ex.Message,
-                    UserMessage = @"We had issues with connecting to the data source."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had issues with connecting to the data source.", ex.Message);
             }
             catch (Exception ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = ex.Message,
-                    UserMessage = @"We had issues processing your request"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had issues processing your request", ex.Message);
             }
         }
 
@@ -257,46 +184,23 @@ namespace HackneyRepairs.Controllers
             try
             {
                 result = await appointmentsActions.GetLatestAppointmentByWorkOrderReference(workOrderReference);
-                var json = Json(result);
-                json.StatusCode = 200;
-                return json;
+                return ResponseBuilder.Ok(result);
             }
             catch (MissingAppointmentException)
             {
-                return new JsonResult(new string[0]);
+                return ResponseBuilder.Ok(new string[0]);
             }
             catch (InvalidWorkOrderInUHException ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = ex.Message,
-                    UserMessage = @"workOrderReference not found"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
+                return ResponseBuilder.Error(404, "workOrderReference not found", ex.Message);
             }
             catch (UhtRepositoryException ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = ex.Message,
-                    UserMessage = @"We had issues with connecting to the data source."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had issues with connecting to the data source.", ex.Message);
             }
             catch (Exception ex)
             {
-                var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = ex.Message,
-                    UserMessage = @"We had issues processing your request"
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had issues processing your request", ex.Message);
             }
         }
 	}

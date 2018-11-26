@@ -13,6 +13,7 @@ using HackneyRepairs.Services;
 using HackneyRepairs.Validators;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using HackneyRepairs.Builders;
 
 namespace HackneyRepairs.Controllers
 {
@@ -21,24 +22,24 @@ namespace HackneyRepairs.Controllers
     public class PropertiesController : Controller
     {
         private IHackneyPropertyService _propertyService;
-		private IHackneyWorkOrdersService _workordersService;
+        private IHackneyWorkOrdersService _workordersService;
         private IHackneyPropertyServiceRequestBuilder _propertyServiceRequestBuilder;
         private IPostcodeValidator _postcodeValidator;
-		private ILoggerAdapter<PropertyActions> _propertyLoggerAdapter;
-		private ILoggerAdapter<WorkOrdersActions> _workorderLoggerAdapter;
+        private ILoggerAdapter<PropertyActions> _propertyLoggerAdapter;
+        private ILoggerAdapter<WorkOrdersActions> _workorderLoggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
 
-		public PropertiesController(ILoggerAdapter<PropertyActions> propertyLoggerAdapter, ILoggerAdapter<WorkOrdersActions> workorderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uHWWarehouseRepository)
+        public PropertiesController(ILoggerAdapter<PropertyActions> propertyLoggerAdapter, ILoggerAdapter<WorkOrdersActions> workorderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uHWWarehouseRepository)
         {
             HackneyPropertyServiceFactory propertyFactory = new HackneyPropertyServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
-			_propertyService = propertyFactory.build(uhtRepository, uHWWarehouseRepository, propertyLoggerAdapter);
+            _propertyService = propertyFactory.build(uhtRepository, uHWWarehouseRepository, propertyLoggerAdapter);
             _propertyServiceRequestBuilder = new HackneyPropertyServiceRequestBuilder(_configBuilder.getConfiguration(), new PostcodeFormatter());
             _postcodeValidator = new PostcodeValidator();
-			_propertyLoggerAdapter = propertyLoggerAdapter;
-			HackneyWorkOrdersServiceFactory workOrdersServiceFactory = new HackneyWorkOrdersServiceFactory();
-			_workordersService = workOrdersServiceFactory.build(uhtRepository, uhwRepository, uHWWarehouseRepository, workorderLoggerAdapter);
-			_workorderLoggerAdapter = workorderLoggerAdapter;
+            _propertyLoggerAdapter = propertyLoggerAdapter;
+            HackneyWorkOrdersServiceFactory workOrdersServiceFactory = new HackneyWorkOrdersServiceFactory();
+            _workordersService = workOrdersServiceFactory.build(uhtRepository, uhwRepository, uHWWarehouseRepository, workorderLoggerAdapter);
+            _workorderLoggerAdapter = workorderLoggerAdapter;
         }
 
         // GET properties
@@ -46,7 +47,6 @@ namespace HackneyRepairs.Controllers
         /// Returns the hierarchy details of a property  
         /// </summary>
         /// <param name="propertyReference">The reference number of the requested property
-		/// </param>
         /// <returns>A list of property details and its parent properties</returns>
         /// <response code="200">Returns a list of property details</response>
         /// <response code="404">If the property is not found</response>   
@@ -56,42 +56,19 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
-                var json = Json(await actions.GetPropertyHierarchy(propertyReference));
-                json.StatusCode = 200;
-                json.ContentType = "application/json";
-                return json;
+	        PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
+                var result = await actions.GetPropertyHierarchy(propertyReference);
+                return ResponseBuilder.Ok(result);
             }
             catch (MissingPropertyException ex)
             {
-                var errors = new List<ApiErrorMessage>()
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = ex.Message,
-                        UserMessage = "Property not foundr"
-                    }
-                };
-                var jsonResponse = Json(errors);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
+                return ResponseBuilder.Error(404, "Property not found", ex.Message);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                var errors = new List<ApiErrorMessage>()
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = "Internal Server Error",
-                        UserMessage = "Internal Error"
-                    }
-                };
-                var jsonResponse = Json(errors);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had some issues processing your request", ex.Message);
             }
         }
-
 
         // GET properties
         /// <summary>
@@ -111,56 +88,21 @@ namespace HackneyRepairs.Controllers
             {
                 if (min_level < max_level || max_level > 8 || max_level < 0 || min_level > 8 || min_level < 0)
                 {
-                    var errors = new List<ApiErrorMessage>
-                    {
-                        new ApiErrorMessage
-                        {
-                            DeveloperMessage = "Invalid parameter - invalid level passed",
-                            UserMessage = "Please provide a valid level"
-                        }
-                    };
-                    var json = Json(errors);
-                    json.StatusCode = 400;
-                    return json;
+                    return ResponseBuilder.Error(400, "Invalid parameter - level is not valid", "Invalid parameter - level is not valid");
                 }
 
-                if (_postcodeValidator.Validate(postcode))
+                if (!_postcodeValidator.Validate(postcode))
                 {
-					PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
-                    var json = Json(await actions.FindProperty(_propertyServiceRequestBuilder.BuildListByPostCodeRequest(postcode), max_level, min_level));
-                    json.StatusCode = 200;
-                    json.ContentType = "application/json";
-                    return json;
+                    return ResponseBuilder.Error(400, "Please provide a valid post code", "Invalid parameter - postcode");
+
                 }
-                else
-                {
-                    var errors = new List<ApiErrorMessage>
-                    {
-                        new ApiErrorMessage
-                        {
-                            DeveloperMessage = "Invalid parameter - postcode",
-                            UserMessage = "Please provide a valid post code"
-                        }
-                    };
-                    var json = Json(errors);
-                    json.StatusCode = 400;
-                    return json;
-                }
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
+                var result = await actions.FindProperty(_propertyServiceRequestBuilder.BuildListByPostCodeRequest(postcode), max_level, min_level);
+                return ResponseBuilder.Ok(result);
             }
-
-            catch (Exception e)
+            catch (Exception ex)
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = e.Message,
-                        UserMessage = "We had some problems processing your request"
-                    }
-                };
-                var json = Json(errors);
-                json.StatusCode = 500;
-                return json;
+                return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
             }
         }
 
@@ -179,38 +121,16 @@ namespace HackneyRepairs.Controllers
             try
             {
 				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
-                var json = Json(await actions.FindPropertyDetailsByRef(reference));
-                json.StatusCode = 200;
-                json.ContentType = "application/json";
-                return json;
+                var response = await actions.FindPropertyDetailsByRef(reference);
+                return ResponseBuilder.Ok(response);
             }
             catch (MissingPropertyException ex)
             {
-                var errors = new List<ApiErrorMessage>()
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = ex.Message,
-                        UserMessage = "Resource identification error"
-                    }
-                };
-                var jsonResponse = Json(errors);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
+                return ResponseBuilder.Error(404, "Resource identification error", ex.Message);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                var errors = new List<ApiErrorMessage>()
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = "Internal Server Error",
-                        UserMessage = "Internal Error"
-                    }
-                };
-                var jsonResponse = Json(errors);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
             }
         }
 
@@ -228,50 +148,35 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                 var result = await actions.FindPropertyBlockDetailsByRef(reference);
-                var json = Json(result);
-                json.StatusCode = 200;
-                json.ContentType = "application/json";
-                return json;
+                return ResponseBuilder.Ok(result);
             }
-            catch(MissingPropertyException e)
+            catch(MissingPropertyException ex)
             {
-                var jsonResponse = Json(null);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
+                return ResponseBuilder.Error(404, "Resource identification error", ex.Message);
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-                var errors = new List<ApiErrorMessage>()
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = "API Internal Error",
-                        UserMessage = "API Internal Error"
-                    }
-                };
-                var jsonResponse = Json(errors);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }
 
-		// GET work orders raised against a block and all properties in it
+	// GET work orders raised against a block and all properties in it
         /// <summary>
-		/// Gets work orders raised against a block and against any property int he block
+	/// Gets work orders raised against a block and against any property int he block
         /// </summary>
-		/// <param name="propertyReference">Property reference, the level of the property cannot be higher than block.</param>
-		/// <param name="trade">Trade of the work order to filter the results (Required).</param>
+	/// <param name="propertyReference">Property reference, the level of the property cannot be higher than block.</param>
+	/// <param name="trade">Trade of the work order to filter the results (Required).</param>
         /// <param name="since">A string with the format dd-MM-yyyy (Optional).</param>
         /// <param name="until">A string with the format dd-MM-yyyy (Optional).</param>
         /// <returns>Details of the block the requested property belongs to</returns>
-		/// <response code="200">Returns work orders raised against a block and all properties in it</response>
+	/// <response code="200">Returns work orders raised against a block and all properties in it</response>
         /// <response code="400">If trade parameter is missing or since or until do not have the right datetime format</response>   
         /// <response code="404">If the property was not found</response>   
         /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{propertyReference}/block/work_orders")]
-		public async Task<JsonResult> GetWorkOrdersForBlockByPropertyReference(string propertyReference, string trade, string since, string until)
+	public async Task<JsonResult> GetWorkOrdersForBlockByPropertyReference(string propertyReference, string trade, string since, string until)
         {
             try
             {
@@ -280,14 +185,7 @@ namespace HackneyRepairs.Controllers
                 {
                     if (!DateTime.TryParseExact(since, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out validSince))
                     {
-                        var error = new ApiErrorMessage
-                        {
-                            DeveloperMessage = "parameter is not a valid DateTime",
-                            UserMessage = "Invalid parameter value - since"
-                        };
-                        var jsonResponse = Json(error);
-                        jsonResponse.StatusCode = 400;
-                        return jsonResponse;
+                        return ResponseBuilder.Error(400, "Invalid parameter value - since", "Parameter is not a valid DateTime");
                     }
                 }
 
@@ -296,60 +194,26 @@ namespace HackneyRepairs.Controllers
                 {
                     if (!DateTime.TryParseExact(until, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out validUntil))
                     {
-                        var error = new ApiErrorMessage
-                        {
-                            DeveloperMessage = "parameter is not a valid DateTime",
-                            UserMessage = "Invalid parameter value - until"
-                        };
-                        var jsonResponse = Json(error);
-                        jsonResponse.StatusCode = 400;
-                        return jsonResponse;
+                        return ResponseBuilder.Error(400, "Invalid parameter value - until", "Parameter is not a valid DateTime");
                     }
                     validUntil = validUntil.AddDays(1).AddSeconds(-1);
                 }
 
-				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
+		PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                 var result = await actions.GetWorkOrdersForBlock(propertyReference, trade, validSince, validUntil);
-                var json = Json(result);
-                json.StatusCode = 200;
-                json.ContentType = "application/json";
-                return json;
+                return ResponseBuilder.Ok(result);
             }
             catch (MissingPropertyException ex)
             {
-				var error = new ApiErrorMessage
-                {
-                    DeveloperMessage = ex.Message,
-                    UserMessage = @"Cannot find property."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
+                return ResponseBuilder.Error(404, "Cannot find property.", ex.Message);
             }
-			catch (InvalidParameterException ex)
-			{
-				var error = new ApiErrorMessage
-                {
-					DeveloperMessage = ex.Message,
-					UserMessage = "403 Forbidden - Invalid parameter provided."
-                };
-                var jsonResponse = Json(error);
-                jsonResponse.StatusCode = 403;
-                return jsonResponse;
-			}
+            catch (InvalidParameterException ex)
+	    {
+                return ResponseBuilder.Error(403, "Forbidden - Invalid parameter provided.", ex.Message);
+            }
             catch (Exception ex)
             {
-                var errors = new List<ApiErrorMessage>
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = "API Internal Error",
-                        UserMessage = "API Internal Error"
-                    }
-                };
-                var jsonResponse = Json(errors);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }
 
@@ -367,41 +231,21 @@ namespace HackneyRepairs.Controllers
         {
             try
             {
-				PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                 var result = await actions.FindPropertyEstateDetailsByRef(reference);
                 if (result == null)
                 {
-                    var jsonResponse = Json(null);
-                    jsonResponse.StatusCode = 404;
-                    return jsonResponse;
+                    return ResponseBuilder.Error(404, "No estate identified for the property requested", "No estate identified for the property requested");
                 }
-                else
-                {
-                    var json = Json(result);
-                    json.StatusCode = 200;
-                    json.ContentType = "application/json";
-                    return json;
-                }
+                return ResponseBuilder.Ok(result);
             }
-            catch (MissingPropertyException e)
+            catch (MissingPropertyException ex)
             {
-                var jsonResponse = Json(null);
-                jsonResponse.StatusCode = 404;
-                return jsonResponse;
+                return ResponseBuilder.Error(404, "Resource identification error", ex.Message);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                var errors = new List<ApiErrorMessage>()
-                {
-                    new ApiErrorMessage
-                    {
-                        DeveloperMessage = "API Internal Error",
-                        UserMessage = "API Internal Error"
-                    }
-                };
-                var jsonResponse = Json(errors);
-                jsonResponse.StatusCode = 500;
-                return jsonResponse;
+                return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }
     }
