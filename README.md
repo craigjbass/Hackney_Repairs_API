@@ -10,11 +10,8 @@ The Repairs API is part of the Hackney API ecosystem and is responsible for all 
 ## Dependencies
 
 - Universal Housing
-- NCC
-
-## Development practices
-
-We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured Clean Architecture][mt-ca] and Made Tech's [.NET Clean Architecture library][dotnet-ca].
+- Servitor
+- DRS
 
 ## Contributing
 
@@ -28,8 +25,6 @@ We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured C
 
 To serve the application, run it using your IDE of choice. We've Visual Studio CE on Mac.
 
-The test suite depends on a local version of Universal Housing, to simulate the legacy data source. To bring this up, run the following. You can then run the tests using the test explorer in your IDE.
-
 ```sh
 $ docker run -it --rm repairs-api dotnet HackneyRepairs.dll
 ```
@@ -37,7 +32,7 @@ To run on particular port,the command is as below.
 ```sh
 $ docker run -p 3000:80 -it --rm repairs-api dotnet HackneyRepairs.dll
 ```
-### Release
+### Release process
 
 ![Circle CI Workflow Example](docs/circle_ci_workflow.png)
 
@@ -49,6 +44,8 @@ Then we have an automated four step deployment process, which runs in CircleCI.
 2. The app is deployed to staging automatically, where we check our latest changes work well.
 3. We manually confirm a production deployment in the CircleCI workflow once we're happy with our changes in staging.
 4. The app is deployed to production.
+
+Our staging and production enviornments are hosted by AWS. We would deploy to production per each feature/config merged into  `central`  branch.
 
 ## Testing
 
@@ -66,6 +63,8 @@ $ cd lbh-universal-housing-simulator
 $ docker build -t uhsimulator .
 $ docker run -ti -p 1433:1433 --rm uhsimulator
 ```
+You can then run the tests using the test explorer in your IDE.
+
 ## Endpoints
  [Endpoints](docs/endpoints.md)
  
@@ -73,24 +72,13 @@ $ docker run -ti -p 1433:1433 --rm uhsimulator
 
 ### Active Maintainers
 
-- **Rashmi Shetty**, Development Manager at London Borough of Hackney (rashmi.shetty@hackney.gov.uk)
-- **Vlad Atamanyuk**, Junior Developer at London Borough of Hackney (vladyslav.atamanyuk@hackney.gov.uk)
-- **Jeff Pinkham**, Engineer at [Made Tech][made-tech] (jeff@madetech.com)
-- **Mark Rosel**, Lead Engineer at [Made Tech][made-tech] (mark.rosel@madetech.com)
-- **Steven Leighton**, Engineer at [Made Tech][made-tech] (steven@madetech.com)
-- **Cormac Brady**, Engineer at [Made Tech][made-tech] (cormac@madetech.com)
-- **Elena Vilimaite**, Engineer at [Made Tech][made-tech] (elena@madetech.com)
+- **Richard Foster**, Lead Engineer at [Made Tech][made-tech] (richard@madetech.com)
+- **Miguel Saitz**, Junior Developer at London Borough of Hackney (miguel.saitz@hackney.gov.uk)
 
 ### Other Contacts
 
-- **Richard Foster**, Lead Engineer at [Made Tech][made-tech] (richard@madetech.com)
-- **Luke Morton**, Director at [Made Tech][made-tech] (luke@madetech.com)
-- **Dennis Robinson**, Delivery Lead at London Borough of Hackney (dennis.robinson@hackney.gov.uk)
-- **Soraya Clarke**, Delivery Manager at London Borough of Hackney (soraya.clarke@hackney.gov.uk)
+- **Rashmi Shetty**, Development Manager at London Borough of Hackney (rashmi.shetty@hackney.gov.uk)
 
 [docker-download]: https://www.docker.com/products/docker-desktop
-[mt-ca]: https://github.com/madetech/clean-architecture
-[made-tech]: https://madetech.com/
-[dotnet-ca]: https://github.com/madetech/dotnet-ca
 [Endpoints]: docs/endpoints.md
 
