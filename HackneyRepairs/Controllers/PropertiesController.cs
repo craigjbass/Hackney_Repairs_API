@@ -134,6 +134,34 @@ namespace HackneyRepairs.Controllers
             }
         }
 
+        // GET properties details by references
+        /// <summary>
+        /// Gets the details for properties by given references
+        /// </summary>
+        //// <param name="reference">A reference number of the requested property</param>
+        /// <returns>A list with details of the requested properties</returns>
+        /// <response code="200">Returns a list of properties</response>
+        /// <response code="404">If any of the properties requested is not found</response>   
+        /// <response code="500">If any errors are encountered</response> 
+        [HttpGet("by_references")]
+        public async Task<JsonResult> GetByReferences(string[] reference)
+        {
+            try
+            {
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
+                var response = await actions.FindPropertiesDetailsByReferences(reference);
+                return ResponseBuilder.Ok(response);
+            }
+            catch (MissingPropertyException ex)
+            {
+                return ResponseBuilder.Error(404, "One or more property references could not be found", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
+            }
+        }
+
         // GET details of a property block by property by reference
         /// <summary>
         /// Gets the details of a block of a property by a given property reference number
@@ -162,21 +190,21 @@ namespace HackneyRepairs.Controllers
             }
         }
 
-	// GET work orders raised against a block and all properties in it
+        // GET work orders raised against a block and all properties in it
         /// <summary>
-	/// Gets work orders raised against a block and against any property int he block
+        /// Gets work orders raised against a block and against any property int he block
         /// </summary>
-	/// <param name="propertyReference">Property reference, the level of the property cannot be higher than block.</param>
-	/// <param name="trade">Trade of the work order to filter the results (Required).</param>
+        /// <param name="propertyReference">Property reference, the level of the property cannot be higher than block.</param> 
+        /// <param name="trade">Trade of the work order to filter the results (Required).</param>
         /// <param name="since">A string with the format dd-MM-yyyy (Optional).</param>
         /// <param name="until">A string with the format dd-MM-yyyy (Optional).</param>
         /// <returns>Details of the block the requested property belongs to</returns>
-	/// <response code="200">Returns work orders raised against a block and all properties in it</response>
+        /// <response code="200">Returns work orders raised against a block and all properties in it</response>
         /// <response code="400">If trade parameter is missing or since or until do not have the right datetime format</response>   
         /// <response code="404">If the property was not found</response>   
         /// <response code="500">If any errors are encountered</response> 
         [HttpGet("{propertyReference}/block/work_orders")]
-	public async Task<JsonResult> GetWorkOrdersForBlockByPropertyReference(string propertyReference, string trade, string since, string until)
+        public async Task<JsonResult> GetWorkOrdersForBlockByPropertyReference(string propertyReference, string trade, string since, string until)
         {
             try
             {
@@ -199,7 +227,7 @@ namespace HackneyRepairs.Controllers
                     validUntil = validUntil.AddDays(1).AddSeconds(-1);
                 }
 
-		PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
+                PropertyActions actions = new PropertyActions(_propertyService, _propertyServiceRequestBuilder, _workordersService, _propertyLoggerAdapter);
                 var result = await actions.GetWorkOrdersForBlock(propertyReference, trade, validSince, validUntil);
                 return ResponseBuilder.Ok(result);
             }
@@ -208,7 +236,7 @@ namespace HackneyRepairs.Controllers
                 return ResponseBuilder.Error(404, "Cannot find property.", ex.Message);
             }
             catch (InvalidParameterException ex)
-	    {
+            {
                 return ResponseBuilder.Error(403, "Forbidden - Invalid parameter provided.", ex.Message);
             }
             catch (Exception ex)

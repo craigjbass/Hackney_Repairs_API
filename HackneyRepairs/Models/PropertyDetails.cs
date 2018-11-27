@@ -5,6 +5,8 @@ namespace HackneyRepairs.Models
 {
     public class PropertyDetails : PropertySummary
     {
-        public bool Maintainable{ get; set; }
+        public bool Maintainable { get; set; }
+        public int LevelCode { get; set; }
+        public string Description { get; set; }
     }
 }

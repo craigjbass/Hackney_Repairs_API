@@ -148,6 +148,32 @@ namespace HackneyRepairs.Actions
             }
         }
 
+        public async Task<object[]> FindPropertiesDetailsByReferences(string[] references)
+        {
+            try
+            {
+                var response = await _propertyService.GetPropertiesByReferences(references);
+                if (response.Length != references.Length)
+                {
+                    throw new MissingPropertyException();
+                }
+                else
+                {
+                    return BuildPropertiesDetails(response);
+                }
+            }
+            catch (MissingPropertyException e)
+            {
+                _logger.LogError($"Finding properties with the property references: {GenericFormatter.CommaSeparate(references)} returned an error: {e.Message}");
+                throw e;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Finding properties with the property references: {GenericFormatter.CommaSeparate(references)} returned an error: {e.Message}");
+                throw new PropertyServiceException();
+            }
+        }
+
         public async Task<object> FindPropertyBlockDetailsByRef(string reference)
         {
             _logger.LogInformation($"Finding the block of a property by the property reference: {reference}");
@@ -229,13 +255,43 @@ namespace HackneyRepairs.Actions
 
         private object BuildPropertyDetails(PropertyDetails property)
         {
+            if (string.IsNullOrEmpty(property.Description))
+            {
+                return new
+                {
+                    address = property.ShortAddress.Trim(),
+                    postcode = property.PostCodeValue.Trim(),
+                    propertyReference = property.PropertyReference.Trim(),
+                    maintainable = property.Maintainable,
+                };
+            }
             return new
             {
                 address = property.ShortAddress.Trim(),
                 postcode = property.PostCodeValue.Trim(),
                 propertyReference = property.PropertyReference.Trim(),
-                maintainable = property.Maintainable
+                maintainable = property.Maintainable,
+                levelCode = property.LevelCode,
+                description = property.Description.Trim()
             };
+        }
+
+        private object[] BuildPropertiesDetails(PropertyDetails[] property)
+        {
+            var properties = new object[property.Length];
+            for (int i = 0; i < property.Length; i++)
+            {
+                properties[i] = new
+                {
+                    address = property[i].ShortAddress.Trim(),
+                    postcode = property[i].PostCodeValue.Trim(),
+                    propertyReference = property[i].PropertyReference.Trim(),
+                    maintainable = property[i].Maintainable,
+                    levelCode = property[i].LevelCode,
+                    description = property[i].Description.Trim()
+                };
+            }
+            return properties;
         }
     }
 

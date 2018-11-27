@@ -5,6 +5,7 @@ using HackneyRepairs.PropertyService;
 using HackneyRepairs.Models;
 using HackneyRepairs.Actions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HackneyRepairs.Services
 {
@@ -69,6 +70,41 @@ namespace HackneyRepairs.Services
                 default:
                     return Task.Run(() => (PropertyDetails)null);
             }
+        }
+
+        public Task<PropertyDetails[]> GetPropertiesByReferences(string[] references)
+        {
+            var fakeProperty = new PropertyDetails
+            {
+                ShortAddress = "Back Office, Robert House, 6 - 15 Florfield Road    ",
+                PostCodeValue = "E8 1DT",
+                PropertyReference = "random",
+                Maintainable = true,
+                LevelCode = 7,
+                Description = "none"
+            };
+
+            if (references.Contains("5454545454") && references.Contains("123435234"))
+            {
+                return Task.Run(() => new PropertyDetails[]
+                {
+                    fakeProperty,
+                    fakeProperty
+                });
+            }
+            if (references.Contains("5454545454"))
+            {
+                return Task.Run(() => new PropertyDetails[]
+                {
+                    fakeProperty
+                });
+            }
+            if (references.Contains("5252"))
+            {
+                throw new PropertyServiceException();
+            }
+
+            return Task.Run(() => new PropertyDetails[0]);
         }
 
         public Task<bool> GetMaintainable(string reference)
