@@ -69,7 +69,7 @@ namespace HackneyRepairs
             services.AddLogging(configure =>
             {
                 if(!string.IsNullOrEmpty(settings.SentrySettings?.Url))
-                configure.AddProvider(new SentryLoggerProvider(settings.SentrySettings?.Url));
+                configure.AddProvider(new SentryLoggerProvider(settings.SentrySettings?.Url, settings.SentrySettings?.Environment));
             });
         }
 

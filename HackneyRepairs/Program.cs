@@ -15,6 +15,7 @@ namespace HackneyRepairs
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                    .UseNLog()
+                   .UseSentry()
                 .Build();
     }
 }
