@@ -2,7 +2,6 @@
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Logging;
 using HackneyRepairs.Repository;
-using HackneyRepairs.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HackneyRepairs.Extension
