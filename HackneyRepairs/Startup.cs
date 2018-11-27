@@ -36,8 +36,8 @@ namespace HackneyRepairs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<Settings.ConfigurationSettings>(Configuration);
-            var settings = Configuration.Get<Settings.ConfigurationSettings>();
+            services.Configure<ConfigurationSettings>(Configuration);
+            var settings = Configuration.Get<ConfigurationSettings>();
 
             // Add framework services.
             services.AddDbContext<UhtDbContext>(options =>

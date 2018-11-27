@@ -42,9 +42,7 @@
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.6" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.1" />
     <PackageReference Include="NLog.Targets.Syslog" Version="5.1.0" />
-    <PackageReference Include="Sentry" Version="1.0.0" />
     <PackageReference Include="SharpRaven" Version="2.4.0" />
-    <PackageReference Include="Sentry.AspNetCore" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
