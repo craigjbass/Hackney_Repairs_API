@@ -73,7 +73,7 @@ namespace HackneyRepairs
 			app.UseDeveloperExceptionPage();
 
 			string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            string value = Environment.GetEnvironmentVariable("SWAGGER_ROUTE_PREFIX");
+            string routePrefix = Environment.GetEnvironmentVariable("SWAGGER_ROUTE_PREFIX");
 
             switch (environment)
 			{
@@ -86,7 +86,7 @@ namespace HackneyRepairs
                         string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
                         if (basePath == null) basePath = "/unboxedhackneyrepairs/";
                         c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "Hackney Repairs API");
-                        c.RoutePrefix = value == null ? string.Empty : "${SWAGGER_ROUTE_PREFIX}";
+                        c.RoutePrefix = routePrefix ?? string.Empty;
                     });
 					break;
 				case "Test":
@@ -98,7 +98,7 @@ namespace HackneyRepairs
                         string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
                         if (basePath == null) basePath = "/unboxedhackneyrepairs/";
                         c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "Hackney Repairs API");
-                        c.RoutePrefix = value == null ? string.Empty : "${SWAGGER_ROUTE_PREFIX}";
+                        c.RoutePrefix = routePrefix ?? string.Empty;
                     });
                     break;
 				case "Development":
@@ -110,7 +110,7 @@ namespace HackneyRepairs
                         string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
                         if (basePath == null) basePath = "/unboxedhackneyrepairs_dev/";
                         c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "Hackney Repairs API");
-                        c.RoutePrefix = value == null ? string.Empty : "${SWAGGER_ROUTE_PREFIX}";
+                        c.RoutePrefix = routePrefix ?? string.Empty;
                     });
                     break;
 				case "Local":
@@ -120,7 +120,7 @@ namespace HackneyRepairs
                         string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
                         if (basePath == null) basePath = "/";
                         c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "Hackney Repairs API");
-                        c.RoutePrefix = value == null ? string.Empty : "${SWAGGER_ROUTE_PREFIX}";
+                        c.RoutePrefix = routePrefix ?? string.Empty;
                     });
                     break;
 				default:
@@ -130,7 +130,7 @@ namespace HackneyRepairs
                         string basePath = Environment.GetEnvironmentVariable("ASPNETCORE_APPL_PATH");
                         if (basePath == null) basePath = "/";
                         c.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "Hackney Repairs API");
-                        c.RoutePrefix = value == null ? string.Empty : "${SWAGGER_ROUTE_PREFIX}";
+                        c.RoutePrefix = routePrefix ?? string.Empty;
                     });
 					break;
 			}
