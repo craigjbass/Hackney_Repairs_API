@@ -255,23 +255,25 @@ namespace HackneyRepairs.Actions
 
         private object BuildPropertyDetails(PropertyDetails property)
         {
-            return string.IsNullOrEmpty(property.Description)
-                ? (new
-                {
-                    address = property.ShortAddress.Trim(),
-                    postcode = property.PostCodeValue.Trim(),
-                    propertyReference = property.PropertyReference.Trim(),
-                    maintainable = property.Maintainable
-                })
-                : (object)(new
+            if (string.IsNullOrEmpty(property.Description))
+            {
+                return new
                 {
                     address = property.ShortAddress.Trim(),
                     postcode = property.PostCodeValue.Trim(),
                     propertyReference = property.PropertyReference.Trim(),
                     maintainable = property.Maintainable,
-                    levelCode = property.LevelCode,
-                    description = property.Description.Trim()
-                });
+                };
+            }
+            return new
+            {
+                address = property.ShortAddress.Trim(),
+                postcode = property.PostCodeValue.Trim(),
+                propertyReference = property.PropertyReference.Trim(),
+                maintainable = property.Maintainable,
+                levelCode = property.LevelCode,
+                description = property.Description.Trim()
+            };
         }
 
         private object[] BuildPropertiesDetails(PropertyDetails[] property)
