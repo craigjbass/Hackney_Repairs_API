@@ -171,8 +171,8 @@ namespace HackneyRepairs.Repository
 
             var parameters = new DynamicParameters();
             parameters.Add("@KeyObject", note.ObjectKey);
-            parameters.Add("@NoteType", "GLO_GEN");
-            parameters.Add("@SecCat", "002");
+            parameters.Add("@NoteType", Environment.GetEnvironmentVariable("DefaultNoteType"));
+            parameters.Add("@SecCat", Environment.GetEnvironmentVariable("DefaultSecureCategory"));
             parameters.Add("@NoteText", note.Text);
             parameters.Add("@UserId", Environment.GetEnvironmentVariable("DefaultAddNoteUser"));
             parameters.Add("@ObjectReference", note.ObjectReference);
