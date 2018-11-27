@@ -16,6 +16,8 @@ namespace HackneyRepairs.Repository
         private UhwDbContext _context;
         private string environmentDbWord;
         private ILoggerAdapter<UhwRepository> _logger;
+        private const string DefaultNoteType = "GLO_GEN";
+        private const string DefaultSecureCategory = "002";
 
         public UhwRepository(UhwDbContext context, ILoggerAdapter<UhwRepository> logger)
         {
@@ -171,10 +173,10 @@ namespace HackneyRepairs.Repository
 
             var parameters = new DynamicParameters();
             parameters.Add("@KeyObject", note.ObjectKey);
-            parameters.Add("@NoteType", Environment.GetEnvironmentVariable("DefaultNoteType"));
-            parameters.Add("@SecCat", Environment.GetEnvironmentVariable("DefaultSecureCategory"));
+            parameters.Add("@NoteType", DefaultNoteType);
+            parameters.Add("@SecCat", DefaultSecureCategory);
             parameters.Add("@NoteText", note.Text);
-            parameters.Add("@UserId", Environment.GetEnvironmentVariable("DefaultAddNoteUser"));
+            parameters.Add("@UserId", Environment.GetEnvironmentVariable("UHUsername"));
             parameters.Add("@ObjectReference", note.ObjectReference);
 
             try
