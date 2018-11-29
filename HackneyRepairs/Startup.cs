@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using HackneyRepairs.Extension;
 using HackneyRepairs.Logging;
+using HackneyRepairs.Interfaces;
 using HackneyRepairs.Settings;
 using System.Reflection;
 
@@ -65,11 +66,16 @@ namespace HackneyRepairs
 
 			});
 			services.AddCustomServices();
+	        
+	        var sentryLoggerProvider = new SentryLoggerProvider(settings.SentrySettings?.Url, settings.SentrySettings?.Environment);
+	        services.AddTransient<IExceptionLogger>(_ =>  sentryLoggerProvider.CreateExceptionLogger());
 
             services.AddLogging(configure =>
             {
                 if(!string.IsNullOrEmpty(settings.SentrySettings?.Url))
-                configure.AddProvider(new SentryLoggerProvider(settings.SentrySettings?.Url, settings.SentrySettings?.Environment));
+                {
+	                configure.AddProvider(sentryLoggerProvider);
+                }
             });
         }
 

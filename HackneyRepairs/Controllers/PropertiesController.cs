@@ -28,8 +28,9 @@ namespace HackneyRepairs.Controllers
         private ILoggerAdapter<PropertyActions> _propertyLoggerAdapter;
         private ILoggerAdapter<WorkOrdersActions> _workorderLoggerAdapter;
         private HackneyConfigurationBuilder _configBuilder;
+        private readonly IExceptionLogger _sentryLogger;
 
-        public PropertiesController(ILoggerAdapter<PropertyActions> propertyLoggerAdapter, ILoggerAdapter<WorkOrdersActions> workorderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uHWWarehouseRepository)
+        public PropertiesController(ILoggerAdapter<PropertyActions> propertyLoggerAdapter, ILoggerAdapter<WorkOrdersActions> workorderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uHWWarehouseRepository, IExceptionLogger sentryLogger)
         {
             HackneyPropertyServiceFactory propertyFactory = new HackneyPropertyServiceFactory();
             _configBuilder = new HackneyConfigurationBuilder((Hashtable)Environment.GetEnvironmentVariables(), ConfigurationManager.AppSettings);
@@ -40,6 +41,7 @@ namespace HackneyRepairs.Controllers
             HackneyWorkOrdersServiceFactory workOrdersServiceFactory = new HackneyWorkOrdersServiceFactory();
             _workordersService = workOrdersServiceFactory.build(uhtRepository, uhwRepository, uHWWarehouseRepository, workorderLoggerAdapter);
             _workorderLoggerAdapter = workorderLoggerAdapter;
+            _sentryLogger = sentryLogger;
         }
 
         // GET properties
@@ -62,10 +64,12 @@ namespace HackneyRepairs.Controllers
             }
             catch (MissingPropertyException ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(404, "Property not found", ex.Message);
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(500, "We had some issues processing your request", ex.Message);
             }
         }
@@ -102,6 +106,7 @@ namespace HackneyRepairs.Controllers
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
             }
         }
@@ -126,10 +131,12 @@ namespace HackneyRepairs.Controllers
             }
             catch (MissingPropertyException ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(404, "Resource identification error", ex.Message);
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(500, "We had some problems processing your request", ex.Message);
             }
         }
@@ -154,10 +161,12 @@ namespace HackneyRepairs.Controllers
             }
             catch(MissingPropertyException ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(404, "Resource identification error", ex.Message);
             }
             catch(Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }
@@ -205,14 +214,17 @@ namespace HackneyRepairs.Controllers
             }
             catch (MissingPropertyException ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(404, "Cannot find property.", ex.Message);
             }
             catch (InvalidParameterException ex)
-	    {
+	        {
+	            _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(403, "Forbidden - Invalid parameter provided.", ex.Message);
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }
@@ -241,10 +253,12 @@ namespace HackneyRepairs.Controllers
             }
             catch (MissingPropertyException ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(404, "Resource identification error", ex.Message);
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(500, "API Internal Error", ex.Message);
             }
         }

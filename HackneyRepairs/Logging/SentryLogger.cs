@@ -1,11 +1,12 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using HackneyRepairs.Interfaces;
 using SharpRaven;
 using SharpRaven.Data;
 
 namespace HackneyRepairs.Logging
 {
-    public class SentryLogger : ILogger
+    public class SentryLogger : ILogger, IExceptionLogger
     {
         private readonly string _name;
         private readonly string _url;
@@ -35,6 +36,13 @@ namespace HackneyRepairs.Logging
                 ev.Tags.Add("environment", _environment);
                 _ravenClient.Capture(ev);
             }
+        }
+
+        public void CaptureException(Exception exception)
+        {
+            var ev = new SentryEvent(exception);
+            ev.Tags.Add("environment", _environment);
+            _ravenClient.Capture(ev);
         }
     }
 }

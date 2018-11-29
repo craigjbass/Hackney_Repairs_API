@@ -17,13 +17,16 @@ namespace HackneyRepairs.Controllers
         private IHackneyWorkOrdersService _workOrdersService;
         private ILoggerAdapter<NotesActions> _notesLoggerAdapter;
         private ILoggerAdapter<WorkOrdersActions> _workOrdersLoggerAdapter;
+        private readonly IExceptionLogger _sentryLogger;
 
-        public NotesController(ILoggerAdapter<NotesActions> logger, ILoggerAdapter<WorkOrdersActions> workOrdersLogger, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository)
+        public NotesController(ILoggerAdapter<NotesActions> logger, ILoggerAdapter<WorkOrdersActions> workOrdersLogger, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository, IExceptionLogger sentryLogger)
+        
         {
             _workOrdersLoggerAdapter = workOrdersLogger;
             _notesLoggerAdapter = logger;
             var factory = new HackneyWorkOrdersServiceFactory();
             _workOrdersService = factory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _workOrdersLoggerAdapter);
+            _sentryLogger = sentryLogger;
         }
 
         // GET A feed of notes
@@ -62,6 +65,7 @@ namespace HackneyRepairs.Controllers
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 if (ex is MissingNoteTargetException)
                 {
                     var userMessage = "noteTarget parameter does not exist in the data source";

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
+using HackneyRepairs.Interfaces;
 
 namespace HackneyRepairs.Logging
 {
@@ -20,6 +21,10 @@ namespace HackneyRepairs.Logging
         public void Dispose()
         {
             _loggers.Clear();
+        }
+        public IExceptionLogger CreateExceptionLogger()
+        {
+            return _loggers.GetOrAdd("custom", name => new SentryLogger(name, _url, _environment));
         }
     }
 }

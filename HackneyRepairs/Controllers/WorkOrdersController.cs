@@ -19,11 +19,13 @@ namespace HackneyRepairs.Controllers
 	{
 		private IHackneyWorkOrdersService _workOrdersService;
 		private ILoggerAdapter<WorkOrdersActions> _workOrderLoggerAdapter;
+	    private readonly IExceptionLogger _sentryLogger;
 
-		public WorkOrdersController(ILoggerAdapter<WorkOrdersActions> workOrderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository)
+	    public WorkOrdersController(ILoggerAdapter<WorkOrdersActions> workOrderLoggerAdapter, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository, IExceptionLogger sentryLogger)
 		{
 			_workOrderLoggerAdapter = workOrderLoggerAdapter;
-			var workOrderServiceFactory = new HackneyWorkOrdersServiceFactory();
+		    _sentryLogger = sentryLogger;
+		    var workOrderServiceFactory = new HackneyWorkOrdersServiceFactory();
 			_workOrdersService = workOrderServiceFactory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _workOrderLoggerAdapter);
 		}
 
@@ -44,7 +46,7 @@ namespace HackneyRepairs.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<JsonResult> GetWorkOrdersByWorkOrderReferences(string[] reference, string include = "")
-        {
+        {  
             if (reference.Length == 0)
             {
                 return ResponseBuilder.Error(400, "Bad request", "Bad Request - Missing reference parameter");
@@ -61,6 +63,7 @@ namespace HackneyRepairs.Controllers
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException || ex is MobileReportsConnectionException)
                 {
                     return ResponseBuilder.Error(500, "We had issues with connecting to the data source", ex.Message);
@@ -113,6 +116,7 @@ namespace HackneyRepairs.Controllers
 			}
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException || ex is MobileReportsConnectionException)
                 {
                     return ResponseBuilder.Error(500, "We had issues with connecting to the data source", ex.Message);
@@ -180,6 +184,7 @@ namespace HackneyRepairs.Controllers
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 if (ex is UHWWarehouseRepositoryException || ex is UhtRepositoryException)
                 {
                     return ResponseBuilder.Error(500, "We had issues with connecting to the data source", ex.Message);
@@ -216,14 +221,17 @@ namespace HackneyRepairs.Controllers
             }
 			catch (MissingWorkOrderException ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(404, "Work order not found", ex.Message);
             }
             catch (UhtRepositoryException ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(500, "We had issues with connecting to the data source", ex.Message);
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 return ResponseBuilder.Error(500, "We had issues processing your request", ex.Message);
             }
         }
@@ -257,6 +265,7 @@ namespace HackneyRepairs.Controllers
             }
             catch (Exception ex)
             {
+                _sentryLogger.CaptureException(ex);
                 if (ex is UhtRepositoryException || ex is UHWWarehouseRepositoryException)
                 {
                     return ResponseBuilder.Error(500, "we had issues with connecting to the data source.", ex.Message);
