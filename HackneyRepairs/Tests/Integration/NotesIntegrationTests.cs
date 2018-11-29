@@ -23,6 +23,7 @@ namespace HackneyRepairs.Tests.Integration
             Environment.SetEnvironmentVariable("UhWarehouseDb", "database=Test");
             Environment.SetEnvironmentVariable("UhwDb", "database=Test");
             Environment.SetEnvironmentVariable("UhtDb", "database=Test");
+            Environment.SetEnvironmentVariable("SentrySettings__URL", "https://123@sentry.io/123");
             _server = new TestServer(new WebHostBuilder().UseStartup<TestStartup>());
             _client = _server.CreateClient();
         }

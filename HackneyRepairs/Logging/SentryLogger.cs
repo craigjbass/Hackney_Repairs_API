@@ -37,7 +37,6 @@ namespace HackneyRepairs.Logging
                 _ravenClient.Capture(ev);
             }
         }
-
         public void CaptureException(Exception exception)
         {
             var ev = new SentryEvent(exception);

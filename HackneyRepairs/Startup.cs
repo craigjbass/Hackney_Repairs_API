@@ -67,16 +67,15 @@ namespace HackneyRepairs
 			});
 			services.AddCustomServices();
 	        
-	        var sentryLoggerProvider = new SentryLoggerProvider(settings.SentrySettings?.Url, settings.SentrySettings?.Environment);
-	        services.AddTransient<IExceptionLogger>(_ =>  sentryLoggerProvider.CreateExceptionLogger());
-
-            services.AddLogging(configure =>
-            {
-                if(!string.IsNullOrEmpty(settings.SentrySettings?.Url))
-                {
-	                configure.AddProvider(sentryLoggerProvider);
-                }
-            });
+	        if(!string.IsNullOrEmpty(settings.SentrySettings?.Url))
+	        {
+				var sentryLoggerProvider = new SentryLoggerProvider(settings.SentrySettings?.Url, settings.SentrySettings?.Environment);
+				services.AddTransient<IExceptionLogger>(_ =>  sentryLoggerProvider.CreateExceptionLogger());
+				services.AddLogging(configure =>
+				{
+					configure.AddProvider(sentryLoggerProvider);
+				});
+	        }
         }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
