@@ -1,11 +1,17 @@
 using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using HackneyRepairs.Actions;
 using HackneyRepairs.Builders;
 using HackneyRepairs.Factories;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.Repository;
+using HackneyRepairs.Services;
+using HackneyRepairs.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HackneyRepairs.Controllers
@@ -15,17 +21,20 @@ namespace HackneyRepairs.Controllers
     public class NotesController : Controller
     {
         private IHackneyWorkOrdersService _workOrdersService;
-        private ILoggerAdapter<NotesActions> _notesLoggerAdapter;
+        private IHackneyNotesService _notesService;
+        private ILoggerAdapter<NoteActions> _notesLoggerAdapter;
         private ILoggerAdapter<WorkOrdersActions> _workOrdersLoggerAdapter;
         private readonly IExceptionLogger _sentryLogger;
 
-        public NotesController(ILoggerAdapter<NotesActions> logger, ILoggerAdapter<WorkOrdersActions> workOrdersLogger, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository, IExceptionLogger sentryLogger)
-        
+        public NotesController(ILoggerAdapter<NoteActions> logger, ILoggerAdapter<WorkOrdersActions> workOrdersLogger, IUhtRepository uhtRepository, IUhwRepository uhwRepository, IUHWWarehouseRepository uhWarehouseRepository, IExceptionLogger sentryLogger)
         {
             _workOrdersLoggerAdapter = workOrdersLogger;
             _notesLoggerAdapter = logger;
-            var factory = new HackneyWorkOrdersServiceFactory();
-            _workOrdersService = factory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _workOrdersLoggerAdapter);
+            var WorkOrdersfactory = new HackneyWorkOrdersServiceFactory();
+            var notesfactory = new HackneyNotesServiceFactory();
+            
+            _workOrdersService = WorkOrdersfactory.build(uhtRepository, uhwRepository, uhWarehouseRepository, _workOrdersLoggerAdapter);
+            _notesService = notesfactory.build(uhwRepository, _notesLoggerAdapter);
             _sentryLogger = sentryLogger;
         }
 
@@ -56,8 +65,8 @@ namespace HackneyRepairs.Controllers
             {
                 return ResponseBuilder.Error(400, "Missing parameter - notetarget", "Missing parameter - notetarget");
             }
-            
-            var notesActions = new NotesActions(_workOrdersService, _notesLoggerAdapter);
+
+            var notesActions = new NoteActions(_workOrdersService, _notesService, _notesLoggerAdapter);
             try
             {
                 var result = await notesActions.GetNoteFeed(startId, noteTarget, resultSize);
@@ -77,6 +86,56 @@ namespace HackneyRepairs.Controllers
                     return ResponseBuilder.Error(500, userMessage, ex.Message);
                 }
                 return ResponseBuilder.Error(500, "We had issues processing your request.", ex.Message);
+            }
+        }
+
+        // POST Adds a note to a UH object
+        /// <summary>
+        /// Adds a note to a Universal Housing object. It currently accepts notes for UHOrders
+        /// </summary>
+        /// <response code="204">The note has been added to Universal Housing</response>
+        /// <response code="400">One or more parameters in the request body is not valid</response>   
+        /// <response code="404">Note has not been added due the Universal Housing object has not been found</response>   
+        /// <response code="500">If any errors are encountered</response>
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> AddNote([FromBody] NoteRequest request)
+        {
+            var validationObj = new NoteRequestValidator();
+            var validationResult = validationObj.Validate(request);
+
+            if (!validationResult.Valid)
+            {
+                var errors = validationResult.ErrorMessages.Select(error => new ApiErrorMessage
+                {
+                    DeveloperMessage = error,
+                    UserMessage = error
+                }).ToList();
+                return ResponseBuilder.ErrorFromList(400, errors);
+            }
+
+            var notesActions = new NoteActions(_workOrdersService, _notesService, _notesLoggerAdapter);
+            try
+            {
+                await notesActions.AddNote(request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex is MissingWorkOrderException)
+                {
+                    var userMessage = "Object reference has not been found. Note not created";
+                    return ResponseBuilder.Error(404, userMessage, ex.Message);
+                }
+                if (ex is UhwRepositoryException)
+                {
+                    var userMessage = "We had issues with connecting to the data source.";
+                    return ResponseBuilder.Error(500, userMessage, ex.Message);
+                }
+                return ResponseBuilder.Error(500, "We had issues processing your request.", ex.StackTrace);
             }
         }
     }

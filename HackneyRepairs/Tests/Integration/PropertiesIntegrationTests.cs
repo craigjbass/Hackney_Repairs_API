@@ -282,6 +282,60 @@ namespace HackneyRepairs.Tests
         }
         #endregion
 
+        #region GET Properties details by reference tests
+        [Theory]
+        [InlineData("reference=5454545454&reference=123435234")]
+        [InlineData("reference=5454545454")]
+        public async Task return_a_200_result_for_valid_request_by_references(string argument)
+        {
+            var result = await _client.GetAsync($"v1/properties/by_references?{argument}");
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("application/json", result.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
+        public async Task return_a_500_result_when_there_is_an_internal_server_error_by_references()
+        {
+            var result = await _client.GetAsync("v1/properties/by_references?reference=5252");
+            Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_404_result_when_there_is_no_property_found_for_the_references()
+        {
+            var result = await _client.GetAsync("v1/properties/by_references?reference=42525252512");
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_json_object_for_valid_references()
+        {
+            var result = await _client.GetAsync("v1/properties/by_references?reference=5454545454");
+            string resultString = await result.Content.ReadAsStringAsync();
+            StringBuilder json = new StringBuilder();
+            json.Append("[");
+            json.Append("{");
+            json.Append("\"address\":\"Back Office, Robert House, 6 - 15 Florfield Road\",");
+            json.Append("\"postcode\":\"E8 1DT\",");
+            json.Append("\"propertyReference\":\"random\",");
+            json.Append("\"maintainable\":true,");
+            json.Append("\"levelCode\":7,");
+            json.Append("\"description\":\"none\"");
+            json.Append("}");
+            json.Append("]");
+
+            Assert.Equal(json.ToString(), resultString);
+        }
+
+        [Fact]
+        public async Task return_a_error_reponse_object_when_there_is_no_property_found_for_the_references()
+        {
+            var result = await _client.GetAsync("v1/properties/by_references?reference=42525252512");
+            string resultString = await result.Content.ReadAsStringAsync();
+            Assert.Contains("developerMessage", resultString);
+        }
+        #endregion
+
         #region GET Property block details by property reference tests
         [Fact]
         public async Task return_a_200_result_for_valid_block_request_by_property_reference()

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Dapper;
 using HackneyRepairs.DbContext;
 using HackneyRepairs.DTOs;
+using HackneyRepairs.Formatters;
 using HackneyRepairs.Interfaces;
 using HackneyRepairs.Models;
 using HackneyRepairs.PropertyService;
@@ -213,8 +214,8 @@ namespace HackneyRepairs.Repository
                         INNER 
                             JOIN lulevel ON property.level_code = lulevel.lu_ref 
                         WHERE 
-                            post_code = @Postcode {SqlLevelCondition(minLevel, maxLevel)}";
-                    
+                            post_code = @Postcode {SqlLevelCondition(minLevel, maxLevel)}
+                        ORDER BY property.prop_ref";
                     var properties = connection.Query<PropertyLevelModel>(query, new { Postcode = postcode }).ToArray();
                     return properties;
                 }
@@ -235,16 +236,50 @@ namespace HackneyRepairs.Repository
                 {
                     string query = @"
                         SELECT 
-                            short_address AS 'ShortAddress',
+                            address1 AS 'ShortAddress',
                             post_code AS 'PostCodeValue',
                             ~no_maint AS 'Maintainable', 
-                            prop_ref AS 'PropertyReference' 
+                            prop_ref AS 'PropertyReference',
+                            level_code AS 'LevelCode',
+                            lulevel.lu_desc AS 'Description'
                         FROM 
                             property 
+                            INNER JOIN lulevel ON property.level_code = lulevel.lu_ref
                         WHERE 
                             prop_ref = @PropertyReference";
-                    var property = connnection.Query<PropertyDetails>(query, new { PropertyReference = reference }).FirstOrDefault();
+                    var property = connnection.Query<PropertyDetails>(query, new { PropertyReference = reference }).First();
                     return property;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new UHWWarehouseRepositoryException();
+            }
+        }
+
+        public async Task<PropertyDetails[]> GetPropertiesDetailsByReference(string[] references)
+        {
+            _logger.LogInformation($"Getting details for properties {GenericFormatter.CommaSeparate(references)}");
+            try
+            {
+                using (SqlConnection connnection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    string query = @"
+                        SELECT 
+                            address1 AS 'ShortAddress',
+                            post_code AS 'PostCodeValue',
+                            ~no_maint AS 'Maintainable', 
+                            prop_ref AS 'PropertyReference',
+                            level_code AS 'LevelCode',
+                            lulevel.lu_desc AS 'Description'
+                        FROM 
+                            property 
+                            INNER JOIN lulevel ON property.level_code = lulevel.lu_ref
+                        WHERE 
+                            prop_ref IN @PropertyReference";
+                    var properties = connnection.Query<PropertyDetails>(query, new { PropertyReference = references }).ToArray();
+                    return properties;
                 }
             }
             catch (Exception ex)
@@ -263,7 +298,7 @@ namespace HackneyRepairs.Repository
                 {
                     string query = @"
                         SELECT 
-                            short_address AS 'ShortAddress',
+                            address1 AS 'ShortAddress',
                             post_code AS 'PostCodeValue',
                             ~no_maint AS 'Maintainable', 
                             prop_ref AS 'PropertyReference'
@@ -295,7 +330,7 @@ namespace HackneyRepairs.Repository
                 {
                     string query = @"
                         SELECT 
-                            short_address AS 'ShortAddress',
+                            address1 AS 'ShortAddress',
                             post_code AS 'PostCodeValue',
                             ~no_maint AS 'Maintainable',
                             prop_ref AS 'PropertyReference'
@@ -443,7 +478,7 @@ namespace HackneyRepairs.Repository
                         rtrim(rmreqst.user_code) userid,
                         null tasks,
                         rtrim(short_address) propname,
-                        short_address address1,
+                        address1,
                         post_code postcode,
                         convert(varchar(50),rq_problem) comments
                         from rmworder 

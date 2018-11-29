@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using HackneyRepairs.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -54,6 +56,44 @@ namespace HackneyRepairs.Tests.Integration
         {
             var result = await _client.GetAsync("v1/notes/feed?startId=11550853&noteTarget=uhorder");
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
+        }
+        #endregion
+
+        #region POST add notes
+        [Fact]
+        public async Task return_a_204_result_when_request_valid_and_workorder_exists()
+        {
+            StringBuilder postBody = new StringBuilder();
+            postBody.Append("{");
+            postBody.Append("\"objectReference\":\"1234567\", ");
+            postBody.Append("\"userId\":\"randomUser\", ");
+            postBody.Append("\"text\":\"random text\", ");
+            postBody.Append("\"objectKey\":\"uhorder\" ");
+            postBody.Append("}");
+
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = await _client.PostAsync("v1/notes", new StringContent(postBody.ToString(), Encoding.UTF8, "application/json"));
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task return_a_404_result_if_objectReference_does_not_exist()
+        {
+            StringBuilder postBody = new StringBuilder();
+            postBody.Append("{");
+            postBody.Append("\"objectReference\":\"0\", ");
+            postBody.Append("\"userId\":\"randomUser\", ");
+            postBody.Append("\"text\":\"random text\", ");
+            postBody.Append("\"objectKey\":\"uhorder\" ");
+            postBody.Append("}");
+
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = await _client.PostAsync("v1/notes", new StringContent(postBody.ToString(), Encoding.UTF8, "application/json"));
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
         #endregion
     }

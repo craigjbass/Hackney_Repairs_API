@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using Dapper;
 using HackneyRepairs.Models;
+using System.Linq;
 
 namespace HackneyRepairs.Repository
 {
@@ -15,6 +16,8 @@ namespace HackneyRepairs.Repository
         private UhwDbContext _context;
         private string environmentDbWord;
         private ILoggerAdapter<UhwRepository> _logger;
+        private const string DefaultNoteType = "GLO_GEN";
+        private const string DefaultSecureCategory = "002";
 
         public UhwRepository(UhwDbContext context, ILoggerAdapter<UhwRepository> logger)
         {
@@ -156,6 +159,38 @@ namespace HackneyRepairs.Repository
                 throw new UhwRepositoryException();
             }
         }
+
+        public async Task AddNote(NoteRequest note)
+        {
+            if (string.Equals(note.ObjectKey.ToLower(), "uhorder"))
+            {
+                note.ObjectKey = "UHOrder";
+            }
+            else
+            {
+                throw new UhwRepositoryException();
+            }
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@KeyObject", note.ObjectKey);
+            parameters.Add("@NoteType", DefaultNoteType);
+            parameters.Add("@SecCat", DefaultSecureCategory);
+            parameters.Add("@NoteText", note.Text);
+            parameters.Add("@UserId", Environment.GetEnvironmentVariable("UHUsername"));
+            parameters.Add("@ObjectReference", note.ObjectReference);
+
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
+                {
+                    connection.Query("usp_HH_ValidateObjectNoteParams", parameters, commandType: CommandType.StoredProcedure); 
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UhwRepositoryException();
+            }
+         }
 
         public static string GetCutoffTime()
         {
